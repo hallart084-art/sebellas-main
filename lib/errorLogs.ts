@@ -1,100 +1,85 @@
 import type { AppErrorLog } from '../types';
+import { supabase } from './supabaseClient';
 
-const STORAGE_KEY_ERROR_LOGS = 'app_error_logs_local';
-
-const loadStoredErrorLogs = (): AppErrorLog[] => {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY_ERROR_LOGS);
-    if (raw) {
-      return JSON.parse(raw);
-    }
-  } catch (e) {
-    console.error('[ErrorLogs] Failed to load local error logs:', e);
-  }
-  return [];
-};
-
-const saveStoredErrorLogs = (logs: AppErrorLog[]) => {
-  try {
-    localStorage.setItem(STORAGE_KEY_ERROR_LOGS, JSON.stringify(logs));
-  } catch (e) {
-    console.error('[ErrorLogs] Failed to save local error logs:', e);
-  }
-};
+const mapErrorLogRow = (row: Record<string, unknown>): AppErrorLog => ({
+ id: String(row.id ?? ''),
+ errorMessage: String(row.error_message ?? ''),
+ aiModel: String(row.ai_model ?? ''),
+ errorDetails: String(row.error_details ?? ''),
+ username: String(row.username ?? ''),
+ occurrences: Number(row.occurrences ?? 0),
+ firstSeenAt: String(row.first_seen_at ?? ''),
+ lastSeenAt: String(row.last_seen_at ?? ''),
+ promptStyle: String(row.prompt_style ?? ''),
+ origin: String(row.origin ?? 'web'),
+});
 
 export const logAppError = async (payload: {
-  errorMessage: string;
-  aiModel: string;
-  errorDetails: string;
-  username: string;
-  sessionToken: string;
-  promptStyle: string;
-  origin?: string;
+ errorMessage: string;
+ aiModel: string;
+ errorDetails: string;
+ username: string;
+ sessionToken: string;
+ promptStyle: string;
+ origin?: string;
 }): Promise<boolean> => {
-  try {
-    const logs = loadStoredErrorLogs();
-    const now = new Date().toISOString();
+ const { data, error } = await supabase.rpc('log_app_error_v1', {
+ p_error_message: payload.errorMessage,
+ p_ai_model: payload.aiModel,
+ p_error_details: payload.errorDetails,
+ p_username: payload.username,
+ p_session_token: payload.sessionToken,
+ p_prompt_style: payload.promptStyle,
+ p_origin: payload.origin ?? 'web',
+ });
 
-    const existingIndex = logs.findIndex(
-      (l) =>
-        l.errorMessage === payload.errorMessage &&
-        l.aiModel === payload.aiModel &&
-        l.username.toLowerCase() === payload.username.toLowerCase()
-    );
-
-    if (existingIndex >= 0) {
-      logs[existingIndex].occurrences = (logs[existingIndex].occurrences || 1) + 1;
-      logs[existingIndex].lastSeenAt = now;
-      logs[existingIndex].errorDetails = payload.errorDetails || logs[existingIndex].errorDetails;
-    } else {
-      const newLog: AppErrorLog = {
-        id: `err-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
-        errorMessage: payload.errorMessage,
-        aiModel: payload.aiModel,
-        errorDetails: payload.errorDetails,
-        username: payload.username,
-        occurrences: 1,
-        firstSeenAt: now,
-        lastSeenAt: now,
-        promptStyle: payload.promptStyle,
-        origin: payload.origin ?? 'web',
-      };
-      logs.unshift(newLog);
-    }
-
-    saveStoredErrorLogs(logs);
-    return true;
-  } catch (err) {
-    console.error('[ErrorLogs] Failed to save error log:', err);
-    return false;
-  }
+ if (error) throw new Error(error.message);
+ const result = Array.isArray(data) ? data[0] : data;
+ return Boolean((result as Record<string, unknown> | null)?.success);
 };
 
 export const listAppErrorLogs = async (
-  _username: string,
-  _sessionToken: string,
-  limit = 100
+ username: string,
+ sessionToken: string,
+ limit = 100
 ): Promise<AppErrorLog[]> => {
-  const logs = loadStoredErrorLogs();
-  logs.sort((a, b) => new Date(b.lastSeenAt).getTime() - new Date(a.lastSeenAt).getTime());
-  return logs.slice(0, limit);
+ const { data, error } = await supabase.rpc('list_app_errors_v1', {
+ p_username: username,
+ p_session_token: sessionToken,
+ p_limit: limit,
+ });
+
+ if (error) throw new Error(error.message);
+ if (!Array.isArray(data)) return [];
+ return data.map((row) => mapErrorLogRow(row as Record<string, unknown>));
 };
 
 export const clearAllAppErrorLogs = async (
-  _username: string,
-  _sessionToken: string
+ username: string,
+ sessionToken: string
 ): Promise<boolean> => {
-  saveStoredErrorLogs([]);
-  return true;
+ const { data, error } = await supabase.rpc('clear_all_app_errors_v1', {
+ p_username: username,
+ p_session_token: sessionToken,
+ });
+
+ if (error) throw new Error(error.message);
+ const result = Array.isArray(data) ? data[0] : data;
+ return Boolean((result as Record<string, unknown> | null)?.success);
 };
 
 export const deleteAppErrorLog = async (
-  _username: string,
-  _sessionToken: string,
-  errorId: string
+ username: string,
+ sessionToken: string,
+ errorId: string
 ): Promise<boolean> => {
-  const logs = loadStoredErrorLogs();
-  const filtered = logs.filter((l) => l.id !== errorId);
-  saveStoredErrorLogs(filtered);
-  return true;
+ const { data, error } = await supabase.rpc('delete_app_error_v1', {
+    p_username: username,
+    p_session_token: sessionToken,
+    p_error_id: errorId,
+  });
+
+  if (error) throw new Error(error.message);
+  const result = Array.isArray(data) ? data[0] : data;
+  return Boolean((result as Record<string, unknown> | null)?.success);
 };

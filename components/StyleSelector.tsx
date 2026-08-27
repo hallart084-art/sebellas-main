@@ -17,13 +17,12 @@ interface StyleSelectorProps {
  showFeatureLabel?: boolean;
 }
 
-const styleOptions: readonly StyleOption[] = ['photographic', 'sameAsReference', 'isolated', 'vector', 'footage', 'custom'];
+const styleOptions: readonly StyleOption[] = ['photographic', 'sameAsReference', 'isolated', 'footage', 'custom'];
 
 const styleOptionLabels: Record<StyleOption, AllTranslationKeys> = {
  photographic: 'promptStylePhotographic',
  sameAsReference: 'promptStyleSameAsReference',
  isolated: 'promptStyleIsolated',
- vector: 'promptStyleVector',
  custom: 'promptStyleCustom',
  footage: 'promptStyleFootage',
 };

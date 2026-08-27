@@ -1,54 +1,104 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sebellas Vector Prompt Generator</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Sebellas Prompt Generator</title>
+ <script src="https://cdn.tailwindcss.com"></script>
+ <link rel="preconnect" href="https://fonts.googleapis.com">
+ <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
-  
-  <script>
-  tailwind.config = {
-    darkMode: 'class',
-    theme: {
-      extend: {
-        fontFamily: {
-          sans: ['Manrope', 'sans-serif'],
-        },
-        fontSize: {
-          'xs': ['11px', '16px'],
-          'sm': ['13px', '20px'],
-          'base': ['15px', '24px'],
-          'lg': ['17px', '28px'],
-          'xl': ['19px', '28px'],
-        }
-      }
-    }
-  }
-  </script>
-  
-  <script type="importmap">
-  {
-    "imports": {
-      "react": "https://esm.sh/react@^19.1.0",
-      "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
-      "react/": "https://esm.sh/react@^19.1.0/",
-      "@google/genai": "https://esm.sh/@google/genai@^1.5.1",
-      "react-dom": "https://esm.sh/react-dom@^19.1.0"
-    }
-  }
-  </script>
-  <link rel="stylesheet" href="/index.css">
+ <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&display=swap" rel="stylesheet">
+ <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+ <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+ <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+ <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+ 
+ <script>
+ tailwind.config = {
+ darkMode: 'class',
+ theme: {
+ extend: {
+ fontFamily: {
+ sans: ['Manrope', 'sans-serif'],
+ },
+ fontSize: {
+ 'xs': ['11px', '16px'],
+ 'sm': ['13px', '20px'],
+ 'base': ['15px', '24px'],
+ 'lg': ['17px', '28px'],
+ 'xl': ['19px', '28px'],
+ }
+ }
+ }
+ }
+ </script>
+ 
+<script type="importmap">
+{
+ "imports": {
+ "react": "https://esm.sh/react@^19.1.0",
+ "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+ "react/": "https://esm.sh/react@^19.1.0/",
+ "@google/genai": "https://esm.sh/@google/genai@^1.5.1",
+ "react-dom": "https://esm.sh/react-dom@^19.1.0"
+ }
+}
+</script>
+ <link rel="stylesheet" href="/index.css">
 </head>
-<body class="min-h-screen m-0 p-0 bg-[#0d0d10] text-gray-100 antialiased overflow-x-hidden">
-  <div id="root" class="w-full min-h-screen"></div>
-  <script type="module" src="/index.tsx"></script>
+<body class="min-h-screen flex flex-col items-center justify-start p-4 antialiased layout-booting">
+  <script>
+  // This script runs before React to prevent a flash of the wrong theme.
+  (function() {
+  try {
+  localStorage.removeItem('theme');
+  } catch (e) {}
+  document.body.classList.remove('theme-dark', 'dark');
+  document.body.classList.add('theme-light');
+  })();
+
+  // Calculate scrollbar width dynamically to prevent layout shift without using scrollbar-gutter
+  function updateScrollbarWidth() {
+    document.documentElement.style.setProperty('--scrollbar-width', Math.max(0, window.innerWidth - document.documentElement.clientWidth) + 'px');
+  }
+  window.addEventListener('resize', updateScrollbarWidth);
+  updateScrollbarWidth();
+  </script>
+
+ <!-- Prompt Cowboy Background Start (Only shows in Light Mode) -->
+ <div data-background="true" class="fixed top-[25vh] left-0 bottom-0 -z-10 overflow-hidden pointer-events-none block w-[110vw]">
+ <img alt="" class="object-cover object-top" style="position:absolute;height:100%;width:100%;left:0;top:0;right:0;bottom:0;color:transparent" src="/background.svg"/>
+ </div>
+ <div id="clouds-container" class="fixed top-0 left-0 bottom-0 w-[100vw] -z-[5] overflow-hidden pointer-events-none block ">
+ <div class="absolute inset-0 transition-opacity duration-1000 opacity-50">
+ <img alt="" width="150" height="80" class="absolute top-[8%] right-[20%] w-[80px] md:w-[120px] lg:w-[150px]" style="color:transparent" src="/desert/cloud1.svg"/>
+ <img alt="" width="150" height="80" class="absolute top-[5%] left-[20%] w-[100px] md:w-[140px] lg:w-[240px]" style="color:transparent" src="/desert/cloud3.svg"/>
+ <img alt="" width="120" height="60" class="absolute top-[12%] right-[38%] w-[90px] md:w-[110px] lg:w-[120px] hidden lg:block" style="color:transparent" src="/desert/cloud2.svg"/>
+ </div>
+ </div>
+ <!-- Prompt Cowboy Background End -->
+ <div id="app-container" class="relative w-full pt-4 sm:pt-10 px-4 sm:px-6 pb-12">
+ <div id="root" class="w-full"></div>
+ </div>
+ <script>
+ // Pre-sync sidebar layout before React mounts to prevent main-content jump/flicker.
+ (function() {
+ try {
+ var appContainer = document.getElementById('app-container');
+ if (!appContainer) return;
+ if (window.matchMedia('(max-width: 767px)').matches) {
+ appContainer.classList.remove('sidebar-active');
+ return;
+ }
+ var stored = localStorage.getItem('isSidebarOpen');
+ var shouldOpen = stored === null ? true : stored === 'true';
+ appContainer.classList.toggle('sidebar-active', shouldOpen);
+ } catch (e) {
+ // Keep default layout if storage or media query is unavailable.
+ }
+ })();
+ </script>
+ <script type="module" src="/index.tsx"></script>
 </body>
 </html>

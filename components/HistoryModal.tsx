@@ -20,7 +20,6 @@ const styleOptionLabels: Record<StyleOption, AllTranslationKeys> = {
  photographic: 'promptStylePhotographic',
  sameAsReference: 'promptStyleSameAsReference',
  isolated: 'promptStyleIsolated',
- vector: 'promptStyleVector',
  custom: 'promptStyleCustom',
  footage: 'promptStyleFootage',
 };
@@ -28,7 +27,6 @@ const styleOptionLabels: Record<StyleOption, AllTranslationKeys> = {
 const filterOptions = [
  { value: 'all' as const, label: 'All Prompts' },
  { value: 'text' as const, label: 'Text Prompts' },
- { value: 'vector' as const, label: 'Vector Prompts' },
  { value: 'image' as const, label: 'Image Prompts' },
  { value: 'video' as const, label: 'Video Prompts' },
 ];
@@ -471,10 +469,10 @@ const HistoryModal: React.FC<HistoryModalProps> = ({ onClose, history, onDelete,
 
  // Helper to get first concept text for sorting
  const getFirstConcept = (entry: HistoryEntry) => {
-   if (entry.settings.inputMode === 'text' || entry.settings.inputMode === 'vector') return entry.settings.conceptsInput;
-   if (entry.settings.inputMode === 'image') return entry.settings.imageNames[0] || '';
-   if (entry.settings.inputMode === 'video') return entry.settings.videoNames[0] || '';
-   return '';
+ if (entry.settings.inputMode === 'text') return entry.settings.conceptsInput;
+ if (entry.settings.inputMode === 'image') return entry.settings.imageNames[0] || '';
+ if (entry.settings.inputMode === 'video') return entry.settings.videoNames[0] || '';
+ return '';
  };
 
  // Filter by Search Query and Filter Type

@@ -12,6 +12,7 @@
     "@fingerprintjs/fingerprintjs": "^5.2.0",
     "@google/genai": "^1.5.1",
     "@lobehub/icons": "^5.10.0",
+    "@supabase/supabase-js": "^2.112.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
   },

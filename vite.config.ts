@@ -13,10 +13,10 @@ export default defineConfig(({ mode }) => {
  host: '0.0.0.0',
  },
  plugins: [react()],
-  define: {
-    'process.env.API_KEY': JSON.stringify(process.env.API_KEY || process.env.GEMINI_API_KEY || env.GEMINI_API_KEY || env.API_KEY || ''),
-    'process.env.GEMINI_API_KEY': JSON.stringify(process.env.GEMINI_API_KEY || process.env.API_KEY || env.GEMINI_API_KEY || env.API_KEY || '')
-  },
+ define: {
+ 'process.env.API_KEY': JSON.stringify(env.GEMINI_API_KEY),
+ 'process.env.GEMINI_API_KEY': JSON.stringify(env.GEMINI_API_KEY)
+ },
  resolve: {
  alias: {
  '@': path.resolve(__dirname, '.'),
@@ -31,6 +31,9 @@ export default defineConfig(({ mode }) => {
               }
               if (id.includes('node_modules/@google/genai')) {
                 return 'vendor-genai';
+              }
+              if (id.includes('node_modules/@supabase')) {
+                return 'vendor-supabase';
               }
               if (id.includes('node_modules/@fingerprintjs')) {
                 return 'vendor-fingerprint';

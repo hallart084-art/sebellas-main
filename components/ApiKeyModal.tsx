@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom';
 import Spinner from './Spinner';
 
 import { useLocalizationContext } from '../contexts/LocalizationContext';
+import { useDropdownPosition } from '../hooks/useDropdownPosition';
 import { MODEL_PROVIDER_LABELS } from '../constants';
 import type { ApiModel, ModelProvider } from '../constants';
 import { normalizeApiKeyList, type ApiKeyCheckResult, type ProviderApiKeys, type ProviderApiStatus } from '../hooks/useGemini';
@@ -17,26 +18,53 @@ interface ApiKeyModalProps {
   apiStatus: ProviderApiStatus;
   selectedModel: ApiModel;
   isSidebarOpen: boolean;
-  onModelChange?: (model: ApiModel) => void;
 }
 
 const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, currentApiKeys, apiStatus, selectedModel, isSidebarOpen }) => {
+  
   const { t } = useLocalizationContext();
-  const [localApiKeyText, setLocalApiKeyText] = useState<string>(currentApiKeys.google.join('\n'));
-  const [isChecking, setIsChecking] = useState<boolean>(false);
-  const [checkResult, setCheckResult] = useState<{status: 'success' | 'warning' | 'error', message: string} | null>(null);
+  const [localApiKeyText, setLocalApiKeyText] = useState<Record<ModelProvider, string>>({
+    google: currentApiKeys.google.join('\n'),
+    groq: currentApiKeys.groq.join('\n'),
+    mistral: currentApiKeys.mistral.join('\n'),
+    openrouter: currentApiKeys.openrouter?.join('\n') ?? '',
+  });
+  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('google');
+  const [isChecking, setIsChecking] = useState<Record<ModelProvider, boolean>>({ google: false, groq: false, mistral: false, openrouter: false });
+  const [checkResult, setCheckResult] = useState<Record<ModelProvider, {status: 'success' | 'warning' | 'error', message: string} | null>>({ google: null, groq: null, mistral: null, openrouter: null });
+  const [keyCheckStatuses, setKeyCheckStatuses] = useState<Record<ModelProvider, Record<string, 'valid' | 'limited' | 'invalid'>>>({ google: {}, groq: {}, mistral: {}, openrouter: {} });
+  const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
+  const [apiKeyTextareaScrollTop, setApiKeyTextareaScrollTop] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
 
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const importInputRef = useRef<HTMLInputElement>(null);
+  const providerTriggerRef = useRef<HTMLButtonElement>(null);
   const closeTimerRef = useRef<number | null>(null);
+  const { dropdownRef: providerDropdownRef, dropdownStyle: providerDropdownStyle } = useDropdownPosition({
+    isOpen: isProviderDropdownOpen,
+    triggerRef: providerTriggerRef,
+    onClose: () => setIsProviderDropdownOpen(false),
+    matchTriggerWidth: true,
+    minWidth: 190,
+  });
 
   useEffect(() => {
-    setLocalApiKeyText(currentApiKeys.google.join('\n'));
+    setLocalApiKeyText({
+      google: currentApiKeys.google.join('\n'),
+      groq: currentApiKeys.groq.join('\n'),
+      mistral: currentApiKeys.mistral.join('\n'),
+      openrouter: currentApiKeys.openrouter?.join('\n') ?? '',
+    });
   }, [currentApiKeys]);
+  
+  useEffect(() => {
+    setCheckResult({ google: null, groq: null, mistral: null, openrouter: null });
+  }, []);
 
   const requestClose = useCallback(() => {
     if (isClosing) return;
+    setIsProviderDropdownOpen(false);
     setIsClosing(true);
     closeTimerRef.current = window.setTimeout(() => {
       onClose();
@@ -55,6 +83,10 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
+        if (isProviderDropdownOpen) {
+          setIsProviderDropdownOpen(false);
+          return;
+        }
         requestClose();
       }
     };
@@ -62,41 +94,69 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [requestClose]);
+  }, [isProviderDropdownOpen, requestClose]);
 
   const handleSave = () => {
-    const keys = normalizeApiKeyList(localApiKeyText);
     onSave({
-      google: keys,
+      google: normalizeApiKeyList(localApiKeyText.google),
+      groq: normalizeApiKeyList(localApiKeyText.groq),
+      mistral: normalizeApiKeyList(localApiKeyText.mistral),
+      openrouter: normalizeApiKeyList(localApiKeyText.openrouter),
     });
     requestClose();
   };
 
-  const handleCheck = async () => {
-    const keys = normalizeApiKeyList(localApiKeyText);
+  const handleCheck = async (provider: ModelProvider) => {
+    const keys = normalizeApiKeyList(localApiKeyText[provider]);
     if (keys.length === 0) return;
-    setIsChecking(true);
-    setCheckResult(null);
+    setIsChecking(prev => ({ ...prev, [provider]: true }));
+    setCheckResult(prev => ({ ...prev, [provider]: null }));
 
-    const results = await Promise.all(keys.map(key => onCheck('google', key, selectedModel)));
+    const results = await Promise.all(keys.map(key => onCheck(provider, key, selectedModel)));
+    setKeyCheckStatuses(prev => ({
+      ...prev,
+      [provider]: Object.fromEntries(keys.map((key, index) => [
+        key,
+        results[index].success ? 'valid' : (results[index].reason === 'limited' ? 'limited' : 'invalid'),
+      ])),
+    }));
     const validCount = results.filter(result => result.success).length;
     const limitedCount = results.filter(result => result.reason === 'limited').length;
     const invalidCount = results.length - validCount - limitedCount;
 
     if (validCount === results.length) {
-      setCheckResult({ status: 'success', message: t('apiKeyCheckAllSuccess', { count: validCount }) });
+        setCheckResult(prev => ({ ...prev, [provider]: { status: 'success', message: t('apiKeyCheckAllSuccess', { count: validCount }) } }));
     } else if (validCount > 0) {
-      setCheckResult({ status: 'warning', message: t('apiKeyCheckPartial', { valid: validCount, limited: limitedCount, invalid: invalidCount }) });
+        setCheckResult(prev => ({ ...prev, [provider]: { status: 'warning', message: t('apiKeyCheckPartial', { valid: validCount, limited: limitedCount, invalid: invalidCount }) } }));
     } else {
-      setCheckResult({ status: 'error', message: t('apiKeyCheckAllFailed', { limited: limitedCount, invalid: invalidCount }) });
+        setCheckResult(prev => ({ ...prev, [provider]: { status: 'error', message: t('apiKeyCheckAllFailed', { limited: limitedCount, invalid: invalidCount }) } }));
     }
-    setIsChecking(false);
+    setIsChecking(prev => ({ ...prev, [provider]: false }));
+  };
+  
+  const handleInputChange = (provider: ModelProvider, value: string) => {
+    // Convert commas to newlines so the masking dots render correctly line-by-line
+    const formattedValue = value.replace(/,/g, '\n');
+    setLocalApiKeyText(prev => ({ ...prev, [provider]: formattedValue }));
+    setCheckResult(prev => ({ ...prev, [provider]: null }));
+    setKeyCheckStatuses(prev => ({ ...prev, [provider]: {} }));
   };
 
-  const handleInputChange = (value: string) => {
-    const formattedValue = value.replace(/,/g, '\n');
-    setLocalApiKeyText(formattedValue);
-    setCheckResult(null);
+  const maskApiKeyLine = (line: string): string => {
+    const trimmedEndLength = line.length - line.trimEnd().length;
+    const trimmedLine = line.trimEnd();
+    if (!trimmedLine) return line;
+
+    const visibleTailLength = Math.min(6, trimmedLine.length);
+    const hiddenLength = Math.max(0, trimmedLine.length - visibleTailLength);
+    const maskedPrefix = '.'.repeat(hiddenLength);
+    return `${maskedPrefix}${trimmedLine.slice(-visibleTailLength)}${' '.repeat(trimmedEndLength)}`;
+  };
+
+  const getApiKeyLineStatus = (provider: ModelProvider, line: string): 'valid' | 'limited' | 'invalid' | undefined => {
+    const key = line.trim();
+    if (!key) return undefined;
+    return keyCheckStatuses[provider][key];
   };
 
   const handleImportClick = () => {
@@ -108,21 +168,79 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
     event.target.value = '';
     if (!file) return;
 
+    const isTextFile = file.name.toLowerCase().endsWith('.txt') || file.type === 'text/plain';
+    if (!isTextFile) {
+      setCheckResult(prev => ({ ...prev, [selectedProvider]: { status: 'error', message: 'Import only supports .txt API key files.' } }));
+      return;
+    }
+
     try {
       const fileText = await file.text();
       const importedKeys = normalizeApiKeyList(fileText);
       if (importedKeys.length === 0) {
-        setCheckResult({ status: 'error', message: 'No API keys found in the imported file.' });
+        setCheckResult(prev => ({ ...prev, [selectedProvider]: { status: 'error', message: 'No API keys found in the imported file.' } }));
         return;
       }
-      setLocalApiKeyText(prev => normalizeApiKeyList([...normalizeApiKeyList(prev), ...importedKeys]).join('\n'));
-      setCheckResult({ status: 'success', message: `${importedKeys.length} API key(s) imported.` });
+      setLocalApiKeyText(prev => ({
+        ...prev,
+        [selectedProvider]: normalizeApiKeyList([...normalizeApiKeyList(prev[selectedProvider]), ...importedKeys]).join('\n'),
+      }));
+      setCheckResult(prev => ({ ...prev, [selectedProvider]: { status: 'success', message: `${importedKeys.length} API key(s) imported.` } }));
+      setKeyCheckStatuses(prev => ({ ...prev, [selectedProvider]: {} }));
     } catch {
-      setCheckResult({ status: 'error', message: 'Failed to import API key file.' });
+      setCheckResult(prev => ({ ...prev, [selectedProvider]: { status: 'error', message: 'Failed to import API key file.' } }));
     }
   };
 
-  const selectedKeyCount = normalizeApiKeyList(localApiKeyText).length;
+  const providerOptions: Array<{ provider: ModelProvider; label: string; apiLabel: string }> = [
+    { provider: 'google', label: 'Gemini', apiLabel: 'Gemini API Key' },
+    { provider: 'groq', label: 'Groq', apiLabel: 'Groq API Key' },
+    { provider: 'mistral', label: 'Mistral', apiLabel: 'Mistral API Key' },
+    { provider: 'openrouter', label: 'OpenRouter', apiLabel: 'OpenRouter API Key' },
+  ];
+
+  const selectedResult = checkResult[selectedProvider];
+  const selectedLabel = MODEL_PROVIDER_LABELS[selectedProvider];
+  const selectedInitialized = apiStatus[selectedProvider];
+  const selectedOption = providerOptions.find(option => option.provider === selectedProvider) ?? providerOptions[0];
+  const selectedKeyCount = normalizeApiKeyList(localApiKeyText[selectedProvider]).length;
+  const hasAnyLocalKey = normalizeApiKeyList(localApiKeyText.google).length > 0
+    || normalizeApiKeyList(localApiKeyText.groq).length > 0
+    || normalizeApiKeyList(localApiKeyText.mistral).length > 0
+    || normalizeApiKeyList(localApiKeyText.openrouter).length > 0;
+
+  const handleProviderSelect = (provider: ModelProvider) => {
+    setSelectedProvider(provider);
+    setIsProviderDropdownOpen(false);
+    setApiKeyTextareaScrollTop(0);
+  };
+
+  const providerDropdownMenu = (
+    <div
+      ref={providerDropdownRef}
+      className="dropdown-menu-portal p-1"
+      style={providerDropdownStyle}
+      role="menu"
+      aria-orientation="vertical"
+      aria-labelledby="apiProviderDropdownButton"
+    >
+      <div className="selector-options-list max-h-60 overflow-y-auto flex flex-col gap-0.5">
+        {providerOptions.map((option) => (
+          <button
+            key={option.provider}
+            type="button"
+            onClick={() => handleProviderSelect(option.provider)}
+            className={`dropdown-menu-item flex items-center justify-between w-full text-left px-3 py-2 text-sm ${option.provider === selectedProvider ? 'active' : ''}`}
+            role="menuitemradio"
+            aria-checked={option.provider === selectedProvider}
+          >
+            <span className="truncate">{option.label}</span>
+            {option.provider === selectedProvider && <span className="material-symbols-outlined text-base">check</span>}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
 
   const content = (
     <div 
@@ -145,62 +263,139 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
         </button>
 
         <div className="relative z-[1]">
-          <h2 id="apiKeyModalTitle" className="font-bold mb-2 pr-6 text-lg">Google AI Studio API Key</h2>
+          <style>{`
+            #apiKeyModalTitle { font-size: 17px !important; }
+            #apiKeyModalLegendText { font-size: 13px !important; }
+            .api-key-modal-layout label,
+            .api-key-modal-layout button,
+            .api-key-modal-layout a,
+            .api-key-modal-layout textarea,
+            .api-key-modal-layout .api-key-mask-overlay,
+            .api-key-modal-layout p,
+            .api-key-modal-layout div {
+              font-size: 12px !important;
+            }
+            .api-key-modal-layout textarea:focus {
+              color: var(--text-primary) !important;
+              -webkit-text-fill-color: var(--text-primary) !important;
+            }
+            .api-key-modal-actions button {
+              font-size: 13px !important;
+            }
+          `}</style>
+          <h2 id="apiKeyModalTitle" className="font-bold mb-2 pr-6">{t('apiKeySectionLabel')}</h2>
           
-          <p id="apiKeyModalLegendText" className="mb-4 legend-text text-sm">
-            Aplikasi terhubung langsung ke mesin Google AI Studio (Gemini). Masukkan API Key Anda di bawah ini jika diperlukan.
-          </p>
+          <p id="apiKeyModalLegendText" className="mb-4 legend-text max-w-[32rem]">{t('tooltip_API_KEY_INPUT')}</p>
 
-          <div className="space-y-4">
+          <div className="api-key-modal-layout">
             <div>
-              <div className="flex items-center justify-between ml-0.5 mb-2">
-                <label htmlFor="googleApiKeyInputModal" className="advanced-settings-field-label text-xs font-semibold">
-                  Google AI Studio API Key
+              <div className="flex items-center ml-0.5 mb-2 h-4">
+                <label htmlFor="apiProviderDropdownButton" className="advanced-settings-field-label block mb-0" style={{ fontSize: '12px' }}>
+                  {t('modelApiLabel')}
+                </label>
+              </div>
+              <button
+                id="apiProviderDropdownButton"
+                ref={providerTriggerRef}
+                type="button"
+                onClick={() => setIsProviderDropdownOpen(prev => !prev)}
+                className="dropdown-trigger-button api-provider-dropdown-trigger flat-input w-full flex items-center justify-between text-left"
+                aria-haspopup="true"
+                aria-expanded={isProviderDropdownOpen}
+                style={{ paddingTop: '0.5rem', paddingBottom: '0.5rem', fontSize: '12px' }}
+              >
+                <span className="truncate min-w-0 flex-1 pr-1 text-left">{selectedOption.label}</span>
+                <svg
+                  className="inline-block w-4 h-4 ml-0.5 transition-transform duration-[180ms] flex-shrink-0"
+                  style={{ transform: isProviderDropdownOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                </svg>
+              </button>
+            </div>
+
+            <div className="min-w-0">
+              <div className="flex items-center justify-between ml-0.5 mb-2 h-4">
+                <label htmlFor={`${selectedProvider}ApiKeyInputModal`} className="advanced-settings-field-label block mb-0" style={{ fontSize: '12px' }}>
+                  {selectedOption.apiLabel}
                 </label>
                 <a 
-                  href="https://aistudio.google.com/app/apikey" 
+                  href={
+                    selectedProvider === 'google' ? 'https://aistudio.google.com/app/apikey' : 
+                    selectedProvider === 'groq' ? 'https://console.groq.com/keys' : 
+                    selectedProvider === 'openrouter' ? 'https://openrouter.ai/settings/keys' :
+                    'https://console.mistral.ai/api-keys/'
+                  } 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="text-xs text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition-colors"
+                  className="text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300 hover:underline transition-colors"
+                  style={{ fontSize: '12px' }}
                 >
                   {t('apiKeyGetLinkText')}
                 </a>
               </div>
-              <textarea
-                ref={inputRef}
-                id="googleApiKeyInputModal"
-                value={localApiKeyText}
-                onChange={(e) => handleInputChange(e.target.value)}
-                placeholder="AIzaSy... (atau biarkan kosong jika sudah terset di environment)"
-                className="flat-input w-full min-h-[100px] resize-y p-3 text-xs font-mono"
-                rows={4}
-                wrap="off"
-                spellCheck={false}
-              />
+              <div className="relative w-full mb-2">
+                <textarea
+                  ref={inputRef}
+                  id={`${selectedProvider}ApiKeyInputModal`}
+                  value={localApiKeyText[selectedProvider]}
+                  onChange={(e) => handleInputChange(selectedProvider, e.target.value)}
+                  onScroll={(e) => setApiKeyTextareaScrollTop(e.currentTarget.scrollTop)}
+                  placeholder={`${selectedLabel}: ${t('apiKeyMultiPlaceholder')}`}
+                  className="flat-input api-key-masked-textarea w-full min-h-[128px] resize-y"
+                  style={{ paddingTop: '0.65rem', paddingBottom: '0.65rem', fontSize: '12px' }}
+                  rows={5}
+                  wrap="off"
+                  spellCheck={false}
+                />
+                {localApiKeyText[selectedProvider] && (
+                  <div
+                    className="api-key-mask-overlay"
+                    aria-hidden="true"
+                    style={{ fontSize: '12px' }}
+                  >
+                    <div style={{ transform: `translateY(-${apiKeyTextareaScrollTop}px)` }}>
+                      {localApiKeyText[selectedProvider].split('\n').map((line, index) => {
+                        const status = getApiKeyLineStatus(selectedProvider, line);
+                        return (
+                          <div key={`${index}-${line}`} className={`api-key-mask-line ${status ? `is-${status}` : ''}`}>
+                            {maskApiKeyLine(line) || ' '}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
+              </div>
 
-              <div className="min-h-[1.5rem] flex items-start mt-2">
-                {checkResult ? (
-                  <div className={`w-full text-xs font-medium ${
-                    checkResult.status === 'success'
-                      ? 'text-emerald-400'
-                      : checkResult.status === 'warning'
-                        ? 'text-amber-400'
-                        : 'text-rose-400'
-                  }`}>
-                    {checkResult.message}
+              <div className="min-h-[2rem] flex items-start mt-1">
+                {selectedResult ? (
+                  <div className={`w-full mt-1 max-h-32 overflow-y-auto custom-scrollbar break-words ${
+                    selectedResult.status === 'success'
+                      ? 'api-key-status-valid'
+                      : selectedResult.status === 'warning'
+                        ? 'api-key-status-warning'
+                        : 'api-key-status-invalid'
+                  }`} style={{ fontSize: '12px' }}>
+                    {selectedResult.message}
                   </div>
                 ) : (
-                  <p className={`text-xs ${apiStatus.google || selectedKeyCount > 0 ? 'text-emerald-400' : 'text-gray-400'}`}>
+                  <p className={`mt-1 ${(selectedInitialized || selectedKeyCount > 0) ? 'api-key-status-valid' : 'api-key-status-invalid'}`} style={{ fontSize: '12px' }}>
                     {selectedKeyCount > 0
-                      ? `Google AI Studio: ${selectedKeyCount} API Key aktif.`
-                      : apiStatus.google ? 'Google AI Studio: Siap digunakan (via Environment).' : 'Google AI Studio: Siap digunakan.'}
+                      ? t('apiKeyCountStatus', { provider: selectedLabel, count: selectedKeyCount })
+                      : `${selectedLabel}: ${t('apiKeyStatusMissing')}`}
                   </p>
                 )}
               </div>
             </div>
           </div>
 
-          <div className="api-key-modal-actions flex justify-end items-center gap-2 flex-wrap mt-5 pt-3 border-t border-white/[0.08]">
+          <div className="api-key-modal-actions flex justify-end items-center gap-2 flex-wrap mt-5">
              <input
                 ref={importInputRef}
                 type="file"
@@ -211,25 +406,27 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
              <button
                 type="button"
                 onClick={handleImportClick}
-                className="btn btn-secondary text-xs"
+                className="btn btn-secondary"
+                style={{ fontSize: '13px' }}
              >
                 {t('apiKeyImportButton')}
              </button>
              <button
-                onClick={handleCheck}
-                className="btn btn-secondary text-xs"
-                disabled={isChecking || selectedKeyCount === 0}
+                onClick={() => handleCheck(selectedProvider)}
+                className="btn btn-secondary"
+                style={{ fontSize: '13px' }}
+                disabled={isChecking[selectedProvider] || selectedKeyCount === 0}
              >
-                {isChecking ? (
+                {isChecking[selectedProvider] ? (
                   <>
                     <Spinner size="w-3 h-3" thickness="border-2" color={'border-gray-800'} />
-                    <span className="ml-1.5">{t('apiKeyCheckingButton')}</span>
+                    <span className="ml-1.5" style={{ fontSize: '13px' }}>{t('apiKeyCheckingButton')}</span>
                   </>
                 ) : (
-                  <span>{t('apiKeyCheckButton')}</span>
+                  <span style={{ fontSize: '13px' }}>{t('apiKeyCheckButton')}</span>
                 )}
              </button>
-             <button onClick={handleSave} className="btn btn-action text-xs">
+             <button onClick={handleSave} className="btn btn-action" style={{ fontSize: '13px' }} disabled={!hasAnyLocalKey}>
                 {t('apiKeySaveButton')}
              </button>
           </div>
@@ -241,6 +438,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   return (
     <>
       {createPortal(content, document.body)}
+      {isProviderDropdownOpen && typeof document !== 'undefined' && createPortal(providerDropdownMenu, document.body)}
     </>
   );
 };

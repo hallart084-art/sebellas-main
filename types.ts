@@ -11,7 +11,7 @@ export interface GeneratedPromptSet {
  sourceFile?: File;
 }
 
-export type StyleOption = 'photographic' | 'sameAsReference' | 'isolated' | 'vector' | 'custom' | 'footage';
+export type StyleOption = 'photographic' | 'sameAsReference' | 'isolated' | 'custom' | 'footage';
 
 export type PromptQualityOptionType = 'default' | 'xml';
 
@@ -32,7 +32,7 @@ export interface UploadedVideo {
 
 export type ModelId = ApiModel;
 
-export type InputMode = 'text' | 'image' | 'vector' | 'video';
+export type InputMode = 'text' | 'image' | 'video';
 
 export interface GenerationSettings {
  inputMode: InputMode;
