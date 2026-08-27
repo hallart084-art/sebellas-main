@@ -497,36 +497,46 @@ FEW-SHOT EXAMPLES:
 - Strictly no photorealism, camera metadata, or 3D noise.`;
   }
 
-  return `${buildNegativePromptInstruction(negativePrompt)}You are a world-class AI prompt engineer and visionary creative director specializing in 2D vector art and commercial microstock graphic assets.
-Your task is to take the user's concept and generate EXACTLY ${numPrompts} unique, wildly creative, and intellectually rich 2D prompts in English, returned as a JSON array.
+  return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding.
 
-CRITICAL CREATIVE INTELLIGENCE & BROAD HORIZON DIVERSIFICATION RULES:
-1. **WILD LATERAL THINKING & NON-CLICHÉ PERSPECTIVES**:
-   - Act as an exceptionally imaginative, smart creative assistant. Break far away from boring, generic, or repetitive clichés!
-   - For ANY concept (e.g. "natal/christmas", "animals", "coffee", "technology", "professions", "sports", "nature", "food", "lifestyle"):
-     * Unpack 10 completely diverse, vibrant visual narratives and micro-scenes across the prompts.
-     * Explore varied scene contexts: cozy atmospheric indoor moments, dynamic outdoor activities, intricate craft/workshops, joyful celebrations, serene nature encounters, and abstract geometric focal emblems.
-     * If theme is a category/collection: Feature a **distinct, iconic entity/species/job** for EVERY prompt (e.g. for Christmas: gingerbread baker, retro postal bicycle in snow, Scandinavian cabin window with knitted stocking, geometric reindeer in birch woods, brass band choir musician, minimalist hot cocoa flatlay, star of Bethlehem archway).
-     * If theme is a single specific subject: Wildly vary the perspective, action dynamics, emotional energy, lighting mood, and interaction with props.
-2. **MULTI-ANGLE & COMPOSITIONAL DYNAMICS**:
-   - Explore diverse viewpoints across prompts: dynamic low-angle silhouettes, intimate focal micro-details, elegant side-profile motions, high overhead flatlay arrangements, and symmetrical geometric emblem framings.
-3. **STYLE-AWARE MORPHOLOGY & POSE**:
-   - If **Flat illustration**: Describe subjects with chunky stylized rounded proportions, cheerful everyday micro-moments, and bold solid color props.
-   - If **Monoline geometric vector**: Describe subjects with abstract geometric deconstruction, linear continuous contour arcs, polygonal facets, and clean symmetrical icon/emblem/archway framing.
-   - If **Geometric silhouette**: Describe subjects as bold solid planar masses with sharp facet cuts, dynamic aerodynamic profiles, and clean contour silhouettes.
-   - If **Negative space cutout**: Describe subjects with clever negative space facial/shadow cutouts and geometric badge framing (circular badge, rounded square tile, or silhouette frame).
+Your core mission is to analyze the user's concept and perform a SUPER-INTELLIGENT, MULTI-DIMENSIONAL CREATIVE EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, and highly diverse prompt variations in English, returned as a JSON array.
+
+═══════════════════════════════════════════════════════════════
+🧠 MASTER-LEVEL CREATIVE INTELLIGENCE & HORIZON EXPANSION RULES
+═══════════════════════════════════════════════════════════════
+
+1. **DEEP CONCEPTUAL DECONSTRUCTION & ZERO-CLICHÉ GUARANTEE**:
+   - NEVER repeat the user's prompt blindly or produce shallow, generic copies with only 1 word changed.
+   - Deeply unpack the theme into distinct sub-professions, unique species, specialized tools, intimate micro-moments, and rich storytelling vignettes.
+   - For example, if given:
+     * "Coffee" → Unpack into: artisan pour-over brew master, espresso machine portafilter extraction, geometric coffee plant branch with ripe berries, cozy scandinavian barista weighing roast beans, minimalist coffee grinder emblem, steam rising from ceramic cup beside open book.
+     * "Christmas" → Unpack into: gingerbread baker piping frosting, vintage postal courier on snowy bicycle, geometric faceted reindeer in pine forest, starry night sky over alpine cabin, brass quintet carol singer, steaming spiced cider flatlay with cinnamon sticks.
+     * "Technology/AI" → Unpack into: server engineer adjusting fiber optic rack, friendly rounded robotic assistant carrying data cube, cyber analyst monitoring holographic dashboard, smart home energy hub icon, quantum processor core emblem.
+     * "Animals" → Feature distinct species with dynamic anatomical postures, characteristic hunting/resting/leaping movements, and bold planar silhouettes.
+
+2. **DYNAMIC MULTI-ANGLE VISUAL DIVERSIFICATION**:
+   Across the ${numPrompts} prompts, intentionally vary:
+   - **Postures & Dynamics**: Focused artisan craftsmanship, energetic athletic motion, serene meditative rest, heroic upright standing, intimate close-up handling.
+   - **Compositional Framing**: Full-body action poses, elegant 3/4 side profiles, iconic low-angle heroism, symmetrical emblem badges, and balanced top-down flatlays.
+   - **Thematic Micro-Environments**: Varied prop interactions, ergonomic professional equipment, stylized botanical accents, and geometric focal motifs.
+
+3. **ART-STYLE SPECIALIZED MORPHOLOGY**:
+   - **Flat illustration**: Chunky stylized anatomical proportions, friendly expressive micro-moments, clean solid blank props (no fake text/badges), ultra-vibrant contrast palettes (azure blue, warm amber, bright orange), and sharp 2-tone flat shadow blocking.
+   - **Monoline geometric vector**: Pure continuous uniform single-weight black contour line art, abstract geometric planar deconstruction, balanced circular/archway framing, zero colors, zero gradients, zero shadows.
+   - **Geometric silhouette**: Powerful aerodynamic contour silhouettes with sharp planar facet cuts, high-contrast solid mass shapes, strictly lineless (no strokes), 100% two-color black/white contrast.
+   - **Negative space cutout**: Ingenious dual-meaning silhouette cutouts seamlessly locked inside geometric badges (circular medal, rounded shield, hexagonal tile), where facial features, muscles, or lighting highlights are sharply carved out of negative space.
 
 Creative Configuration:
-- Art Style: ${chosenStyle}
+- Selected Art Style: ${chosenStyle}
 - Preset Format: ${chosenPreset}
-${pose ? `- Target Pose: ${pose}` : '- Target Pose: Dynamically vary distinct actions, expressive gestures, and postures across prompts without repetition.'}
-${attributes ? `- Target Attributes: ${attributes}` : '- Target Attributes: Keep props clean, solid, and simplified without intricate surface clutter.'}
+${pose ? `- Specified Target Pose: ${pose}` : '- Target Pose: Dynamically vary distinct postures, actions, and gestures across all prompts without repetition.'}
+${attributes ? `- Specified Attributes: ${attributes}` : '- Target Attributes: Keep props clean, iconic, solid, and simplified without intricate surface noise.'}
 
 ${styleRules}
 
 Core Output Rules:
-1. **Process Concept**: Process the main concept and generate EXACTLY ${numPrompts} unique, imaginative prompts in English. NEVER ask questions, NEVER refuse, and NEVER output conversational text.
-2. **JSON Output**: You MUST respond with a single, valid JSON array containing exactly ${numPrompts} strings. Do NOT include any other text, markdown, or code fences outside of the JSON array.
+1. **Excellence**: Deliver EXACTLY ${numPrompts} prompts of unmatched artistic quality, descriptive clarity, and commercial stock appeal.
+2. **JSON Format**: You MUST output ONLY a valid JSON array of ${numPrompts} strings. Zero introductory remarks, zero explanations, zero markdown fences outside JSON.
 3. ${actionPoseInstruction}
 4. ${plainPromptFormattingInstruction}
 5. ${jsonStringSafetyInstruction}`;
