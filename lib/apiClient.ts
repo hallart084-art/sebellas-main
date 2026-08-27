@@ -250,21 +250,27 @@ const generateWithChatCompletion = async (
  { role: 'user', content: toChatCompletionUserContent(contents) },
  ];
 
- const response = await fetch(endpoint, {
- method: 'POST',
- headers: {
- 'Authorization': `Bearer ${apiKey.trim()}`,
- 'Content-Type': 'application/json',
- ...extraHeaders,
- },
- body: JSON.stringify({
- model,
- messages,
- temperature: config?.temperature ?? 1.0,
- top_p: 0.95,
- max_tokens: config?.maxOutputTokens || maxTokens,
- }),
- });
+  const requestPayload: Record<string, any> = {
+    model,
+    messages,
+    temperature: config?.temperature ?? 1.0,
+    top_p: 0.95,
+    max_tokens: config?.maxOutputTokens || maxTokens,
+  };
+
+  if (providerLabel === 'Mistral' || providerLabel === 'Groq' || providerLabel === 'GitHub') {
+    requestPayload.response_format = { type: 'json_object' };
+  }
+
+  const response = await fetch(endpoint, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${apiKey.trim()}`,
+      'Content-Type': 'application/json',
+      ...extraHeaders,
+    },
+    body: JSON.stringify(requestPayload),
+  });
 
  if (!response.ok) {
  const errorText = await response.text();
