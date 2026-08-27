@@ -1,21 +1,23 @@
 import type { InputMode } from './types';
 
-export type ModelProvider = 'google' | 'groq' | 'mistral' | 'openrouter' | 'github';
+export type ModelProvider = 'google' | 'groq' | 'github' | 'mistral' | 'openai' | 'openrouter';
 
-export const MODEL_PROVIDERS: readonly ModelProvider[] = ['google', 'groq', 'mistral', 'openrouter', 'github'];
+export const MODEL_PROVIDERS: readonly ModelProvider[] = ['google', 'groq', 'github', 'mistral', 'openai', 'openrouter'];
 
 export const MODEL_PROVIDER_LABELS: Record<ModelProvider, string> = {
-  google: 'Gemini',
-  groq: 'Groq',
-  mistral: 'Mistral',
-  openrouter: 'OpenRouter',
-  github: 'GitHub',
+  google: 'Gemini API',
+  groq: 'Groq API',
+  github: 'GitHub Models API',
+  mistral: 'Mistral API',
+  openai: 'OpenAI API',
+  openrouter: 'OpenRouter API',
 };
 
 export const GOOGLE_API_KEY_CHECK_MODEL = 'gemini-2.5-flash';
 export const GROQ_API_KEY_CHECK_MODEL = 'qwen/qwen3.6-27b';
-export const MISTRAL_API_KEY_CHECK_MODEL = 'mistral-small-latest';
 export const GITHUB_API_KEY_CHECK_MODEL = 'gpt-4o-mini';
+export const MISTRAL_API_KEY_CHECK_MODEL = 'mistral-small-latest';
+export const OPENAI_API_KEY_CHECK_MODEL = 'gpt-4o-mini';
 export const OPENROUTER_API_KEY_CHECK_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
 
 export type ModelDefinition = {
@@ -27,71 +29,48 @@ export type ModelDefinition = {
 };
 
 export const AI_MODELS = [
-  // --- Google (Gemini) ---
-  { id: 'gemini-flash-latest', provider: 'google', displayName: 'Gemini Flash Latest', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'gemini-flash-lite-latest', provider: 'google', displayName: 'Gemini Flash Lite Latest', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'gemini-pro-latest', provider: 'google', displayName: 'Gemini Pro Latest', supportedModes: ['text', 'image', 'vector', 'video'] },
-  { id: 'gemini-2.5-flash', provider: 'google', displayName: 'Gemini 2.5 Flash', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'gemini-2.5-flash-lite', provider: 'google', displayName: 'Gemini 2.5 Flash Lite', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'gemini-2.5-pro', provider: 'google', displayName: 'Gemini 2.5 Pro', supportedModes: ['text', 'image', 'vector', 'video'] },
-  { id: 'gemini-3-flash-preview', provider: 'google', displayName: 'Gemini 3 Flash Preview', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'gemini-3.1-flash-lite', provider: 'google', displayName: 'Gemini 3.1 Flash Lite', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'gemini-3.1-pro-preview', provider: 'google', displayName: 'Gemini 3.1 Pro Preview', supportedModes: ['text', 'image', 'vector', 'video'] },
-  { id: 'gemini-3.5-flash', provider: 'google', displayName: 'Gemini 3.5 Flash', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'gemini-robotics-er-1.6-preview', provider: 'google', displayName: 'Gemini Robotics ER 1.6 Preview', supportedModes: ['text', 'image', 'vector', 'video'] },
+  // --- Gemini API ---
+  { id: 'gemini-2.5-flash', provider: 'google', displayName: 'gemini-2.5-flash', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
+  { id: 'gemini-1.5-flash', provider: 'google', displayName: 'gemini-1.5-flash', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
+  { id: 'gemini-2.0-flash', provider: 'google', displayName: 'gemini-2.0-flash', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
+  { id: 'gemini-3.1-flash-lite', provider: 'google', displayName: 'gemini-3.1-flash-lite', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
 
-  // --- GitHub Models ---
-  { id: 'gpt-4o-mini', provider: 'github', displayName: 'GPT-4o Mini (GitHub)', supportedModes: ['text', 'image', 'vector'], supportsQuickGenerate: true },
-  { id: 'gpt-4o', provider: 'github', displayName: 'GPT-4o (GitHub)', supportedModes: ['text', 'image', 'vector'], supportsQuickGenerate: true },
-  { id: 'meta-llama-3.3-70b-instruct', provider: 'github', displayName: 'Llama 3.3 70B (GitHub)', supportedModes: ['text', 'vector'] },
-  { id: 'meta-llama-3.1-8b-instruct', provider: 'github', displayName: 'Llama 3.1 8B (GitHub)', supportedModes: ['text', 'vector'] },
-  { id: 'mistral-large-2411', provider: 'github', displayName: 'Mistral Large (GitHub)', supportedModes: ['text', 'vector'] },
-  { id: 'phi-4', provider: 'github', displayName: 'Phi-4 (GitHub)', supportedModes: ['text', 'vector'] },
+  // --- Groq API ---
+  { id: 'llama-3.2-11b-vision-preview', provider: 'groq', displayName: 'llama-3.2-11b-vision-preview', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'llama-3.2-90b-vision-preview', provider: 'groq', displayName: 'llama-3.2-90b-vision-preview', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'qwen/qwen3.6-27b', provider: 'groq', displayName: 'qwen/qwen3.6-27b', supportedModes: ['text', 'vector'] },
+  { id: 'qwen/qwen3.8-27b', provider: 'groq', displayName: 'qwen/qwen3.8-27b', supportedModes: ['text', 'vector'] },
+  { id: 'groq/compound-mini', provider: 'groq', displayName: 'groq/compound-mini', supportedModes: ['text', 'vector'] },
+  { id: 'groq/compound', provider: 'groq', displayName: 'groq/compound', supportedModes: ['text', 'vector'] },
+  { id: 'openai/gpt-oss-120b', provider: 'groq', displayName: 'openai/gpt-oss-120b', supportedModes: ['text', 'vector'] },
+  { id: 'openai/gpt-oss-20b', provider: 'groq', displayName: 'openai/gpt-oss-20b', supportedModes: ['text', 'vector'] },
 
-  // --- Groq ---
-  { id: 'qwen/qwen3.6-27b', provider: 'groq', displayName: 'Qwen 3.6 27B', supportedModes: ['text', 'vector'] },
-  { id: 'qwen/qwen3.8-27b', provider: 'groq', displayName: 'Qwen 3.8 27B', supportedModes: ['text', 'vector'] },
-  { id: 'groq/compound-mini', provider: 'groq', displayName: 'Groq Compound Mini', supportedModes: ['text', 'vector'] },
-  { id: 'groq/compound', provider: 'groq', displayName: 'Groq Compound', supportedModes: ['text', 'vector'] },
-  { id: 'openai/gpt-oss-120b', provider: 'groq', displayName: 'GPT OSS 120B', supportedModes: ['text', 'vector'] },
-  { id: 'openai/gpt-oss-20b', provider: 'groq', displayName: 'GPT OSS 20B', supportedModes: ['text', 'vector'] },
+  // --- GitHub Models API ---
+  { id: 'gpt-4o', provider: 'github', displayName: 'gpt-4o (GitHub)', supportedModes: ['text', 'image', 'vector'], supportsQuickGenerate: true },
+  { id: 'gpt-4o-mini', provider: 'github', displayName: 'gpt-4o-mini (GitHub)', supportedModes: ['text', 'image', 'vector'], supportsQuickGenerate: true },
+  { id: 'meta-llama-3.3-70b-instruct', provider: 'github', displayName: 'meta-llama-3.3-70b-instruct', supportedModes: ['text', 'vector'] },
+  { id: 'mistral-large-2411', provider: 'github', displayName: 'mistral-large-2411', supportedModes: ['text', 'vector'] },
+  { id: 'phi-4', provider: 'github', displayName: 'phi-4', supportedModes: ['text', 'vector'] },
 
-  // --- OpenRouter ---
-  { id: 'google/gemini-flash-latest', provider: 'openrouter', displayName: 'Gemini Flash Latest', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'google/gemini-pro-latest', provider: 'openrouter', displayName: 'Gemini Pro Latest', supportedModes: ['text', 'image', 'vector', 'video'] },
-  { id: 'google/gemini-2.5-pro', provider: 'openrouter', displayName: 'Gemini 2.5 Pro', supportedModes: ['text', 'image', 'vector', 'video'] },
-  { id: 'google/gemini-2.5-flash', provider: 'openrouter', displayName: 'Gemini 2.5 Flash', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'google/gemini-2.5-flash-lite', provider: 'openrouter', displayName: 'Gemini 2.5 Flash Lite', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'google/gemini-3-flash-preview', provider: 'openrouter', displayName: 'Gemini 3 Flash Preview', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'google/gemini-3.1-flash-lite-preview', provider: 'openrouter', displayName: 'Gemini 3.1 Flash Lite Preview', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'google/gemini-3.1-flash-lite', provider: 'openrouter', displayName: 'Gemini 3.1 Flash Lite', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
-  { id: 'google/gemini-3.1-pro-preview', provider: 'openrouter', displayName: 'Gemini 3.1 Pro Preview', supportedModes: ['text', 'image', 'vector', 'video'] },
-  { id: 'google/gemini-3.5-flash', provider: 'openrouter', displayName: 'Gemini 3.5 Flash', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
+  // --- Mistral API ---
+  { id: 'pixtral-12b-2409', provider: 'mistral', displayName: 'pixtral-12b-2409', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'pixtral-large-latest', provider: 'mistral', displayName: 'pixtral-large-latest', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'mistral-small-latest', provider: 'mistral', displayName: 'mistral-small-latest', supportedModes: ['text', 'vector'] },
 
-  // --- Mistral ---
-  { id: 'magistral-medium-2509', provider: 'mistral', displayName: 'Magistral Medium 2509', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'magistral-small-2509', provider: 'mistral', displayName: 'Magistral Small 2509', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'ministral-14b-2512', provider: 'mistral', displayName: 'Ministral 14B', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'ministral-3b-2512', provider: 'mistral', displayName: 'Ministral 3B', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'ministral-8b-2512', provider: 'mistral', displayName: 'Ministral 8B', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-large-2512', provider: 'mistral', displayName: 'Mistral Large 2512', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-large-latest', provider: 'mistral', displayName: 'Mistral Large Latest', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-medium-2505', provider: 'mistral', displayName: 'Mistral Medium 2505', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-medium-2508', provider: 'mistral', displayName: 'Mistral Medium 2508', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-medium-2604', provider: 'mistral', displayName: 'Mistral Medium 2604', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-medium-latest', provider: 'mistral', displayName: 'Mistral Medium Latest', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-small-2506', provider: 'mistral', displayName: 'Mistral Small 2506', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-small-2603', provider: 'mistral', displayName: 'Mistral Small 2603', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'mistral-small-latest', provider: 'mistral', displayName: 'Mistral Small Latest', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'open-mistral-nemo', provider: 'mistral', displayName: 'Open Mistral Nemo', supportedModes: ['text', 'vector'] },
-  { id: 'pixtral-12b-2409', provider: 'mistral', displayName: 'Pixtral 12B', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'pixtral-large-2411', provider: 'mistral', displayName: 'Pixtral Large 2411', supportedModes: ['text', 'image', 'vector'] },
-  { id: 'pixtral-large-latest', provider: 'mistral', displayName: 'Pixtral Large Latest', supportedModes: ['text', 'image', 'vector'] },
+  // --- OpenAI API ---
+  { id: 'gpt-4o-mini', provider: 'openai', displayName: 'gpt-4o-mini', supportedModes: ['text', 'image', 'vector'], supportsQuickGenerate: true },
+  { id: 'gpt-4o', provider: 'openai', displayName: 'gpt-4o', supportedModes: ['text', 'image', 'vector'], supportsQuickGenerate: true },
+
+  // --- OpenRouter API ---
+  { id: 'meta-llama/llama-3.2-11b-vision-instruct:free', provider: 'openrouter', displayName: 'meta-llama/llama-3.2-11b-vision-instruct:free', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'google/gemini-2.0-flash-exp:free', provider: 'openrouter', displayName: 'google/gemini-2.0-flash-exp:free', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'qwen/qwen-2.5-vl-72b-instruct:free', provider: 'openrouter', displayName: 'qwen/qwen-2.5-vl-72b-instruct:free', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'meta-llama/llama-3.3-70b-instruct:free', provider: 'openrouter', displayName: 'meta-llama/llama-3.3-70b-instruct:free', supportedModes: ['text', 'vector'] },
 ] as const satisfies readonly ModelDefinition[];
 
 export type ApiModel = typeof AI_MODELS[number]['id'];
 
-export const DEFAULT_MODEL: ApiModel = 'gemini-3.1-flash-lite';
+export const DEFAULT_MODEL: ApiModel = 'gemini-2.5-flash';
 
 export const getModelDefinition = (id: ApiModel | string): ModelDefinition => {
   const model = AI_MODELS.find(m => m.id === id);
@@ -115,4 +94,5 @@ export const VECTOR_ART_STYLES = [
   'Negative space cutout',
 ] as const;
 
-export const DEFAULT_VECTOR_ART_STYLE = VECTOR_ART_STYLES[0];
+export type VectorArtStyle = typeof VECTOR_ART_STYLES[number];
+export const DEFAULT_VECTOR_ART_STYLE: VectorArtStyle = 'Flat illustration';

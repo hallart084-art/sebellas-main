@@ -23,10 +23,11 @@ interface ApiKeyModalProps {
 
 const DEFAULT_PROVIDER_MODELS: Record<ModelProvider, ApiModel> = {
   google: 'gemini-2.5-flash',
+  groq: 'llama-3.2-11b-vision-preview',
   github: 'gpt-4o-mini',
-  groq: 'llama-3.1-8b-instant',
-  mistral: 'mistral-large-latest',
-  openrouter: 'google/gemini-2.5-flash',
+  mistral: 'pixtral-12b-2409',
+  openai: 'gpt-4o-mini',
+  openrouter: 'meta-llama/llama-3.2-11b-vision-instruct:free',
 };
 
 const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, currentApiKeys, apiStatus, selectedModel, isSidebarOpen, onModelChange }) => {
@@ -34,15 +35,16 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   const { t } = useLocalizationContext();
   const [localApiKeyText, setLocalApiKeyText] = useState<Record<ModelProvider, string>>({
     google: currentApiKeys.google.join('\n'),
-    github: currentApiKeys.github?.join('\n') ?? '',
     groq: currentApiKeys.groq.join('\n'),
+    github: currentApiKeys.github?.join('\n') ?? '',
     mistral: currentApiKeys.mistral.join('\n'),
+    openai: currentApiKeys.openai?.join('\n') ?? '',
     openrouter: currentApiKeys.openrouter?.join('\n') ?? '',
   });
   const [selectedProvider, setSelectedProvider] = useState<ModelProvider>(() => getModelProvider(selectedModel));
-  const [isChecking, setIsChecking] = useState<Record<ModelProvider, boolean>>({ google: false, github: false, groq: false, mistral: false, openrouter: false });
-  const [checkResult, setCheckResult] = useState<Record<ModelProvider, {status: 'success' | 'warning' | 'error', message: string} | null>>({ google: null, github: null, groq: null, mistral: null, openrouter: null });
-  const [keyCheckStatuses, setKeyCheckStatuses] = useState<Record<ModelProvider, Record<string, 'valid' | 'limited' | 'invalid'>>>({ google: {}, github: {}, groq: {}, mistral: {}, openrouter: {} });
+  const [isChecking, setIsChecking] = useState<Record<ModelProvider, boolean>>({ google: false, groq: false, github: false, mistral: false, openai: false, openrouter: false });
+  const [checkResult, setCheckResult] = useState<Record<ModelProvider, {status: 'success' | 'warning' | 'error', message: string} | null>>({ google: null, groq: null, github: null, mistral: null, openai: null, openrouter: null });
+  const [keyCheckStatuses, setKeyCheckStatuses] = useState<Record<ModelProvider, Record<string, 'valid' | 'limited' | 'invalid'>>>({ google: {}, groq: {}, github: {}, mistral: {}, openai: {}, openrouter: {} });
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
   const [apiKeyTextareaScrollTop, setApiKeyTextareaScrollTop] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
@@ -110,9 +112,10 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   const handleSave = () => {
     onSave({
       google: normalizeApiKeyList(localApiKeyText.google),
-      github: normalizeApiKeyList(localApiKeyText.github),
       groq: normalizeApiKeyList(localApiKeyText.groq),
+      github: normalizeApiKeyList(localApiKeyText.github),
       mistral: normalizeApiKeyList(localApiKeyText.mistral),
+      openai: normalizeApiKeyList(localApiKeyText.openai),
       openrouter: normalizeApiKeyList(localApiKeyText.openrouter),
     });
     if (onModelChange) {

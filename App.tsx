@@ -482,15 +482,87 @@ const App: React.FC = () => {
 
   const processAndGenerate = useCallback(async (
     placeholder: GeneratedPromptSet,
-    _promptBuilder: () => { contents: any; config: any; },
-    _assignedKeyIndex?: number
+    promptBuilder: () => { contents: any; config: any; },
+    assignedKeyIndex?: number
   ): Promise<GeneratedPromptSet> => {
-    return {
-      ...placeholder,
-      prompts: ['Sistem API saat ini sedang dinonaktifkan sementara.'],
-      hasError: true,
-    };
-  }, []);
+    try {
+      const provider = getModelProvider(settings.selectedModel);
+      const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+      if (providerKeys.length === 0) {
+        throw new Error(`API key untuk ${MODEL_PROVIDER_LABELS[provider]} belum diatur. Silakan atur di menu Set API Key.`);
+      }
+
+      const { contents, config } = promptBuilder();
+      const startKeyIndex = assignedKeyIndex !== undefined
+        ? (assignedKeyIndex % providerKeys.length)
+        : (reserveNextApiKeyStartIndex(provider) ?? 0);
+
+      let responseText = '';
+      let lastError: any = null;
+
+      for (let attempt = 0; attempt < providerKeys.length; attempt++) {
+        const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
+        const currentKey = providerKeys[keyIdx];
+
+        try {
+          responseText = await generateModelContent({
+            model: settings.selectedModel,
+            contents,
+            config,
+            apiKey: currentKey,
+          });
+          lastError = null;
+          break;
+        } catch (err) {
+          lastError = err;
+        }
+      }
+
+      if (lastError) throw lastError;
+
+      let prompts: string[] = [];
+      try {
+        const parsed = JSON.parse(responseText);
+        if (Array.isArray(parsed)) {
+          prompts = parsed.map(item => typeof item === 'string' ? item : JSON.stringify(item));
+        } else if (parsed && typeof parsed === 'object') {
+          const arr = Object.values(parsed).find(v => Array.isArray(v));
+          if (arr) prompts = (arr as any[]).map(item => typeof item === 'string' ? item : JSON.stringify(item));
+          else prompts = [responseText];
+        } else {
+          prompts = [responseText];
+        }
+      } catch {
+        prompts = [responseText];
+      }
+
+      prompts = prompts.map(p => p.trim()).filter(Boolean);
+
+      if (settings.inputMode === 'vector' || settings.styleOption === 'vector') {
+        const isWhiteBg = settings.vectorWhiteBg ?? true;
+        const suffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle, isWhiteBg);
+        prompts = prompts.map(p => {
+          if (!p.toLowerCase().includes('flat illustration') && !p.toLowerCase().includes('monoline') && !p.toLowerCase().includes('vector')) {
+            return `${p}, ${suffix}`;
+          }
+          return p;
+        });
+      }
+
+      return {
+        ...placeholder,
+        prompts,
+        hasError: false,
+      };
+    } catch (err: any) {
+      const errorMessage = parseApiError(err);
+      return {
+        ...placeholder,
+        prompts: [`[${MODEL_PROVIDER_LABELS[getModelProvider(settings.selectedModel)]}] ${errorMessage}`],
+        hasError: true,
+      };
+    }
+  }, [apiKeys, reserveNextApiKeyStartIndex, settings, parseApiError]);
 
 type GenerationJob = () => Promise<GeneratedPromptSet>;
  type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[] };
@@ -838,9 +910,108 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     setIsRetryingAll(false);
   }, [generatedPromptSets, isLoading, isRetryingAll, retryingIds, retryFailedSet, settings.workerCount, settings.batchDelaySeconds, parseApiError, t]);
 
-  const handleGeneratePrompts = useCallback(async (_isQuick: boolean = false) => {
-    setError('Sistem API saat ini sedang dinonaktifkan sementara.');
-  }, []);
+  const handleGeneratePrompts = useCallback(async (isQuick: boolean = false) => {
+    if (settings.numPrompts <= 0) { setError(t('errorNumPromptsPositive')); return; }
+    if (isLoading || isRetryingAll || retryingIds.size > 0) return;
+
+    const provider = getModelProvider(settings.selectedModel);
+    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+    if (providerKeys.length === 0) {
+      setError(`Silakan masukkan ${MODEL_PROVIDER_LABELS[provider]} API key di menu Set API Key.`);
+      return;
+    }
+
+    const currentGenerationId = ++generationIdRef.current;
+    setIsLoading(true);
+    setError(null);
+
+    let generationTask: GenerationTask | undefined;
+    switch (settings.inputMode) {
+      case 'text': generationTask = generateForTextMode(isQuick); break;
+      case 'vector': generationTask = generateForVectorMode(isQuick); break;
+      case 'image': generationTask = generateForImageMode(isQuick); break;
+      case 'video': generationTask = await generateForVideoMode(isQuick); break;
+    }
+
+    if (!generationTask || generationTask.jobs.length === 0) {
+      setIsLoading(false);
+      return;
+    }
+
+    const workerCount = Math.max(1, Math.min(50, Math.max(settings.workerCount || 1, providerKeys.length || 1)));
+    const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
+
+    setGeneratedPromptSets(generationTask.placeholders.map(p => ({ ...p })));
+    setActiveWorkersCount(workerCount);
+    setTotalJobsCount(generationTask.jobs.length);
+    setCompletedJobsCount(0);
+    setActivityLogs([]);
+    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas paralel di ${providerKeys.length || workerCount} worker (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
+
+    let finishedCount = 0;
+    for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += workerCount) {
+      const batch = generationTask.jobs.slice(startIndex, startIndex + workerCount);
+
+      await Promise.all(batch.map(async (job, idx) => {
+        const workerIndex = (startIndex + idx) % workerCount + 1;
+        const conceptName = generationTask.placeholders[0]?.originalConcept || '';
+
+        setCurrentProcessingConcept(conceptName);
+        addActivityLog(`Worker #${workerIndex}: Sedang memproses "${conceptName}"...`, 'info', workerIndex);
+
+        const result = await job();
+        finishedCount += 1;
+        setCompletedJobsCount(finishedCount);
+
+        if (result.hasError) {
+          addActivityLog(`Worker #${workerIndex}: Gagal memproses "${conceptName}"`, 'error', workerIndex);
+        } else {
+          addActivityLog(`Worker #${workerIndex}: Berhasil membuat ${result.prompts.length} prompt untuk "${conceptName}"`, 'success', workerIndex);
+        }
+
+        if (generationIdRef.current === currentGenerationId) {
+          setGeneratedPromptSets(prev => prev.map(card => {
+            if (card.id === result.id) {
+              return {
+                ...card,
+                prompts: [...card.prompts, ...result.prompts],
+                hasError: card.hasError || result.hasError,
+              };
+            }
+            return card;
+          }));
+        }
+        return result;
+      }));
+
+      if (generationIdRef.current !== currentGenerationId) return;
+
+      const hasMoreBatches = startIndex + workerCount < generationTask.jobs.length;
+      if (hasMoreBatches && batchDelaySeconds > 0) {
+        addActivityLog(`Menunggu jeda batch ${batchDelaySeconds} detik...`, 'info');
+        await waitForBatchDelay(batchDelaySeconds);
+        if (generationIdRef.current !== currentGenerationId) return;
+      }
+    }
+
+    if (generationIdRef.current !== currentGenerationId) return;
+
+    addActivityLog(`Semua proses berhasil diselesaikan!`, 'success');
+    setIsLoading(false);
+
+    setGeneratedPromptSets(currentSets => {
+      if (currentSets.some(s => !s.hasError && s.prompts.length > 0)) {
+        const currentSettings: GenerationSettings = {
+          ...settings,
+          conceptsInput: (settings.inputMode === 'text' || settings.inputMode === 'vector') ? settings.conceptsInput : '',
+          imageNames: settings.inputMode === 'image' ? uploadedImages.map(img => img.name) : [],
+          videoNames: settings.inputMode === 'video' ? videoProcessor.uploadedVideos.map(v => v.name) : [],
+        };
+        saveHistory([{ id: Date.now(), timestamp: Date.now(), settings: currentSettings, sets: currentSets, folderId: settings.targetFolderId || null }, ...history]);
+      }
+      return currentSets;
+    });
+  }, [settings, uploadedImages, videoProcessor.uploadedVideos, saveHistory, history, t, generateForTextMode, generateForVectorMode, generateForImageMode, generateForVideoMode, isLoading, isRetryingAll, retryingIds, addActivityLog, apiKeys]);
  
  const formatPromptsForExport = useCallback((promptsToExport?: (string | Record<string, any>)[]): string => {
  const allPrompts = promptsToExport || generatedPromptSets.filter(set => !set.hasError && set.prompts.length > 0).flatMap(set => set.prompts);
