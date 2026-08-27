@@ -260,9 +260,8 @@ const generateWithChatCompletion = async (
  body: JSON.stringify({
  model,
  messages,
- temperature: config?.temperature ?? 1.0,
- top_p: 0.95,
- max_tokens: config?.maxOutputTokens || maxTokens,
+ temperature: 0.7,
+ max_tokens: maxTokens,
  }),
  });
 

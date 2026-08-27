@@ -588,12 +588,9 @@ Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
   }
  
  const config: any = {
- systemInstruction,
- responseMimeType: 'application/json',
- responseSchema: schema,
- // Optimasi kecepatan: maxOutputTokens disesuaikan dengan jumlah prompt
- // 1 prompt ≈ 100-300 token + JSON wrapper, minimum 1024 agar aman untuk semua provider
- maxOutputTokens: Math.min(8192, Math.max(1024, settings.numPrompts * 300)),
+   systemInstruction,
+   responseMimeType: 'application/json',
+   responseSchema: schema,
  };
  applyQuickGenerateConfig(config, settings.selectedModel, isQuick);
  return { systemInstruction, contents, config };
