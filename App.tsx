@@ -151,7 +151,7 @@ const App: React.FC = () => {
  const [folders, setFolders] = useState<Folder[]>([]);
 
  const generationIdRef = useRef<number>(0);
- const apiKeyIndexesRef = useRef<Record<ModelProvider, number>>({ google: 0, groq: 0, mistral: 0, openrouter: 0, github: 0 });
+ const apiKeyIndexesRef = useRef<Record<ModelProvider, number>>({ google: 0 });
  const keyLastUsedTimeRef = useRef<Record<string, number>>({});
  const wasMobileViewportRef = useRef<boolean>(isMobileViewport);
  const desktopSidebarPrefRef = useRef<boolean>(isSidebarOpen);
@@ -488,45 +488,28 @@ const App: React.FC = () => {
     try {
       const provider = getModelProvider(settings.selectedModel);
       const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-      if (!isProviderInitialized(provider) || providerKeys.length === 0) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
       if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
         throw new Error(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
       }
       const { contents, config } = promptBuilder();
 
       let responseText = '';
-      let lastGenerationError: unknown = null;
       const startKeyIndex = assignedKeyIndex !== undefined
-        ? (assignedKeyIndex % providerKeys.length)
+        ? (assignedKeyIndex % Math.max(1, providerKeys.length))
         : (reserveNextApiKeyStartIndex(provider) ?? 0);
-      if (startKeyIndex === null || startKeyIndex === undefined) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
       const isXml = settings.promptQualityOption === 'xml';
 
-      for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
-        const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
-        const selectedApiKey = providerKeys[keyIdx];
+      const selectedApiKey = providerKeys.length > 0
+        ? providerKeys[Math.abs(startKeyIndex) % providerKeys.length]
+        : undefined;
 
-        try {
-          responseText = await generateModelContent({
-            model: settings.selectedModel,
-            contents,
-            config,
-            apiKey: selectedApiKey,
-            isXmlQuality: isXml,
-          });
-          lastGenerationError = null;
-          break;
-        } catch (requestError) {
-          lastGenerationError = requestError;
-          const canTryAnotherKey = (shouldRotateApiKeyOnError(requestError) || isTransientEmptyResponseError(requestError)) && attempt < providerKeys.length - 1;
-          if (!canTryAnotherKey) {
-            throw requestError;
-          }
-          console.warn(`Retrying ${provider} request with the next API key after a key-specific error.`, requestError);
-        }
-      }
-
-      if (lastGenerationError) throw lastGenerationError;
+      responseText = await generateModelContent({
+        model: settings.selectedModel,
+        contents,
+        config,
+        apiKey: selectedApiKey,
+        isXmlQuality: isXml,
+      });
 
       if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
 
@@ -876,13 +859,13 @@ const App: React.FC = () => {
  }
  }, [apiKeys, reserveNextApiKeyStartIndex, isProviderInitialized, settings.selectedModel, settings.inputMode, settings.styleOption, settings.numPrompts, t, parseApiError, logError]);
 
-type GenerationJob = () => Promise<GeneratedPromptSet>;
- type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[] };
+  type GenerationJob = (assignedKeyIndex?: number) => Promise<GeneratedPromptSet>;
+  type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[] };
 
- const waitForBatchDelay = (seconds: number): Promise<void> => {
- if (seconds <= 0) return Promise.resolve();
- return new Promise(resolve => window.setTimeout(resolve, seconds * 1000));
- };
+  const waitForBatchDelay = (seconds: number): Promise<void> => {
+    if (seconds <= 0) return Promise.resolve();
+    return new Promise(resolve => window.setTimeout(resolve, seconds * 1000));
+  };
 
   const fileToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
@@ -908,8 +891,8 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       inputMode: 'text' as const,
     }));
 
-    const jobs = rawConcepts.map((concept, index) =>
-      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, settings, isQuick))
+    const jobs: GenerationJob[] = rawConcepts.map((concept, index) =>
+      (assignedKeyIndex?: number) => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, settings, isQuick), assignedKeyIndex ?? index)
     );
 
     return { placeholders, jobs };
@@ -930,8 +913,8 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       inputMode: 'vector' as const,
     }));
 
-    const jobs = rawConcepts.map((concept, index) =>
-      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector' }, isQuick))
+    const jobs: GenerationJob[] = rawConcepts.map((concept, index) =>
+      (assignedKeyIndex?: number) => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector' }, isQuick), assignedKeyIndex ?? index)
     );
 
     return { placeholders, jobs };
@@ -952,9 +935,9 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       sourceFile: image.file,
       thumbnailUrl: image.objectUrl, // Use objectUrl for immediate display, but it won't be saved to history
     }));
-    const jobs = uploadedImages.map((image, index) => async () => {
+    const jobs: GenerationJob[] = uploadedImages.map((image, index) => async (assignedKeyIndex?: number) => {
       const base64Data = await fileToBase64(image.file);
-      return processAndGenerate(placeholders[index], () => PromptBuilder.buildImagePrompt({ data: base64Data, mimeType: image.type }, settings, isQuick));
+      return processAndGenerate(placeholders[index], () => PromptBuilder.buildImagePrompt({ data: base64Data, mimeType: image.type }, settings, isQuick), assignedKeyIndex ?? index);
     });
     return { placeholders, jobs };
   }, [uploadedImages, settings, processAndGenerate, t]);
@@ -981,21 +964,20 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       id: generateUuid(), originalConcept: video.name, prompts: [], hasError: false, inputMode: 'video' as const, sourceId: video.id, sourceFile: video.file,
     }));
  
- const jobs = videoProcessor.uploadedVideos.map((video, index) => async () => {
- const placeholder = placeholders[index];
- try {
- if (!video.file) throw new Error(t('errorLoadingVideoUrl'));
- const videoData = await videoToBase64(video.file);
- return processAndGenerate(placeholder, () => PromptBuilder.buildVideoPrompt(videoData, settings, isQuick));
- } catch (err) {
- const errorMessage = (err instanceof Error) ? err.message : String(err);
- console.error(`Error processing video "${video.name}":`, err);
- const errorPrompts = [`Failed to generate prompts for video "${video.name}" due to processing error: ${errorMessage}`];
- return { ...placeholder, prompts: errorPrompts, hasError: true };
- }
- });
- return { placeholders, jobs };
- }, [videoProcessor.uploadedVideos, settings, processAndGenerate, t]);
+    const jobs: GenerationJob[] = videoProcessor.uploadedVideos.map((video, index) => async (assignedKeyIndex?: number) => {
+      const placeholder = placeholders[index];
+      try {
+        if (!video.file) throw new Error(t('errorLoadingVideoUrl'));
+        const videoData = await videoToBase64(video.file);
+        return processAndGenerate(placeholder, () => PromptBuilder.buildVideoPrompt(videoData, settings, isQuick), assignedKeyIndex ?? index);
+      } catch (err) {
+        const message = parseApiError(err);
+        logError(err, 'generateForVideoMode');
+        return { ...placeholder, prompts: [message], hasError: true };
+      }
+    });
+    return { placeholders, jobs };
+  }, [videoProcessor.uploadedVideos, settings, processAndGenerate, t, parseApiError, logError]);
 
  const retryFailedSet = useCallback(async (failedSet: GeneratedPromptSet): Promise<GeneratedPromptSet> => {
  const retryMode = failedSet.inputMode ?? settings.inputMode;
@@ -1170,8 +1152,8 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     setIsRetryingAll(false);
   }, [generatedPromptSets, isLoading, isRetryingAll, retryingIds, retryFailedSet, settings.workerCount, settings.batchDelaySeconds, parseApiError, t]);
 
- const handleGeneratePrompts = useCallback(async (isQuick: boolean = false) => {
- if (settings.numPrompts <= 0) { setError(t('errorNumPromptsPositive')); return; }
+  const handleGeneratePrompts = useCallback(async (isQuick: boolean = true) => {
+    if (settings.numPrompts <= 0) { setError(t('errorNumPromptsPositive')); return; }
  if (isLoading || isRetryingAll || retryingIds.size > 0) return;
  if (!isProviderInitialized(getModelProvider(settings.selectedModel))) {
  const providerLabel = MODEL_PROVIDER_LABELS[getModelProvider(settings.selectedModel)];
@@ -1209,27 +1191,30 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
 
     const finalSets: GeneratedPromptSet[] = [];
     const provider = getModelProvider(settings.selectedModel);
-    const workerCount = Math.max(1, Math.min(50, settings.workerCount || 1));
+    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+    const workerCount = Math.max(1, Math.min(50, Math.max(providerKeys.length, settings.workerCount || 1)));
     const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
 
     setActiveWorkersCount(workerCount);
     setTotalJobsCount(generationTask.jobs.length);
     setCompletedJobsCount(0);
     setActivityLogs([]);
-    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas dengan ${workerCount} worker paralel aktif (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
+    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas dengan ${workerCount} worker paralel aktif...`, 'info');
 
     let finishedCount = 0;
     for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += workerCount) {
       const batch = generationTask.jobs.slice(startIndex, startIndex + workerCount);
       
       const batchResults = await Promise.all(batch.map(async (job, idx) => {
-        const workerIndex = (startIndex + idx) % workerCount + 1;
-        const conceptName = generationTask.placeholders[startIndex + idx]?.originalConcept || '';
+        const globalJobIdx = startIndex + idx;
+        const workerIndex = (globalJobIdx % workerCount) + 1;
+        const keyIndex = providerKeys.length > 0 ? (globalJobIdx % providerKeys.length) : 0;
+        const conceptName = generationTask.placeholders[globalJobIdx]?.originalConcept || '';
         
         setCurrentProcessingConcept(conceptName);
-        addActivityLog(`Worker #${workerIndex}: Sedang memproses konsep "${conceptName}"...`, 'info', workerIndex);
+        addActivityLog(`Worker #${workerIndex} (API Key #${keyIndex + 1}): Sedang memproses konsep "${conceptName}"...`, 'info', workerIndex);
 
-        const result = await job();
+        const result = await job(keyIndex);
         finishedCount += 1;
         setCompletedJobsCount(finishedCount);
 
@@ -1526,7 +1511,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
                   setIsApiKeyModalOpen(true);
                   return;
                 }
-                handleGeneratePrompts(false);
+                handleGeneratePrompts(true);
               }}
             />
 

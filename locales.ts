@@ -114,7 +114,7 @@ const enTranslations = {
  customTemplatePlaceholder: "e.g., A pixel art character of [main subject], white background...",
 
  generatePromptsButton: "Generate prompts",
- quickGenerateButton: "Quick Generate",
+ quickGenerateButton: "⚡ Turbo Generate",
  processingButton: "Processing...",
  processingMessage: "Processing, please be patient...",
  processingVideoMessage: "Processing video, this may take a moment...",
@@ -311,7 +311,7 @@ export const translations: TranslationsType = {
  customTemplateLabel: "Template Prompt Kustom",
  customTemplatePlaceholder: "cth: Karakter pixel art dari [main subject], background putih...",
  generatePromptsButton: "Hasilkan prompt",
- quickGenerateButton: "Hasilkan Cepat",
+ quickGenerateButton: "⚡ Hasilkan Super Cepat",
  processingButton: "Memproses...",
  processingMessage: "Sedang memproses, harap bersabar...",
  processingVideoMessage: "Memproses video, ini mungkin butuh beberapa saat...",

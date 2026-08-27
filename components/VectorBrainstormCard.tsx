@@ -98,20 +98,9 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
 
     try {
       const storedKeys = readStoredProviderApiKeys();
-      const provider = getModelProvider(settings.selectedModel);
-      let activeKey = storedKeys[provider]?.[0];
+      const activeKey = storedKeys.google?.[0];
 
-      // Fallback to any available provider key if current model has no key
-      if (!activeKey) {
-        for (const p of ['google', 'github', 'groq', 'mistral', 'openrouter'] as const) {
-          if (storedKeys[p]?.[0]) {
-            activeKey = storedKeys[p][0];
-            break;
-          }
-        }
-      }
-
-      if (activeKey) {
+      if (activeKey || true) {
         const rawContent = await generateModelContent({
           model: settings.selectedModel,
           apiKey: activeKey,

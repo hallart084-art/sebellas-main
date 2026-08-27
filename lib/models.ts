@@ -2,10 +2,11 @@ import { ApiModel, getModelDefinition } from '../constants';
 import { ThinkingLevel } from '@google/genai';
 
 /**
- * Checks whether a given Gemini model supports the Quick Generate feature.
+ * Checks whether a given model supports the Quick Generate feature.
+ * All models and APIs support Turbo / Quick Generate.
  */
-export const isQuickGenerateSupported = (model: ApiModel): boolean => {
-  return getModelDefinition(model).supportsQuickGenerate ?? false;
+export const isQuickGenerateSupported = (_model: ApiModel): boolean => {
+  return true;
 };
 
 /**
@@ -15,6 +16,11 @@ export const isQuickGenerateSupported = (model: ApiModel): boolean => {
 export const applyQuickGenerateConfig = (config: any, model: ApiModel, isQuick: boolean = false): void => {
   const modelName = model.split('/').pop() || model;
   const isGemini = model.includes('gemini') || modelName.includes('gemini');
+  
+  if (isQuick) {
+    config.maxOutputTokens = 1024;
+  }
+
   if (!isGemini) return;
 
   // Prompt generation = creative formatting task, bukan reasoning berat
@@ -25,3 +31,4 @@ export const applyQuickGenerateConfig = (config: any, model: ApiModel, isQuick: 
     config.thinkingConfig = { thinkingBudget: 0 };
   }
 };
+
