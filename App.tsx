@@ -502,33 +502,11 @@ const App: React.FC = () => {
       if (startKeyIndex === null || startKeyIndex === undefined) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
       const isXml = settings.promptQualityOption === 'xml';
 
-      // Cooldown per provider (ms) — minimal & turbo
-      const SAFE_KEY_COOLDOWN_MS: Record<string, number> = {
-        google: 100,
-        groq: 200,
-        mistral: 200,
-        openrouter: 200,
-        github: 1000,
-      };
-      const keyCooldownInterval = SAFE_KEY_COOLDOWN_MS[provider] ?? 200;
-
       for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
         const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
         const selectedApiKey = providerKeys[keyIdx];
 
         try {
-          // Smart Independent Cooldown per-KEY:
-          // - Setiap key punya timer mandiri → key berbeda di worker paralel = 0ms jeda (instant)
-          // - Jika key yang SAMA baru saja dipakai → tunggu sisa cooldown saja
-          // - Jika key sudah idle >= interval → langsung eksekusi (0ms delay)
-          const lastUsed = keyLastUsedTimeRef.current[selectedApiKey] || 0;
-          const elapsed = Date.now() - lastUsed;
-          if (elapsed < keyCooldownInterval) {
-            const waitTime = keyCooldownInterval - elapsed;
-            await new Promise(resolve => window.setTimeout(resolve, waitTime));
-          }
-          keyLastUsedTimeRef.current[selectedApiKey] = Date.now();
-
           responseText = await generateModelContent({
             model: settings.selectedModel,
             contents,
@@ -923,7 +901,7 @@ const App: React.FC = () => {
  }, [apiKeys, reserveNextApiKeyStartIndex, isProviderInitialized, settings.selectedModel, settings.inputMode, settings.styleOption, settings.numPrompts, t, parseApiError, logError]);
 
 type GenerationJob = () => Promise<GeneratedPromptSet>;
- type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[], jobToPlaceholderMap?: number[], conceptNames?: string[] };
+ type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[] };
 
  const waitForBatchDelay = (seconds: number): Promise<void> => {
  if (seconds <= 0) return Promise.resolve();
@@ -946,55 +924,20 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       return { placeholders: [], jobs: [] };
     }
 
-    const provider = getModelProvider(settings.selectedModel);
-    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-    const numKeys = Math.max(1, providerKeys.length || settings.workerCount || 1);
+    const placeholders = rawConcepts.map(concept => ({
+      id: generateUuid(),
+      originalConcept: concept,
+      prompts: [],
+      hasError: false,
+      inputMode: 'text' as const,
+    }));
 
-    const totalRequested = Math.max(1, settings.numPrompts || 1);
+    const jobs = rawConcepts.map((concept, index) =>
+      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, settings, isQuick))
+    );
 
-    const placeholders: GeneratedPromptSet[] = [];
-    const jobs: GenerationJob[] = [];
-    const jobToPlaceholderMap: number[] = [];
-    const conceptNames: string[] = [];
-    let globalJobIdx = 0;
-
-    // Turbo Parallel Chunk Distribution:
-    // Ukuran per call ideal: 5-8 prompt (AI merespon dalam ~1.2-1.8 detik per call)
-    // Jika prompt banyak (misal 70), dibagi menjadi beberapa wave cepat yang jalan paralel di semua key.
-    const MAX_CHUNK_PER_JOB = 8;
-    const optimalChunk = Math.max(1, Math.min(MAX_CHUNK_PER_JOB, Math.ceil(totalRequested / numKeys)));
-
-    rawConcepts.forEach((concept) => {
-      const placeholderIdx = placeholders.length;
-      const placeholder: GeneratedPromptSet = {
-        id: generateUuid(),
-        originalConcept: concept,
-        prompts: [],
-        hasError: false,
-        inputMode: 'text' as const,
-      };
-      placeholders.push(placeholder);
-
-      let remaining = totalRequested;
-      while (remaining > 0) {
-        const countForThisJob = Math.min(remaining, optimalChunk);
-        const assignedKeyIdx = globalJobIdx % numKeys;
-        jobToPlaceholderMap.push(placeholderIdx);
-        conceptNames.push(concept);
-        jobs.push(() =>
-          processAndGenerate(
-            placeholder,
-            () => PromptBuilder.buildTextPrompt(concept, { ...settings, numPrompts: countForThisJob }, isQuick),
-            assignedKeyIdx
-          )
-        );
-        remaining -= countForThisJob;
-        globalJobIdx += 1;
-      }
-    });
-
-    return { placeholders, jobs, jobToPlaceholderMap, conceptNames };
-  }, [settings, processAndGenerate, apiKeys, t]);
+    return { placeholders, jobs };
+  }, [settings, processAndGenerate, t]);
 
   const generateForVectorMode = useCallback((isQuick: boolean) => {
     const rawConcepts = settings.conceptsInput.split(/[\n,;]/).map(c => c.trim()).filter(Boolean);
@@ -1003,53 +946,20 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       return { placeholders: [], jobs: [] };
     }
 
-    const provider = getModelProvider(settings.selectedModel);
-    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-    const numKeys = Math.max(1, providerKeys.length || settings.workerCount || 1);
+    const placeholders = rawConcepts.map(concept => ({
+      id: generateUuid(),
+      originalConcept: concept,
+      prompts: [],
+      hasError: false,
+      inputMode: 'vector' as const,
+    }));
 
-    const totalRequested = Math.max(1, settings.numPrompts || 1);
+    const jobs = rawConcepts.map((concept, index) =>
+      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector' }, isQuick))
+    );
 
-    const placeholders: GeneratedPromptSet[] = [];
-    const jobs: GenerationJob[] = [];
-    const jobToPlaceholderMap: number[] = [];
-    const conceptNames: string[] = [];
-    let globalJobIdx = 0;
-
-    // Turbo Parallel Chunk Distribution untuk Vector Mode (max 6-8 per call agar respon kilat)
-    const MAX_CHUNK_PER_JOB = 8;
-    const optimalChunk = Math.max(1, Math.min(MAX_CHUNK_PER_JOB, Math.ceil(totalRequested / numKeys)));
-
-    rawConcepts.forEach((concept) => {
-      const placeholderIdx = placeholders.length;
-      const placeholder: GeneratedPromptSet = {
-        id: generateUuid(),
-        originalConcept: concept,
-        prompts: [],
-        hasError: false,
-        inputMode: 'vector' as const,
-      };
-      placeholders.push(placeholder);
-
-      let remaining = totalRequested;
-      while (remaining > 0) {
-        const countForThisJob = Math.min(remaining, optimalChunk);
-        const assignedKeyIdx = globalJobIdx % numKeys;
-        jobToPlaceholderMap.push(placeholderIdx);
-        conceptNames.push(concept);
-        jobs.push(() =>
-          processAndGenerate(
-            placeholder,
-            () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob }, isQuick),
-            assignedKeyIdx
-          )
-        );
-        remaining -= countForThisJob;
-        globalJobIdx += 1;
-      }
-    });
-
-    return { placeholders, jobs, jobToPlaceholderMap, conceptNames };
-  }, [settings, processAndGenerate, apiKeys, t]);
+    return { placeholders, jobs };
+  }, [settings, processAndGenerate, t]);
   
   const generateForImageMode = useCallback((isQuick: boolean) => {
     if (uploadedImages.length === 0) {
@@ -1323,90 +1233,48 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
 
     const finalSets: GeneratedPromptSet[] = [];
     const provider = getModelProvider(settings.selectedModel);
-    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-    const isRoundRobin = !!generationTask.jobToPlaceholderMap;
-    const numKeys = Math.max(1, providerKeys.length || 1);
-
-    // Multi-Key Parallel Concurrency:
-    // Jalankan worker paralel sesuai jumlah key yang tersedia
-    const effectiveWorkerCount = Math.max(1, Math.min(50, Math.max(settings.workerCount || 1, numKeys)));
+    const workerCount = Math.max(1, Math.min(50, settings.workerCount || 1));
     const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
 
-    setActiveWorkersCount(effectiveWorkerCount);
+    setActiveWorkersCount(workerCount);
     setTotalJobsCount(generationTask.jobs.length);
     setCompletedJobsCount(0);
     setActivityLogs([]);
-
-    if (isRoundRobin) {
-      addActivityLog(`⚡ Multi-Key Turbo: ${generationTask.placeholders.length} konsep, ${generationTask.jobs.length} worker paralel (${numKeys} key aktif, ${MODEL_PROVIDER_LABELS[provider]})`, 'info');
-      // Tampilkan placeholder kosong di awal agar card langsung muncul
-      setGeneratedPromptSets([...generationTask.placeholders]);
-    } else {
-      addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas dengan ${effectiveWorkerCount} worker paralel aktif (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
-    }
+    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas dengan ${workerCount} worker paralel aktif (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
 
     let finishedCount = 0;
-    for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += effectiveWorkerCount) {
-      const batch = generationTask.jobs.slice(startIndex, startIndex + effectiveWorkerCount);
+    for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += workerCount) {
+      const batch = generationTask.jobs.slice(startIndex, startIndex + workerCount);
       
       const batchResults = await Promise.all(batch.map(async (job, idx) => {
-        // Stagger mikro 50ms agar request network tidak bentrok di milidetik yang sama
-        if (isRoundRobin && idx > 0) {
-          await new Promise(resolve => window.setTimeout(resolve, idx * 50));
-        }
-        const absoluteJobIdx = startIndex + idx;
-        const workerIndex = idx + 1;
-        const conceptName = isRoundRobin
-          ? (generationTask.conceptNames?.[absoluteJobIdx] || '')
-          : (generationTask.placeholders[absoluteJobIdx]?.originalConcept || '');
+        const workerIndex = (startIndex + idx) % workerCount + 1;
+        const conceptName = generationTask.placeholders[startIndex + idx]?.originalConcept || '';
         
         setCurrentProcessingConcept(conceptName);
-        if (isRoundRobin) {
-          const keyNumber = (absoluteJobIdx % numKeys) + 1;
-          addActivityLog(`🔑 Key #${keyNumber}: Men-generate batch untuk "${conceptName}"...`, 'info', workerIndex);
-        } else {
-          addActivityLog(`Worker #${workerIndex}: Sedang memproses konsep "${conceptName}"...`, 'info', workerIndex);
-        }
+        addActivityLog(`Worker #${workerIndex}: Sedang memproses konsep "${conceptName}"...`, 'info', workerIndex);
 
         const result = await job();
         finishedCount += 1;
         setCompletedJobsCount(finishedCount);
 
         if (result.hasError) {
-          addActivityLog(`❌ Gagal prompt "${conceptName}"`, 'error', workerIndex);
+          addActivityLog(`Worker #${workerIndex}: Gagal memproses "${conceptName}"`, 'error', workerIndex);
         } else {
-          addActivityLog(`✅ Prompt #${finishedCount} "${conceptName}" selesai`, 'success', workerIndex);
+          addActivityLog(`Worker #${workerIndex}: Berhasil membuat ${result.prompts.length} prompt untuk "${conceptName}"`, 'success', workerIndex);
         }
 
-        // Real-time update
+        // Update state immediately as each job finishes
         if (generationIdRef.current === currentGenerationId) {
-          if (isRoundRobin && generationTask.jobToPlaceholderMap) {
-            // Round-Robin: merge prompt ke placeholder yang sesuai
-            const phIdx = generationTask.jobToPlaceholderMap[absoluteJobIdx];
-            const targetPlaceholder = generationTask.placeholders[phIdx];
-            if (!result.hasError && result.prompts.length > 0) {
-              targetPlaceholder.prompts = [...targetPlaceholder.prompts, ...result.prompts];
-            }
-            if (result.hasError) {
-              targetPlaceholder.hasError = true;
-            }
-            // Trigger re-render dengan object baru
-            setGeneratedPromptSets(prev => prev.map((s, i) =>
-              i === phIdx ? { ...targetPlaceholder } : s
-            ));
-          } else {
-            // Legacy mode (image/video): tambah set baru
-            setGeneratedPromptSets(prev => [...prev, result]);
-          }
+          setGeneratedPromptSets(prev => [...prev, result]);
         }
         return result;
       }));
       
-      if (!isRoundRobin) finalSets.push(...batchResults);
+      finalSets.push(...batchResults);
 
       if (generationIdRef.current !== currentGenerationId) return;
 
-      const hasMoreBatches = startIndex + effectiveWorkerCount < generationTask.jobs.length;
+      const hasMoreBatches = startIndex + workerCount < generationTask.jobs.length;
       if (hasMoreBatches && batchDelaySeconds > 0) {
         addActivityLog(`Menunggu jeda batch ${batchDelaySeconds} detik...`, 'info');
         await waitForBatchDelay(batchDelaySeconds);
@@ -1416,27 +1284,23 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     
     if (generationIdRef.current !== currentGenerationId) return;
 
-    // Finalisasi: gunakan placeholders untuk round-robin, finalSets untuk legacy
-    const completedSets = isRoundRobin ? generationTask.placeholders : finalSets;
-    
-    if (completedSets.some(s => s.hasError)) {
+    if (finalSets.some(s => s.hasError)) {
       setError(t('errorSomePromptsFailed'));
       addActivityLog(`Selesai dengan beberapa error.`, 'warning');
     } else {
-      const totalPrompts = completedSets.flatMap(s => s.prompts).length;
-      addActivityLog(`🎉 Semua selesai! Total ${totalPrompts} prompt siap.`, 'success');
+      addActivityLog(`Semua proses berhasil diselesaikan! Total ${finalSets.flatMap(s => s.prompts).length} prompt siap.`, 'success');
     }
 
     setIsLoading(false);
 
-    if (completedSets.some(s => !s.hasError && s.prompts.length > 0)) {
+    if (finalSets.some(s => !s.hasError && s.prompts.length > 0)) {
       const currentSettings: GenerationSettings = {
         ...settings,
         conceptsInput: (settings.inputMode === 'text' || settings.inputMode === 'vector') ? settings.conceptsInput : '',
         imageNames: settings.inputMode === 'image' ? uploadedImages.map(img => img.name) : [],
         videoNames: settings.inputMode === 'video' ? videoProcessor.uploadedVideos.map(v => v.name) : [],
       };
-      saveHistory([{ id: Date.now(), timestamp: Date.now(), settings: currentSettings, sets: completedSets, folderId: settings.targetFolderId || null }, ...history]);
+      saveHistory([{ id: Date.now(), timestamp: Date.now(), settings: currentSettings, sets: finalSets, folderId: settings.targetFolderId || null }, ...history]);
     }
   }, [settings, uploadedImages, videoProcessor.uploadedVideos, saveHistory, history, t, isProviderInitialized, generateForTextMode, generateForVectorMode, generateForImageMode, generateForVideoMode, isLoading, isRetryingAll, retryingIds, addActivityLog, apiKeys]);
  
