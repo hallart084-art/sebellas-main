@@ -132,6 +132,7 @@ const generateWithGoogle = async ({ model, contents, config, apiKey }: GenerateP
   }
   const key = apiKey.trim();
   const isBearerToken = key.startsWith('AQ.') || key.startsWith('ya29.');
+  const effectiveMaxTokens = config?.maxOutputTokens || 8192;
 
   if (isBearerToken) {
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
@@ -142,7 +143,7 @@ const generateWithGoogle = async ({ model, contents, config, apiKey }: GenerateP
         ? [{ role: 'user', parts: contents.parts }]
         : [{ role: 'user', parts: [{ text: String(contents) }] }],
       generationConfig: {
-        maxOutputTokens: 8192,
+        maxOutputTokens: effectiveMaxTokens,
         temperature: config?.temperature ?? 1.0,
         topP: 0.95,
         responseMimeType: 'application/json',
@@ -183,7 +184,7 @@ const generateWithGoogle = async ({ model, contents, config, apiKey }: GenerateP
   const freshAi = new GoogleGenAI({ apiKey: key });
   const finalConfig = { 
      ...config, 
-     maxOutputTokens: 8192,
+     maxOutputTokens: effectiveMaxTokens,
      temperature: config?.temperature ?? 1.0,
      topP: 0.95,
      responseMimeType: 'application/json' 
@@ -261,7 +262,7 @@ const generateWithChatCompletion = async (
  messages,
  temperature: config?.temperature ?? 1.0,
  top_p: 0.95,
- max_tokens: maxTokens,
+ max_tokens: config?.maxOutputTokens || maxTokens,
  }),
  });
 
