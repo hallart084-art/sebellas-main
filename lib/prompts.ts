@@ -91,10 +91,13 @@ const jsonStringSafetyInstruction = `CRITICAL JSON OUTPUT RULES (HIGHEST PRIORIT
  * karena format seperti itu mendorong AI menulis reasoning ke dalam output.
  */
 const buildNegativePromptInstruction = (negativePrompt: string): string => {
-  if (!negativePrompt.trim()) return '';
-  return `CONTENT RESTRICTIONS (apply silently — do NOT write these rules or any reasoning about them in your output):
-The following concepts are strictly forbidden. Never include them, their synonyms, related terms, or derivative concepts anywhere in your generated prompts. If a forbidden concept is central to the subject, replace it with a thematically similar alternative. Apply this restriction invisibly — your output must only contain the final prompt text, nothing else.
-Forbidden: ${negativePrompt.trim()}
+  const baseNoTextRule = `UNIVERSAL MANDATORY NEGATIVE RESTRICTIONS (apply silently — do NOT write these rules or any reasoning in your output):
+- STRICTLY ZERO TEXT: Absolutely NO text, NO typography, NO words, NO letters, NO numbers, NO fonts, NO slogans, NO labels, NO signs, NO watermark, NO logo text, NO signature, NO barcodes, NO captions, and NO fake script/writing anywhere. All surfaces, props, screens, signs, and backgrounds must be completely plain, blank, and textless.
+`;
+  if (!negativePrompt.trim()) {
+    return baseNoTextRule + '\n';
+  }
+  return `${baseNoTextRule}- USER FORBIDDEN CONCEPTS: ${negativePrompt.trim()} (Never include them, their synonyms, related terms, or derivative concepts anywhere in your output).
 
 `;
 };
@@ -357,7 +360,7 @@ export const getFlatIllustrationSuffix = (whiteBg: boolean = true) => {
     ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients, no gradients"
     : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients, no gradients";
 
-  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no noise, no photorealism, no 3d render.`;
+  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
 };
 
 export const FLAT_ILLUSTRATION_SUFFIX = getFlatIllustrationSuffix(true);
@@ -367,7 +370,7 @@ export const getFlatObjectIllustrationSuffix = (whiteBg: boolean = true) => {
     ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients, no gradients"
     : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients, no gradients";
 
-  return `flat illustration style, inanimate object vector graphic, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean surfaces, chunky stylized 2D object geometry, no humans, no people, zero characters, no faces, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no noise, no photorealism, no 3d render.`;
+  return `flat illustration style, inanimate object vector graphic, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean surfaces, chunky stylized 2D object geometry, no humans, no people, zero characters, no faces, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
 };
 
 export const FLAT_OBJECT_ILLUSTRATION_SUFFIX = getFlatObjectIllustrationSuffix(true);
@@ -377,7 +380,7 @@ export const getMonolineVectorSuffix = (whiteBg: boolean = true) => {
     ? "perfectly isolated on solid pure white background, zero color background, pure white canvas, zero gradients, no gradients"
     : "perfectly isolated on clean solid background, zero gradients, no gradients";
 
-  return `minimalist monoline vector art, continuous uniform single-weight black outline strokes, clean geometric linework, simplified abstract contour shapes, pure black and white line art, no colors, no fills, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no complex micro-textures, ${bgClause}, modern microstock graphic icon style, clean vector contour.`;
+  return `minimalist monoline vector art, continuous uniform single-weight black outline strokes, clean geometric linework, simplified abstract contour shapes, pure black and white line art, no colors, no fills, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no complex micro-textures, ${bgClause}, modern microstock graphic icon style, clean vector contour.`;
 };
 
 export const MONOLINE_VECTOR_SUFFIX = getMonolineVectorSuffix(true);
@@ -387,7 +390,7 @@ export const getGeometricSilhouetteSuffix = (whiteBg: boolean = true) => {
     ? "strictly two colors only, solid black silhouette on solid pure white background, pure white canvas, zero color, zero gradients, no gradients"
     : "strictly two colors only, solid white silhouette on solid pure black background, pure black canvas, zero color, zero gradients, no gradients";
 
-  return `geometric silhouette vector art, minimalist solid flat shape logo mark, bold solid vector masses, simple minimal elegant design, sharp planar facet cuts, clean aerodynamic contours, high-contrast black and white graphic emblem, ${colorClause}, no tiny micro-details, no intricate textures, zero outlines, zero strokes, zero line art, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, clean modern icon asset.`;
+  return `geometric silhouette vector art, minimalist solid flat shape logo mark, bold solid vector masses, simple minimal elegant design, sharp planar facet cuts, clean aerodynamic contours, high-contrast black and white graphic emblem, ${colorClause}, no tiny micro-details, no intricate textures, zero outlines, zero strokes, zero line art, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, clean modern icon asset.`;
 };
 
 export const GEOMETRIC_SILHOUETTE_SUFFIX = getGeometricSilhouetteSuffix(true);
@@ -397,7 +400,7 @@ export const getNegativeSpaceCutoutSuffix = (whiteBg: boolean = true) => {
     ? "strictly two colors only, solid black and white, solid black subject on solid pure white background, pure white canvas, zero color, zero gradients, no gradients"
     : "strictly two colors only, solid white on solid pure black background, pure black canvas, zero color, zero gradients, no gradients";
 
-  return `negative space vector art, frameless free-standing silhouette cutout, clever negative space cutout graphic mark, dual-tone optical illusion, subject anatomical contours and lighting carved purely from solid negative space, simple minimal elegant design, strictly frameless, strictly no border, zero framing, zero outer badge, zero enclosing shape, no box, no circle frame, no border lines, pure black and white dual-tone, ${colorClause}, no tiny micro-details, no intricate textures, strictly solid flat shapes, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows, clean corporate vector icon asset.`;
+  return `negative space vector art, frameless free-standing silhouette cutout, clever negative space cutout graphic mark, dual-tone optical illusion, subject anatomical contours and lighting carved purely from solid negative space, simple minimal elegant design, strictly frameless, strictly no border, zero framing, zero outer badge, zero enclosing shape, no box, no circle frame, no border lines, pure black and white dual-tone, ${colorClause}, no tiny micro-details, no intricate textures, strictly solid flat shapes, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, clean corporate vector icon asset.`;
 };
 
 export const NEGATIVE_SPACE_CUTOUT_SUFFIX = getNegativeSpaceCutoutSuffix(true);
