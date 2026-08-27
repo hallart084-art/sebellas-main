@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { GoogleGenAI } from "@google/genai";
 import { GOOGLE_API_KEY_CHECK_MODEL, GROQ_API_KEY_CHECK_MODEL, MISTRAL_API_KEY_CHECK_MODEL, OPENROUTER_API_KEY_CHECK_MODEL, getModelProvider } from '../constants';
 import type { ApiModel, ModelProvider } from '../constants';
+import { checkApiKeyOnline } from '../lib/apiClient';
 
 export type ProviderApiKeys = Record<ModelProvider, string[]>;
 export type ProviderApiStatus = Record<ModelProvider, boolean>;
@@ -262,129 +263,19 @@ export const useGemini = (t: (key: any, params?: any) => string) => {
     writeProviderKeysToStorage(provider, normalizedKeys);
   }, [initializeGoogleApi, initializeGroqApi, initializeMistralApi, initializeOpenRouterApi, initializeGitHubApi]);
 
+  const handleCheckProviderApiKey = useCallback(async (provider: ModelProvider, key: string, _checkModel?: ApiModel): Promise<ApiKeyCheckResult> => {
+    if (!key) return { success: false, message: t('errorApiKeyInvalid') };
+    const res = await checkApiKeyOnline(provider, key);
+    return {
+      success: res.success,
+      reason: res.reason,
+      message: res.message,
+    };
+  }, [t]);
+
   const handleCheckApiKey = useCallback(async (key: string): Promise<ApiKeyCheckResult> => {
-    if (!key) return { success: false, message: t('errorApiKeyInvalid') };
-    const trimmed = key.trim();
-    const isBearer = trimmed.startsWith('AQ.') || trimmed.startsWith('ya29.');
-
-    if (isBearer) {
-      try {
-        const restRes = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${trimmed}`,
-          },
-          body: JSON.stringify({
-            contents: [{ parts: [{ text: 'hi' }] }],
-          }),
-        });
-
-        if (restRes.ok) {
-          return { success: true, reason: 'valid' };
-        }
-
-        const errText = await restRes.text();
-        throw new Error(`${restRes.status} ${errText}`);
-      } catch (err) {
-        console.error("Bearer token check failed:", err);
-        return {
-          success: false,
-          message: parseApiError(err),
-          reason: isApiLimitError(err) ? 'limited' : 'invalid',
-        };
-      }
-    }
-
-    try {
-      const tempAi = new GoogleGenAI({ apiKey: trimmed });
-      await tempAi.models.generateContent({
-        model: GOOGLE_API_KEY_CHECK_MODEL,
-        contents: 'test',
-        config: { thinkingConfig: { thinkingBudget: 0 } }
-      });
-      return { success: true, reason: 'valid' };
-    } catch (error) {
-      console.error("API Key check failed:", error);
-      return {
-        success: false,
-        message: parseApiError(error),
-        reason: isApiLimitError(error) ? 'limited' : 'invalid',
-      };
-    }
-  }, [t, parseApiError]);
-
-  const handleCheckProviderApiKey = useCallback(async (provider: ModelProvider, key: string, checkModel?: ApiModel): Promise<ApiKeyCheckResult> => {
-    if (!key) return { success: false, message: t('errorApiKeyInvalid') };
-    if (provider === 'google') return handleCheckApiKey(key);
-
-    if (provider === 'github') {
-      try {
-        const response = await fetch('https://models.inference.ai.azure.com/chat/completions', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${key.trim()}`,
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            model: 'gpt-4o-mini',
-            messages: [{ role: 'user', content: 'ok' }],
-            max_tokens: 1,
-          }),
-        });
-
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(`${response.status} ${errorText || `GitHub API request failed with status ${response.status}`}`);
-        }
-
-        return { success: true, reason: 'valid' };
-      } catch (error) {
-        console.error(`GitHub API Key check failed:`, error);
-        return {
-          success: false,
-          message: parseApiError(error),
-          reason: isApiLimitError(error) ? 'limited' : 'invalid',
-        };
-      }
-    }
-
-    const providerLabel = provider === 'groq' ? 'Groq' : provider === 'openrouter' ? 'OpenRouter' : 'Mistral';
-    const endpoint = provider === 'groq'
-      ? 'https://api.groq.com/openai/v1/models'
-      : provider === 'openrouter'
-      ? 'https://openrouter.ai/api/v1/auth/key'
-      : 'https://api.mistral.ai/v1/models';
-
-    const extraHeaders: Record<string, string> = provider === 'openrouter'
-      ? { 'HTTP-Referer': 'https://sebelaspromptgen.app', 'X-Title': 'SebelasPromptGen' }
-      : {};
-
-    try {
-      const response = await fetch(endpoint, {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${key.trim()}`,
-          'Content-Type': 'application/json',
-          ...extraHeaders,
-        },
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(`${response.status} ${errorText || `${providerLabel} API request failed with status ${response.status}`}`);
-      }
-
-      return { success: true, reason: 'valid' };
-    } catch (error) {
-      console.error(`${providerLabel} API Key check failed:`, error);
-      return {
-        success: false,
-        message: parseApiError(error),
-        reason: isApiLimitError(error) ? 'limited' : 'invalid',
-      };
-    }
-  }, [handleCheckApiKey, parseApiError, t]);
+    return handleCheckProviderApiKey('google', key);
+  }, [handleCheckProviderApiKey]);
 
     const handleRemoveDeadApiKey = useCallback((provider: ModelProvider, deadKey: string, reason?: string) => {
         const trimmed = deadKey.trim();
