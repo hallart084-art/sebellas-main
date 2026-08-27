@@ -245,10 +245,15 @@ const generateWithChatCompletion = async (
  if (!apiKey || typeof apiKey !== 'string') {
  throw new Error(`${providerLabel} API key is missing. Please configure your API key in Settings.`);
  }
- const messages = [
- ...(config?.systemInstruction ? [{ role: 'system', content: config.systemInstruction }] : []),
- { role: 'user', content: toChatCompletionUserContent(contents) },
- ];
+  const userContent = toChatCompletionUserContent(contents);
+  const systemInstruction = config?.systemInstruction
+    ? `${config.systemInstruction}\nYou MUST format your entire response as a valid JSON object: {"prompts": ["...", "..."]}`
+    : 'You MUST format your entire response as a valid JSON object: {"prompts": ["...", "..."]}';
+
+  const messages = [
+    { role: 'system', content: systemInstruction },
+    { role: 'user', content: userContent },
+  ];
 
   const requestPayload: Record<string, any> = {
     model,
@@ -262,27 +267,41 @@ const generateWithChatCompletion = async (
     requestPayload.response_format = { type: 'json_object' };
   }
 
-  const response = await fetch(endpoint, {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${apiKey.trim()}`,
-      'Content-Type': 'application/json',
-      ...extraHeaders,
-    },
-    body: JSON.stringify(requestPayload),
-  });
+  const doFetch = async (payload: Record<string, any>) => {
+    return fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${apiKey.trim()}`,
+        'Content-Type': 'application/json',
+        ...extraHeaders,
+      },
+      body: JSON.stringify(payload),
+    });
+  };
 
- if (!response.ok) {
- const errorText = await response.text();
- throw new ApiRequestError(
- errorText || `${providerLabel} API request failed with status ${response.status}`,
- response.status,
- errorText
- );
- }
+  let response = await doFetch(requestPayload);
 
- const payload = await response.json();
- return getChatCompletionText(payload, providerLabel);
+  // If response_format caused a 400 error, retry once immediately without response_format
+  if (!response.ok && requestPayload.response_format) {
+    const fallbackPayload = { ...requestPayload };
+    delete fallbackPayload.response_format;
+    const fallbackRes = await doFetch(fallbackPayload);
+    if (fallbackRes.ok) {
+      response = fallbackRes;
+    }
+  }
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new ApiRequestError(
+      errorText || `${providerLabel} API request failed with status ${response.status}`,
+      response.status,
+      errorText
+    );
+  }
+
+  const payload = await response.json();
+  return getChatCompletionText(payload, providerLabel);
 };
 
 const isOpenRouterTokenBudgetError = (errorText: string): boolean => {
