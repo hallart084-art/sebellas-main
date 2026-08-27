@@ -518,30 +518,6 @@ const App: React.FC = () => {
           break;
         } catch (requestError) {
           lastGenerationError = requestError;
-          const errRaw = (requestError instanceof Error ? requestError.message : String(requestError)).toLowerCase();
-          const errParsed = parseApiError(requestError);
-
-          // Hanya hapus secara permanen jika key BENAR-BENAR invalid/dicabut.
-          // JANGAN hapus jika hanya kena 429, model_not_found, atau error sementara.
-          const isModelError = errRaw.includes('model_not_found') || errRaw.includes('does not exist');
-          const isPermanentlyInvalid = !isModelError && (
-            errRaw.includes('invalid_api_key') ||
-            errRaw.includes('invalid api key') ||
-            errRaw.includes('api key not valid') ||
-            (errRaw.includes('unauthorized') && errRaw.includes('invalid'))
-          );
-
-          if (isPermanentlyInvalid) {
-            const maskedKey = `${selectedApiKey.slice(0, 6)}...${selectedApiKey.slice(-4)}`;
-            addActivityLog(`⚠️ [Auto-Remove] Key ${maskedKey} tidak valid/dicabut (${errParsed}) dan otomatis dihapus.`, 'warning');
-            handleRemoveDeadApiKey(provider, selectedApiKey, errParsed);
-          } else if (errRaw.includes('429') || errRaw.includes('rate limit') || errRaw.includes('resource exhausted')) {
-            // Adaptive backoff: jeda 5 detik untuk key yang terkena 429 lalu rotasi ke key berikutnya
-            const maskedKey = `${selectedApiKey.slice(0, 6)}...${selectedApiKey.slice(-4)}`;
-            addActivityLog(`⏳ [Backoff 5s] Key ${maskedKey} limit sementara, rotasi ke key berikutnya...`, 'info');
-            keyLastUsedTimeRef.current[selectedApiKey] = Date.now() + 5000;
-          }
-
           const canTryAnotherKey = attempt < providerKeys.length - 1;
           if (!canTryAnotherKey) {
             throw requestError;
