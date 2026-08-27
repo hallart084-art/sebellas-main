@@ -118,6 +118,7 @@ export const getModelsForInputMode = (mode: InputMode): readonly ApiModel[] =>
 
 export const VECTOR_ART_STYLES = [
   'Flat illustration',
+  'Flat object illustration',
   'Monoline geometric vector',
   'Geometric silhouette',
   'Negative space cutout',

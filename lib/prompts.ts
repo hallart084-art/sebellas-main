@@ -362,6 +362,16 @@ export const getFlatIllustrationSuffix = (whiteBg: boolean = true) => {
 
 export const FLAT_ILLUSTRATION_SUFFIX = getFlatIllustrationSuffix(true);
 
+export const getFlatObjectIllustrationSuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients, no gradients"
+    : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients, no gradients";
+
+  return `flat illustration style, inanimate object vector graphic, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean surfaces, chunky stylized 2D object geometry, no humans, no people, zero characters, no faces, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no noise, no photorealism, no 3d render.`;
+};
+
+export const FLAT_OBJECT_ILLUSTRATION_SUFFIX = getFlatObjectIllustrationSuffix(true);
+
 export const getMonolineVectorSuffix = (whiteBg: boolean = true) => {
   const bgClause = whiteBg
     ? "perfectly isolated on solid pure white background, zero color background, pure white canvas, zero gradients, no gradients"
@@ -394,6 +404,9 @@ export const NEGATIVE_SPACE_CUTOUT_SUFFIX = getNegativeSpaceCutoutSuffix(true);
 
 export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true): string => {
   const chosenStyle = (artStyle || '').toLowerCase();
+  if (chosenStyle.includes('object')) {
+    return getFlatObjectIllustrationSuffix(whiteBg);
+  }
   if (chosenStyle.includes('monoline')) {
     return getMonolineVectorSuffix(whiteBg);
   }
@@ -419,15 +432,36 @@ const buildVectorTextPrompt = (
   const chosenPreset = preset || 'Single Image';
   const isWhiteBg = whiteBg ?? true;
 
+  const isFlatObjectIllustration = chosenStyle.toLowerCase().includes('object');
   const isMonolineVector = chosenStyle.toLowerCase().includes('monoline');
   const isGeometricSilhouette = chosenStyle.toLowerCase().includes('geometric silhouette');
   const isNegativeSpaceCutout = chosenStyle.toLowerCase().includes('negative space');
-  const isFlatIllustration = chosenStyle.toLowerCase().includes('flat illustration');
+  const isFlatIllustration = !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
 
   let activeSuffix = '';
   let styleRules = '';
 
-  if (isMonolineVector) {
+  if (isFlatObjectIllustration) {
+    activeSuffix = getFlatObjectIllustrationSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (FLAT OBJECT ILLUSTRATION - INANIMATE OBJECTS & PROPS ONLY):
+1. **STRICTLY INANIMATE OBJECTS ONLY (ZERO HUMANS, ZERO CHARACTERS, ZERO FACES)**:
+   - Focus PURELY on inanimate physical objects, vehicles, industrial machines, scientific tools, culinary items, furniture, consumer electronics, botanical specimens, or architectural props.
+   - Absolutely NO humans, NO drivers, NO workers, NO children, NO animals, NO cartoon mascots, NO anthropomorphic faces, NO eyes, and NO smiles on objects.
+   - Example: If theme is "mobil" / "car" → describe purely the car/vehicle itself (e.g. modern electric SUV, logistics delivery van, vintage roadster) without driver or passengers. If theme is "coffee" → describe coffee machine, portafilter, ceramic mug, grinder without barista. If theme is "construction" → describe excavator, tool set, hardhat, builder equipment without workers.
+2. **CHUNKY GEOMETRY & PROPORTIONS**: Simplified chunky stylized rounded geometry, clean solid forms, bold simplified mechanical or structural parts.
+3. **NO SURFACE CLUTTER / BLANK SCREENS**: Absolutely DO NOT include tiny badges, small icons, stickers, text, logos, or UI charts on object surfaces. Screens and panels must be solid, blank, and clean.
+4. **COLOR & SHADING**: Colors must be ultra-vibrant, sharp, and cheerful with saturated azure blue and radiant bright orange accents. Shading must be bold, clean-cut, hard-edge 2-tone flat shadow shapes. Strictly zero outlines/strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare.
+5. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**: The background MUST be a single flat solid color with NO floor, NO ground surface, NO floor line, NO scenery, zero gradients, no gradients, and zero fake lighting. The object must be cleanly isolated on this single solid background.
+6. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "delivery car" -> "A chunky modern electric delivery van in three-quarter isometric perspective with bold solid wheels, smooth aerodynamic body panels, and hard-edge two-tone flat shadows on solid pure white background, no driver, no people, ${activeSuffix}"
+- "coffee setup" -> "A stylized manual espresso coffee machine with stainless steel portafilter, standing beside a cylindrical bean grinder and a blank ceramic mug with scattered roasted coffee beans, ${activeSuffix}"
+- "camera" -> "A vintage twin-lens reflex camera with chunky stylized dials, blank solid glass lenses, and sharp two-tone azure and orange body accents, ${activeSuffix}"
+- "gardening equipment" -> "A chunky yellow metal watering can standing beside a pair of solid garden pruning shears, a ceramic potted plant, and a stylized wooden garden trowel, ${activeSuffix}"
+- "smart robotics" -> "A futuristic modular industrial robotic assembly arm mounted on a circular base with precision mechanical joints and a blank digital interface panel, ${activeSuffix}"`;
+  } else if (isMonolineVector) {
     activeSuffix = getMonolineVectorSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (MONOLINE GEOMETRIC VECTOR):
 1. **LINE ART & UNIFORM STROKES**: Strictly continuous uniform single-weight black outline strokes. Clean, consistent stroke thickness throughout the entire artwork without calligraphic tapering, without hatching, without rough sketch lines.
@@ -514,6 +548,7 @@ Your core mission is to analyze the user's concept and perform a SUPER-INTELLIGE
 
 3. **ART-STYLE SPECIALIZED MORPHOLOGY**:
    - **Flat illustration**: Chunky stylized anatomical proportions, friendly expressive micro-moments, clean solid blank props (no fake text/badges), ultra-vibrant contrast palettes (azure blue, warm amber, bright orange), and sharp 2-tone flat shadow blocking.
+   - **Flat object illustration**: Purely inanimate physical objects, vehicles, gear, tools, and props with chunky 2D geometry, vibrant contrast colors, sharp hard-edge flat shadows, strictly zero humans, zero characters, zero faces.
    - **Monoline geometric vector**: Pure continuous uniform single-weight black contour line art, abstract geometric planar deconstruction, zero colors, zero gradients, zero shadows.
    - **Geometric silhouette**: Powerful aerodynamic contour silhouettes with sharp planar facet cuts, high-contrast solid mass shapes, strictly lineless (no strokes), 100% two-color black/white contrast.
    - **Negative space cutout**: Ingenious free-standing silhouette cutouts (strictly frameless, zero border, zero outer badge/frame/box/circle) where facial features, muscles, or lighting highlights are sharply carved out of negative space.
