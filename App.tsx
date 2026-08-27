@@ -483,50 +483,19 @@ const App: React.FC = () => {
   const processAndGenerate = useCallback(async (
     placeholder: GeneratedPromptSet,
     promptBuilder: () => { contents: any; config: any; },
-    assignedKeyIndex?: number
+    _assignedKeyIndex?: number
   ): Promise<GeneratedPromptSet> => {
     try {
-      const provider = getModelProvider(settings.selectedModel);
-      const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-      if (!isProviderInitialized(provider) || providerKeys.length === 0) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
-      if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
-        throw new Error(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
-      }
       const { contents, config } = promptBuilder();
-
-      let responseText = '';
-      let lastGenerationError: unknown = null;
-      const startKeyIndex = assignedKeyIndex !== undefined
-        ? (assignedKeyIndex % providerKeys.length)
-        : (reserveNextApiKeyStartIndex(provider) ?? 0);
-      if (startKeyIndex === null || startKeyIndex === undefined) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
       const isXml = settings.promptQualityOption === 'xml';
 
-      for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
-        const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
-        const selectedApiKey = providerKeys[keyIdx];
-
-        try {
-          responseText = await generateModelContent({
-            model: settings.selectedModel,
-            contents,
-            config,
-            apiKey: selectedApiKey,
-            isXmlQuality: isXml,
-          });
-          lastGenerationError = null;
-          break;
-        } catch (requestError) {
-          lastGenerationError = requestError;
-          const canTryAnotherKey = attempt < providerKeys.length - 1;
-          if (!canTryAnotherKey) {
-            throw requestError;
-          }
-          console.warn(`Retrying ${provider} request with the next API key after a key-specific error.`, requestError);
-        }
-      }
-
-      if (lastGenerationError) throw lastGenerationError;
+      const responseText = await generateModelContent({
+        model: settings.selectedModel,
+        contents,
+        config,
+        apiKey: 'offline-engine',
+        isXmlQuality: isXml,
+      });
 
       if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
 

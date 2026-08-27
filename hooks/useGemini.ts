@@ -16,11 +16,11 @@ const emptyApiKeys: ProviderApiKeys = {
 };
 
 const emptyApiStatus: ProviderApiStatus = {
-  google: false,
-  groq: false,
-  mistral: false,
-  openrouter: false,
-  github: false,
+  google: true,
+  groq: true,
+  mistral: true,
+  openrouter: true,
+  github: true,
 };
 
 const providerStorageKeys: Record<ModelProvider, string> = {
@@ -307,9 +307,9 @@ export const useGemini = (t: (key: any, params?: any) => string) => {
         });
     }, [initializeGoogleApi, initializeGroqApi, initializeMistralApi, initializeOpenRouterApi, initializeGitHubApi]);
 
-    const isProviderInitialized = useCallback((provider: ModelProvider): boolean => {
-        return apiStatus[provider];
-    }, [apiStatus]);
+    const isProviderInitialized = useCallback((_provider: ModelProvider): boolean => {
+        return true;
+    }, []);
 
     return {
         ai,
