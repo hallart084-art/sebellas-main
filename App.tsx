@@ -502,15 +502,15 @@ const App: React.FC = () => {
       if (startKeyIndex === null || startKeyIndex === undefined) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
       const isXml = settings.promptQualityOption === 'xml';
 
-      // Cooldown per provider (ms) — ringan karena round-robin sudah memberikan jeda alami antar key
+      // Cooldown per provider (ms) — minimal & turbo
       const SAFE_KEY_COOLDOWN_MS: Record<string, number> = {
-        google: 300,
-        groq: 800,
-        mistral: 600,
-        openrouter: 600,
-        github: 2000,
+        google: 100,
+        groq: 200,
+        mistral: 200,
+        openrouter: 200,
+        github: 1000,
       };
-      const keyCooldownInterval = SAFE_KEY_COOLDOWN_MS[provider] ?? 600;
+      const keyCooldownInterval = SAFE_KEY_COOLDOWN_MS[provider] ?? 200;
 
       for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
         const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
@@ -958,9 +958,12 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     const conceptNames: string[] = [];
     let globalJobIdx = 0;
 
-    // High-Speed Parallel Key Distribution:
-    // Bagi total requested prompts ke sejumlah API key yang tersedia secara paralel.
-    // Contoh: 70 prompt & 4 key -> 4 job paralel (@ 17-18 prompt) -> selesai dalam ~2.5 detik!
+    // Turbo Parallel Chunk Distribution:
+    // Ukuran per call ideal: 5-8 prompt (AI merespon dalam ~1.2-1.8 detik per call)
+    // Jika prompt banyak (misal 70), dibagi menjadi beberapa wave cepat yang jalan paralel di semua key.
+    const MAX_CHUNK_PER_JOB = 8;
+    const optimalChunk = Math.max(1, Math.min(MAX_CHUNK_PER_JOB, Math.ceil(totalRequested / numKeys)));
+
     rawConcepts.forEach((concept) => {
       const placeholderIdx = placeholders.length;
       const placeholder: GeneratedPromptSet = {
@@ -972,15 +975,9 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       };
       placeholders.push(placeholder);
 
-      // Tentukan jumlah chunk: maksimal sebanyak jumlah key atau jika prompt sedikit, 1 chunk
-      const chunksCount = Math.min(totalRequested, numKeys);
-      const baseChunkSize = Math.floor(totalRequested / chunksCount);
-      const remainder = totalRequested % chunksCount;
-
-      for (let i = 0; i < chunksCount; i++) {
-        const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
-        if (countForThisJob <= 0) continue;
-
+      let remaining = totalRequested;
+      while (remaining > 0) {
+        const countForThisJob = Math.min(remaining, optimalChunk);
         const assignedKeyIdx = globalJobIdx % numKeys;
         jobToPlaceholderMap.push(placeholderIdx);
         conceptNames.push(concept);
@@ -991,6 +988,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
             assignedKeyIdx
           )
         );
+        remaining -= countForThisJob;
         globalJobIdx += 1;
       }
     });
@@ -1017,7 +1015,10 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     const conceptNames: string[] = [];
     let globalJobIdx = 0;
 
-    // High-Speed Parallel Key Distribution untuk Vector Mode
+    // Turbo Parallel Chunk Distribution untuk Vector Mode (max 6-8 per call agar respon kilat)
+    const MAX_CHUNK_PER_JOB = 8;
+    const optimalChunk = Math.max(1, Math.min(MAX_CHUNK_PER_JOB, Math.ceil(totalRequested / numKeys)));
+
     rawConcepts.forEach((concept) => {
       const placeholderIdx = placeholders.length;
       const placeholder: GeneratedPromptSet = {
@@ -1029,14 +1030,9 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       };
       placeholders.push(placeholder);
 
-      const chunksCount = Math.min(totalRequested, numKeys);
-      const baseChunkSize = Math.floor(totalRequested / chunksCount);
-      const remainder = totalRequested % chunksCount;
-
-      for (let i = 0; i < chunksCount; i++) {
-        const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
-        if (countForThisJob <= 0) continue;
-
+      let remaining = totalRequested;
+      while (remaining > 0) {
+        const countForThisJob = Math.min(remaining, optimalChunk);
         const assignedKeyIdx = globalJobIdx % numKeys;
         jobToPlaceholderMap.push(placeholderIdx);
         conceptNames.push(concept);
@@ -1047,6 +1043,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
             assignedKeyIdx
           )
         );
+        remaining -= countForThisJob;
         globalJobIdx += 1;
       }
     });
@@ -1353,9 +1350,9 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       const batch = generationTask.jobs.slice(startIndex, startIndex + effectiveWorkerCount);
       
       const batchResults = await Promise.all(batch.map(async (job, idx) => {
-        // Stagger halus 200ms agar request network tidak bentrok di milidetik yang sama
+        // Stagger mikro 50ms agar request network tidak bentrok di milidetik yang sama
         if (isRoundRobin && idx > 0) {
-          await new Promise(resolve => window.setTimeout(resolve, idx * 200));
+          await new Promise(resolve => window.setTimeout(resolve, idx * 50));
         }
         const absoluteJobIdx = startIndex + idx;
         const workerIndex = idx + 1;
