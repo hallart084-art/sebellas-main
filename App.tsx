@@ -549,27 +549,24 @@ const App: React.FC = () => {
         parsedPrompts = responseText.split('\n').map(l => l.trim()).filter(Boolean);
       }
 
-      // Ensure vector art suffix if in vector mode
-      const isVectorMode = settings.styleOption === 'vector' || settings.inputMode === 'vector';
-      if (isVectorMode) {
-        const isWhiteBg = settings.vectorWhiteBg ?? true;
-        const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle, isWhiteBg);
-        const chosenStyle = (settings.vectorArtStyle || '').toLowerCase();
-        let suffixSig = 'flat illustration style';
-        if (chosenStyle.includes('monoline')) suffixSig = 'minimalist monoline vector art';
-        else if (chosenStyle.includes('geometric silhouette')) suffixSig = 'geometric silhouette vector art';
-        else if (chosenStyle.includes('negative space')) suffixSig = 'clever negative space cutout logo emblem';
+      // Guaranteed Vector Suffix Enforcement:
+      // Pastikan 100% setiap prompt selalu memiliki sufiks paten style yang lengkap dan bersih di ujungnya.
+      const isWhiteBg = settings.vectorWhiteBg ?? true;
+      const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle || 'Flat illustration', isWhiteBg);
 
-        parsedPrompts = parsedPrompts.map(item => {
-          let text = item.trim().replace(/[,.]\s*$/, '').trim();
-          if (!text.toLowerCase().includes(suffixSig)) {
-            text = text.replace(/,?\s*(negative space vector art|geometric silhouette vector art|minimalist monoline vector art|flat illustration style).*$/i, '').trim();
-            text = text.replace(/[,.]\s*$/, '').trim();
-            return `${text}, ${targetSuffix}`;
-          }
-          return item;
-        });
-      }
+      parsedPrompts = parsedPrompts.map(item => {
+        if (!item || typeof item !== 'string') return item;
+        let text = item.trim();
+        text = text.replace(/[,.]\s*$/, '').trim();
+
+        if (!text.endsWith(targetSuffix)) {
+          // Hapus potongan sufiks yang terpotong/setengah ditulis oleh AI jika ada
+          text = text.replace(/,?\s*(flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art).*$/i, '').trim();
+          text = text.replace(/[,.]\s*$/, '').trim();
+          return `${text}, ${targetSuffix}`;
+        }
+        return text;
+      });
 
       return {
         ...placeholder,
