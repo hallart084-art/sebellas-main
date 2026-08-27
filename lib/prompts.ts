@@ -387,7 +387,7 @@ export const getNegativeSpaceCutoutSuffix = (whiteBg: boolean = true) => {
     ? "strictly two colors only, solid black and white, solid black subject on solid pure white background, pure white canvas, zero color, zero gradients, no gradients"
     : "strictly two colors only, solid white on solid pure black background, pure black canvas, zero color, zero gradients, no gradients";
 
-  return `negative space vector art, clever negative space cutout logo emblem, dual-tone optical illusion graphic mark, subject facial features and lighting carved from solid negative space, simple minimal elegant design, clean geometric badge framing, pure black and white dual-tone, ${colorClause}, no tiny micro-details, no intricate textures, strictly solid flat shapes, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows, clean corporate vector icon.`;
+  return `negative space vector art, frameless free-standing silhouette cutout, clever negative space cutout graphic mark, dual-tone optical illusion, subject anatomical contours and lighting carved purely from solid negative space, simple minimal elegant design, strictly frameless, strictly no border, zero framing, zero outer badge, zero enclosing shape, no box, no circle frame, no border lines, pure black and white dual-tone, ${colorClause}, no tiny micro-details, no intricate textures, strictly solid flat shapes, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows, clean corporate vector icon asset.`;
 };
 
 export const NEGATIVE_SPACE_CUTOUT_SUFFIX = getNegativeSpaceCutoutSuffix(true);
@@ -439,7 +439,7 @@ const buildVectorTextPrompt = (
 
 FEW-SHOT EXAMPLES:
 - "wolf head" -> "A stylized geometric wolf head composed of symmetrical arched clean black lines and sharp polygonal facets, ${activeSuffix}"
-- "desert landscape" -> "A minimalist desert landscape inside an arch frame with simplified rolling dunes, a geometric sun with straight radiant rays, and a stylized single palm tree, ${activeSuffix}"
+- "desert landscape" -> "A minimalist desert landscape with simplified rolling dunes, a geometric sun with straight radiant rays, and a stylized single palm tree, ${activeSuffix}"
 - "coffee and plants" -> "A minimalist continuous line composition of a coffee cup with rising steam beside a stylized geometric monstera leaf in a clean vase, ${activeSuffix}"
 - "elephant" -> "A stylized geometric elephant in profile view constructed with clean continuous curved black outlines and arch lines, ${activeSuffix}"`;
   } else if (isGeometricSilhouette) {
@@ -463,18 +463,18 @@ FEW-SHOT EXAMPLES:
     const subjectColor = isWhiteBg ? 'solid black' : 'solid white';
     const bgColor = isWhiteBg ? 'pure white' : 'pure black';
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (NEGATIVE SPACE CUTOUT):
-1. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} and ${bgColor}. If subject is black, background is white. If subject is white, background is black. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
-2. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean geometric shapes. Clever negative space cutouts for major facial features, lighting, or silhouettes. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
-3. **BADGE & FRAME INTEGRATION**: Seamlessly integrate the subject inside a clean geometric silhouette or framing (e.g. solid circular badge, rounded square tile, or silhouette frame).
+1. **STRICTLY FRAMELESS & ZERO BORDERS (NO BADGE / NO OUTER SHAPE)**: The artwork MUST be a completely free-standing silhouette with internal negative space cuts. Absolutely NO outer badges, NO border outlines, NO geometric frames (NO circle borders, NO hexagon frames, NO triangle frames, NO shield badges, NO bounding boxes, NO enclosing shapes). The subject silhouette itself is the only shape, cleanly isolated on the solid canvas.
+2. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} and ${bgColor}. If subject is black, background is white. If subject is white, background is black. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
+3. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean geometric silhouette shapes. Clever negative space cutouts for major facial features, muscles, contours, or lighting highlights. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
 4. **STRICTLY LINELESS, ZERO GRADIENTS & ZERO FAKE LIGHTING**: Strictly flat solid fills and negative space cuts, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "lion head" -> "A fierce ${subjectColor} lion head emblem centered inside a solid circular badge, where the nose, muzzle, eyes, and mane highlights are ingeniously carved from negative space cutouts on ${bgColor} background, ${activeSuffix}"
-- "heron bird" -> "An elegant ${subjectColor} silhouette of a heron bird in flight seamlessly integrated inside a rounded square frame, with streamlined wing feathers formed by negative space slices on ${bgColor} background, ${activeSuffix}"
-- "bearded god" -> "A majestic bust profile of a bearded Greek god inside a solid circular emblem, with hair locks, chiseled brow, and deep jaw shadows sharply carved out through negative space on ${bgColor} background, ${activeSuffix}"
-- "statue of liberty" -> "A low-angle head emblem of the Statue of Liberty, with the face, eyes, and crown spikes defined purely through high-contrast negative space shadow cuts on ${bgColor} background, ${activeSuffix}"`;
+- "lion head" -> "A fierce ${subjectColor} lion head silhouette with the nose, muzzle, eyes, and mane highlights ingeniously carved from negative space cutouts on ${bgColor} background, strictly frameless, no border, ${activeSuffix}"
+- "athletic figure" -> "A dynamic ${subjectColor} athletic figure in mid-leap with limb muscles, momentum lines, and anatomical contours carved sharply from negative space slices on ${bgColor} background, free-standing silhouette, strictly no badge, no border, ${activeSuffix}"
+- "bearded god" -> "A majestic bust profile of a bearded Greek god with hair locks, chiseled brow, and deep jaw shadows sharply carved out through negative space on ${bgColor} background, strictly frameless, no border, ${activeSuffix}"
+- "wolf in motion" -> "A stylized ${subjectColor} running wolf silhouette with fur facets, eye, and jaw highlights defined purely through high-contrast negative space cuts on ${bgColor} background, free-standing silhouette, no border, no frame, ${activeSuffix}"`;
   } else if (isFlatIllustration) {
     activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (FLAT ILLUSTRATION):
@@ -508,23 +508,15 @@ Your core mission is to analyze the user's concept and perform a SUPER-INTELLIGE
 1. **DEEP CONCEPTUAL DECONSTRUCTION & ZERO-CLICHÉ GUARANTEE**:
    - NEVER repeat the user's prompt blindly or produce shallow, generic copies with only 1 word changed.
    - Deeply unpack the theme into distinct sub-professions, unique species, specialized tools, intimate micro-moments, and rich storytelling vignettes.
-   - For example, if given:
-     * "Coffee" → Unpack into: artisan pour-over brew master, espresso machine portafilter extraction, geometric coffee plant branch with ripe berries, cozy scandinavian barista weighing roast beans, minimalist coffee grinder emblem, steam rising from ceramic cup beside open book.
-     * "Christmas" → Unpack into: gingerbread baker piping frosting, vintage postal courier on snowy bicycle, geometric faceted reindeer in pine forest, starry night sky over alpine cabin, brass quintet carol singer, steaming spiced cider flatlay with cinnamon sticks.
-     * "Technology/AI" → Unpack into: server engineer adjusting fiber optic rack, friendly rounded robotic assistant carrying data cube, cyber analyst monitoring holographic dashboard, smart home energy hub icon, quantum processor core emblem.
-     * "Animals" → Feature distinct species with dynamic anatomical postures, characteristic hunting/resting/leaping movements, and bold planar silhouettes.
 
 2. **DYNAMIC MULTI-ANGLE VISUAL DIVERSIFICATION**:
-   Across the ${numPrompts} prompts, intentionally vary:
-   - **Postures & Dynamics**: Focused artisan craftsmanship, energetic athletic motion, serene meditative rest, heroic upright standing, intimate close-up handling.
-   - **Compositional Framing**: Full-body action poses, elegant 3/4 side profiles, iconic low-angle heroism, symmetrical emblem badges, and balanced top-down flatlays.
-   - **Thematic Micro-Environments**: Varied prop interactions, ergonomic professional equipment, stylized botanical accents, and geometric focal motifs.
+   Across the ${numPrompts} prompts, intentionally vary postures, actions, and perspectives.
 
 3. **ART-STYLE SPECIALIZED MORPHOLOGY**:
    - **Flat illustration**: Chunky stylized anatomical proportions, friendly expressive micro-moments, clean solid blank props (no fake text/badges), ultra-vibrant contrast palettes (azure blue, warm amber, bright orange), and sharp 2-tone flat shadow blocking.
-   - **Monoline geometric vector**: Pure continuous uniform single-weight black contour line art, abstract geometric planar deconstruction, balanced circular/archway framing, zero colors, zero gradients, zero shadows.
+   - **Monoline geometric vector**: Pure continuous uniform single-weight black contour line art, abstract geometric planar deconstruction, zero colors, zero gradients, zero shadows.
    - **Geometric silhouette**: Powerful aerodynamic contour silhouettes with sharp planar facet cuts, high-contrast solid mass shapes, strictly lineless (no strokes), 100% two-color black/white contrast.
-   - **Negative space cutout**: Ingenious dual-meaning silhouette cutouts seamlessly locked inside geometric badges (circular medal, rounded shield, hexagonal tile), where facial features, muscles, or lighting highlights are sharply carved out of negative space.
+   - **Negative space cutout**: Ingenious free-standing silhouette cutouts (strictly frameless, zero border, zero outer badge/frame/box/circle) where facial features, muscles, or lighting highlights are sharply carved out of negative space.
 
 Creative Configuration:
 - Selected Art Style: ${chosenStyle}
