@@ -1,20 +1,21 @@
-
 import type { InputMode } from './types';
 
-export type ModelProvider = 'google' | 'groq' | 'mistral' | 'openrouter';
+export type ModelProvider = 'google' | 'groq' | 'mistral' | 'github' | 'openrouter';
 
-export const MODEL_PROVIDERS: readonly ModelProvider[] = ['google', 'groq', 'mistral', 'openrouter'];
+export const MODEL_PROVIDERS: readonly ModelProvider[] = ['google', 'groq', 'mistral', 'github', 'openrouter'];
 
 export const MODEL_PROVIDER_LABELS: Record<ModelProvider, string> = {
  google: 'Gemini',
  groq: 'Groq',
  mistral: 'Mistral',
+ github: 'GitHub',
  openrouter: 'OpenRouter',
 };
 
 export const GOOGLE_API_KEY_CHECK_MODEL = 'gemini-2.5-flash';
 export const GROQ_API_KEY_CHECK_MODEL = 'llama-3.1-8b-instant';
 export const MISTRAL_API_KEY_CHECK_MODEL = 'mistral-small-latest';
+export const GITHUB_API_KEY_CHECK_MODEL = 'gpt-4o-mini';
 export const OPENROUTER_API_KEY_CHECK_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
 
 export type ModelDefinition = {
@@ -76,10 +77,14 @@ export const AI_MODELS = [
   { id: 'mistral-small-2506', provider: 'mistral', displayName: 'Mistral Small 2506', supportedModes: ['text', 'image'] },
   { id: 'mistral-small-2603', provider: 'mistral', displayName: 'Mistral Small 2603', supportedModes: ['text', 'image'] },
   { id: 'mistral-small-latest', provider: 'mistral', displayName: 'Mistral Small Latest', supportedModes: ['text', 'image'] },
-  { id: 'open-mistral-nemo', provider: 'mistral', displayName: 'Open Mistral Nemo', supportedModes: ['text'] },
-  { id: 'pixtral-12b-2409', provider: 'mistral', displayName: 'Pixtral 12B', supportedModes: ['text', 'image'] },
-  { id: 'pixtral-large-2411', provider: 'mistral', displayName: 'Pixtral Large 2411', supportedModes: ['text', 'image'] },
-  { id: 'pixtral-large-latest', provider: 'mistral', displayName: 'Pixtral Large Latest', supportedModes: ['text', 'image'] },
+  // --- GitHub Models ---
+  { id: 'gpt-4o-mini', provider: 'github', displayName: 'GPT-4o Mini', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'gpt-4o', provider: 'github', displayName: 'GPT-4o', supportedModes: ['text', 'image', 'vector'] },
+  { id: 'meta-llama-3.1-405b-instruct', provider: 'github', displayName: 'Llama 3.1 405B', supportedModes: ['text', 'vector'] },
+  { id: 'meta-llama-3.1-70b-instruct', provider: 'github', displayName: 'Llama 3.1 70B', supportedModes: ['text', 'vector'] },
+  { id: 'meta-llama-3.1-8b-instruct', provider: 'github', displayName: 'Llama 3.1 8B', supportedModes: ['text', 'vector'] },
+  { id: 'mistral-large', provider: 'github', displayName: 'Mistral Large (GitHub)', supportedModes: ['text', 'vector'] },
+  { id: 'mistral-small', provider: 'github', displayName: 'Mistral Small (GitHub)', supportedModes: ['text', 'vector'] },
 ] as const satisfies readonly ModelDefinition[];
 
 export type ApiModel = typeof AI_MODELS[number]['id'];
@@ -100,3 +105,13 @@ export const isModelSupportedForMode = (model: ApiModel, mode: InputMode): boole
 
 export const getModelsForInputMode = (mode: InputMode): readonly ApiModel[] =>
   AI_MODELS.filter(model => (model.supportedModes as readonly InputMode[]).includes(mode)).map(m => m.id as ApiModel);
+
+export const VECTOR_ART_STYLES = [
+  'Flat illustration',
+  'Monoline geometric vector',
+  'Geometric silhouette',
+  'Negative space cutout',
+] as const;
+
+export type VectorArtStyle = typeof VECTOR_ART_STYLES[number];
+export const DEFAULT_VECTOR_ART_STYLE: VectorArtStyle = 'Flat illustration';

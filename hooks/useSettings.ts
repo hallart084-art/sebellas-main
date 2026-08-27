@@ -52,10 +52,36 @@ const defaultVideoSettings: ModeSpecificSettings = {
  targetFolderId: null,
 };
 
+const defaultVectorSettings: ModeSpecificSettings & {
+  conceptsInput: string;
+  vectorArtStyle: string;
+  vectorPreset: string;
+  vectorPose: string;
+  vectorAttributes: string;
+  vectorWhiteBg: boolean;
+} = {
+  conceptsInput: '',
+  negativePrompt: '',
+  numPrompts: 5,
+  workerCount: 4,
+  batchDelaySeconds: 0,
+  styleOption: 'vector' as StyleOption,
+  promptQualityOption: 'default' as PromptQualityOptionType,
+  selectedModel: DEFAULT_MODEL,
+  customTemplate: '',
+  targetFolderId: null,
+  vectorArtStyle: 'Flat illustration',
+  vectorPreset: 'Single Image',
+  vectorPose: '',
+  vectorAttributes: '',
+  vectorWhiteBg: true,
+};
+
 const defaultAllSettings = {
  text: defaultTextSettings,
  image: defaultImageSettings,
  video: defaultVideoSettings,
+ vector: defaultVectorSettings,
 };
 
 type AllSettings = typeof defaultAllSettings;
@@ -253,11 +279,32 @@ export const useSettings = () => {
         setBatchDelaySeconds(parseInt(e.target.value, 10));
     };
 
+    const setVectorArtStyle = useCallback((value: string) => {
+        setAllSettings(s => ({ ...s, vector: { ...s.vector, vectorArtStyle: value } }));
+    }, []);
+
+    const setVectorPreset = useCallback((value: string) => {
+        setAllSettings(s => ({ ...s, vector: { ...s.vector, vectorPreset: value } }));
+    }, []);
+
+    const setVectorPose = useCallback((value: string) => {
+        setAllSettings(s => ({ ...s, vector: { ...s.vector, vectorPose: value } }));
+    }, []);
+
+    const setVectorAttributes = useCallback((value: string) => {
+        setAllSettings(s => ({ ...s, vector: { ...s.vector, vectorAttributes: value } }));
+    }, []);
+
+    const setVectorWhiteBg = useCallback((value: boolean) => {
+        setAllSettings(s => ({ ...s, vector: { ...s.vector, vectorWhiteBg: value } }));
+    }, []);
+
     const currentModeSettings = allSettings[inputMode] || defaultAllSettings[inputMode] || defaultAllSettings.text;
+    const vectorSettings = allSettings.vector || defaultAllSettings.vector;
 
     return {
         inputMode, setInputMode,
-        conceptsInput: allSettings.text.conceptsInput, setConceptsInput,
+        conceptsInput: (inputMode === 'vector' ? vectorSettings.conceptsInput : allSettings.text.conceptsInput), setConceptsInput,
         negativePrompt: currentModeSettings.negativePrompt, setNegativePrompt,
         numPrompts: currentModeSettings.numPrompts, setNumPrompts,
         workerCount: currentModeSettings.workerCount, setWorkerCount,
@@ -267,9 +314,14 @@ export const useSettings = () => {
         selectedModel: currentModeSettings.selectedModel, setSelectedModel,
         customTemplate: currentModeSettings.customTemplate, setCustomTemplate,
         targetFolderId: currentModeSettings.targetFolderId, setTargetFolderId,
-        hasUserSelectedStyleOption: selectionTouchedState[inputMode].style,
-        hasUserSelectedModel: selectionTouchedState[inputMode].model,
-        hasUserSelectedPromptQuality: selectionTouchedState[inputMode].quality,
+        vectorArtStyle: vectorSettings.vectorArtStyle, setVectorArtStyle,
+        vectorPreset: vectorSettings.vectorPreset, setVectorPreset,
+        vectorPose: vectorSettings.vectorPose, setVectorPose,
+        vectorAttributes: vectorSettings.vectorAttributes, setVectorAttributes,
+        vectorWhiteBg: vectorSettings.vectorWhiteBg, setVectorWhiteBg,
+        hasUserSelectedStyleOption: selectionTouchedState[inputMode]?.style ?? false,
+        hasUserSelectedModel: selectionTouchedState[inputMode]?.model ?? false,
+        hasUserSelectedPromptQuality: selectionTouchedState[inputMode]?.quality ?? false,
         handleNumPromptsChange,
         handleWorkerCountChange,
         handleBatchDelaySecondsChange,
