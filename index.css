@@ -1,0 +1,8 @@
+@import './styles/variables.css';
+@import './styles/base.css';
+@import './styles/layout.css';
+@import './styles/sidebar.css';
+@import './styles/inputs.css';
+@import './styles/buttons.css';
+@import './styles/components.css';
+@import './styles/themes.css';

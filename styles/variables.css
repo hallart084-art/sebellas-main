@@ -1,0 +1,166 @@
+html {
+      overflow-y: scroll;
+    }
+    :root {
+      --app-input-radius: 16px;
+      --bg-body-light: #F3F4F6; /* gray-100 */
+      --bg-main-light: #FFFFFF;
+      --text-primary-light: #1F2937; /* gray-800 */
+      --text-secondary-light: #6B7280; /* gray-500 */
+      --text-tertiary-light: #9CA3AF; /* gray-400 */
+      --text-accent-light: #4F46E5; /* indigo-600 */
+      --border-light: #E5E7EB; /* gray-200 */
+
+      --text-error-light: #B91C1C; /* red-700 */
+      --bg-error-light: #FEE2E2; /* red-100 */
+      --border-error-light: #FCA5A5; /* red-300 */
+
+      --input-bg-light: #FFFFFF;
+      --input-border-light: #D1D5DB; /* gray-300 */
+      --input-text-light: var(--text-primary-light);
+      --input-placeholder-light: #9CA3AF; /* gray-400 */
+      --input-focus-border-light: #6366F1; /* indigo-500 */
+      --input-focus-shadow-light: 0 0 0 3px rgba(99, 102, 241, 0.25);
+      --input-disabled-bg-light: #F3F4F6; /* gray-100 */
+      --input-disabled-border-light: #E5E7EB; /* gray-200 */
+      --input-disabled-text-light: #9CA3AF; /* gray-400 */
+      --select-arrow-color-light: '%236b7280'; /* gray-500 */
+
+      --scrollbar-track-light: rgba(0, 0, 0, 0.05);
+      --scrollbar-thumb-light: rgba(0, 0, 0, 0.2);
+      --scrollbar-thumb-hover-light: rgba(0, 0, 0, 0.3);
+
+      --dropdown-bg-light: #FFFFFF;
+      --dropdown-border-light: var(--border-light);
+      --dropdown-shadow-light: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+      --dropdown-hover-bg-light: #F3F4F6; /* gray-100 */
+      --dropdown-scrollbar-track-light: transparent;
+      --dropdown-scrollbar-thumb-light: rgba(17, 24, 39, 0.22);
+      --dropdown-scrollbar-thumb-hover-light: rgba(17, 24, 39, 0.34);
+
+      --button-primary-bg-light: #6366F1; /* indigo */
+      --button-primary-hover-bg-light: #5558E8; /* indigo hover */
+      --button-primary-text-light: white;
+      
+      --button-secondary-bg-light: #E5E7EB; /* gray-200 */
+      --button-secondary-hover-bg-light: #D1D5DB; /* gray-300 */
+      --button-secondary-text-light: #374151; /* gray-700 */
+
+      --button-destructive-bg-light: #F43F5E; /* rose */
+      --button-destructive-hover-bg-light: #EA2F50; /* rose hover */
+      --button-destructive-text-light: white;
+
+      --button-success-bg-light: #10B981; /* emerald */
+      --button-success-hover-bg-light: #0DA774; /* emerald hover */
+      --button-success-text-light: white;
+
+      --title-brand-color-light: var(--text-primary-light);
+      --title-suffix-color-light: var(--text-accent-light);
+      --header-tagline-color-light: var(--text-secondary-light);
+      
+      --theme-toggle-icon-color-light: var(--text-secondary-light);
+      --theme-toggle-hover-bg-light: rgba(0,0,0,0.05);
+
+      --image-thumbnail-border-light: var(--border-light);
+      --image-thumbnail-delete-bg-light: rgba(0, 0, 0, 0.6);
+      --image-thumbnail-delete-hover-bg-light: rgba(0, 0, 0, 0.8);
+      --image-thumbnail-delete-icon-light: white;
+      --image-drop-border-light: var(--input-focus-border-light);
+
+      --control-group-bg-light: #F3F4F6; /* gray-100 */
+      --control-group-btn-active-bg-light: #FFFFFF;
+      --control-group-btn-active-text-light: var(--text-accent-light);
+      --control-group-btn-active-shadow-light: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --control-group-btn-hover-bg-light: rgba(0, 0, 0, 0.03);
+
+      --results-item-divider-light: var(--border-light);
+
+      /* Sidebar motion timing — defined globally so #app-container can use the same easing */
+      --sidebar-motion-duration: 560ms;
+      --sidebar-motion-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    body {
+      background-color: #ffffff;
+      color: var(--text-primary-light);
+    }
+    body {
+      font-family: "Manrope", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+      position: relative;
+      overflow: visible;
+    }
+
+    #clouds-container {
+      display: none !important;
+    }
+    body.view-generator.theme-light #clouds-container,
+    body.view-login.theme-light #clouds-container {
+      display: block !important;
+    }
+    body.view-login.theme-light #clouds-container {
+      z-index: 0 !important;
+      opacity: 1 !important;
+    }
+
+    @keyframes ambientDriftPrimary {
+      0% {
+        transform: translate3d(-2%, -1%, 0) scale(1.02);
+        opacity: 0.72;
+      }
+      33% {
+        transform: translate3d(2.5%, -3%, 0) scale(1.07);
+        opacity: 0.88;
+      }
+      66% {
+        transform: translate3d(-3%, 2.5%, 0) scale(1.05);
+        opacity: 0.78;
+      }
+      100% {
+        transform: translate3d(2%, 1%, 0) scale(1.08);
+        opacity: 0.9;
+      }
+    }
+
+    @keyframes ambientDriftSecondary {
+      0% {
+        transform: translate3d(1%, -2%, 0) scale(1.01);
+        opacity: 0.42;
+      }
+      50% {
+        transform: translate3d(-2.5%, 2%, 0) scale(1.05);
+        opacity: 0.56;
+      }
+      100% {
+        transform: translate3d(2%, 1.5%, 0) scale(1.03);
+        opacity: 0.46;
+      }
+    }
+
+    body::before,
+    body::after {
+      content: '';
+      position: fixed;
+      pointer-events: none;
+      background-repeat: no-repeat;
+    }
+    body::before {
+      inset: 0;
+      z-index: -4;
+      opacity: 0.88;
+    }
+    body::after {
+      inset: -8%;
+      z-index: -3;
+      opacity: 0.8;
+      animation: ambientDriftPrimary 28s ease-in-out infinite alternate;
+      transform: translate3d(0, 0, 0);
+    }
+    body::before {
+      background: none !important;
+    }
+    body::after {
+      background-image: none !important;
+    }
+

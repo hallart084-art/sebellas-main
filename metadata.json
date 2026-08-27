@@ -1,0 +1,6 @@
+{
+  "name": "Prompt Generator",
+  "description": "An application to create unique and varied AI image prompts based on user-selected concepts and styles, using the Gemini API.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}

@@ -1,0 +1,59 @@
+    /* Global modern scrollbar */
+    * {
+      scrollbar-width: thin;
+    }
+    body * {
+      scrollbar-color: var(--scrollbar-thumb-light) transparent;
+    }
+    *::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    *::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    body *::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb-light);
+      border-radius: 9999px;
+      border: 2px solid transparent;
+      background-clip: padding-box;
+    }
+    body *::-webkit-scrollbar-thumb:hover {
+      background: var(--scrollbar-thumb-hover-light);
+    }
+
+    /* Main Title Font */
+    .main-title { font-family: "Manrope", sans-serif; font-weight: 800; display: flex; align-items: center; gap: 0.5rem; }
+    .sora-brand { font-family: "Sora", sans-serif; font-optical-sizing: auto; font-weight: 700; font-style: normal; }
+    .host-grotesk-hero {
+      font-family: "Host Grotesk", sans-serif;
+      font-optical-sizing: auto;
+      font-style: normal;
+    }
+    
+    body .title-brand { color: var(--text-primary-light); }
+    body .title-suffix { color: var(--title-suffix-color-light); font-weight: 600; }
+    body .header-tagline { color: var(--header-tagline-color-light); }
+
+
+    .text-sm-input-label {
+      font-weight: 500;
+      margin-bottom: 0.375rem; /* Increased spacing for readability */
+    }
+    body .text-sm-input-label { color: var(--text-secondary-light); }
+    
+    body .legend-text { color: var(--text-secondary-light); }
+    
+    /* Disable document scroll when modal overlays are present */
+    html:has(.modal-backdrop-container), html:has(.overlay-darkness), html:has(.fixed.inset-0.z-\[1200\]), html:has(.model-picker-overlay), html:has(.modal-card) {
+      overflow: hidden;
+    }
+
+    .modal-backdrop-container, .overlay-darkness, .fixed.inset-0.z-\[1200\], .model-picker-overlay {
+      background-color: rgba(0, 0, 0, 0.45) !important;
+      width: 100vw !important;
+    }
+
+    body:has(.modal-backdrop-container), body:has(.overlay-darkness), body:has(.fixed.inset-0.z-\[1200\]), body:has(.model-picker-overlay), body:has(.modal-card) {
+      padding-right: calc(1rem + var(--scrollbar-width, 8px)) !important;
+    }

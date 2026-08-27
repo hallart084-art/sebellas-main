@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sebellas Vector Prompt Generator</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Host+Grotesk:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  
+  <script>
+  tailwind.config = {
+    darkMode: 'class',
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Manrope', 'sans-serif'],
+        },
+        fontSize: {
+          'xs': ['11px', '16px'],
+          'sm': ['13px', '20px'],
+          'base': ['15px', '24px'],
+          'lg': ['17px', '28px'],
+          'xl': ['19px', '28px'],
+        }
+      }
+    }
+  }
+  </script>
+  
+  <script type="importmap">
+  {
+    "imports": {
+      "react": "https://esm.sh/react@^19.1.0",
+      "react-dom/": "https://esm.sh/react-dom@^19.1.0/",
+      "react/": "https://esm.sh/react@^19.1.0/",
+      "@google/genai": "https://esm.sh/@google/genai@^1.5.1",
+      "react-dom": "https://esm.sh/react-dom@^19.1.0"
+    }
+  }
+  </script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+<body class="min-h-screen m-0 p-0 bg-[#0d0d10] text-gray-100 antialiased overflow-x-hidden">
+  <div id="root" class="w-full min-h-screen"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+</html>

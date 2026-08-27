@@ -1,0 +1,833 @@
+    /* Base Button Styling */
+    .btn {
+      font-weight: 600;
+      border-radius: 0.5rem; /* rounded-lg */
+      transition: all 0.2s ease-in-out;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: none;
+      cursor: pointer;
+    }
+    .btn:disabled {
+      cursor: not-allowed;
+      opacity: 1;
+      filter: none !important;
+    }
+    .btn:focus-visible:not(:disabled) {
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+    }
+    .btn .material-symbols-outlined {
+      font-size: 1.25em;
+      margin-right: 0.375rem;
+      line-height: 1;
+    }
+
+    /* Shared sizing for primary generation action buttons */
+    .generation-main-btn {
+      min-height: 44px;
+      padding: 0.6rem 1rem !important;
+      font-size: 0.95rem !important;
+      line-height: 1.2;
+    }
+    .generation-primary-emphasis {
+      min-height: 52px;
+      font-size: 1.05rem !important;
+    }
+    .generation-btn-content,
+    .generation-btn-loading-content {
+      gap: 0.45rem;
+      width: 100%;
+    }
+    .generation-btn-content .material-symbols-outlined,
+    .generation-btn-icon {
+      margin-right: 0 !important;
+    }
+    @media (max-width: 430px) {
+      .generation-controls-row {
+        gap: 0.5rem !important;
+      }
+      .generation-compact-btn {
+        padding-left: 0.55rem !important;
+        padding-right: 0.55rem !important;
+      }
+      .generation-btn-label,
+      .generation-btn-loading-label {
+        display: none !important;
+      }
+      .generation-btn-content,
+      .generation-btn-loading-content {
+        justify-content: center !important;
+      }
+      .generation-btn-icon {
+        font-size: 1.25rem !important;
+      }
+    }
+
+    /* Icon-only button modifier for a square look */
+    .btn.btn-icon {
+      padding: 0.375rem;
+    }
+    .btn.btn-icon .material-symbols-outlined {
+      margin-right: 0;
+      font-size: 1.125rem; /* 18px */
+    }
+
+    /* Uniform size for results toolbar actions */
+    .results-toolbar-btn {
+      height: 26px !important;
+      padding: 0 0.9rem !important;
+      font-size: 11px !important;
+      line-height: 1 !important;
+      border-radius: 0.6rem !important;
+    }
+    .results-toolbar-btn .material-symbols-outlined {
+      font-size: 15px !important;
+      margin-right: 0.25rem !important;
+    }
+
+    /* Keep all selector controls perfectly pill-rounded */
+    .input-mode-selector,
+    .input-mode-slider,
+    .dropdown-trigger-button,
+    .footer-transient-btn,
+    .output-format-toggle,
+    .output-format-btn,
+    .num-prompts-control,
+    .num-prompts-input,
+    .num-prompts-stepper {
+      border-radius: 9999px !important;
+    }
+
+    /* Unified button corner radius across app */
+    button,
+    .btn,
+    .sidebar-item {
+      border-radius: 8px !important;
+    }
+
+    .folder-modal-btn {
+      border-radius: 14px !important;
+    }
+
+    /* Primary Button */
+    .btn-primary {
+      padding: 0.75rem 1.25rem;
+      font-size: 1rem;
+      box-shadow: none !important;
+    }
+    body .btn-primary {
+      background-color: var(--button-primary-bg-light);
+      color: var(--button-primary-text-light);
+    }
+    .btn-primary:hover:not(:disabled) {
+      transform: none;
+      box-shadow: none !important;
+    }
+    body .btn-primary:hover:not(:disabled) {
+      background-color: var(--button-primary-hover-bg-light);
+    }
+    .btn-primary:active:not(:disabled) {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    /* Small Action/Info Buttons */
+    .btn-action {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    body .btn-action {
+      background-color: var(--button-primary-bg-light);
+      color: var(--button-primary-text-light);
+    }
+    body .btn-action:hover:not(:disabled) {
+      background-color: var(--button-primary-hover-bg-light);
+    }
+
+    /* Secondary Button */
+    .btn-secondary {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    body .btn-secondary {
+      background-color: var(--button-secondary-bg-light);
+      color: var(--button-secondary-text-light);
+    }
+    body .btn-secondary:hover:not(:disabled) {
+      background-color: var(--button-secondary-hover-bg-light);
+    }
+
+    /* Success Button */
+    .btn-success {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+      box-shadow: none !important;
+    }
+    body .btn-success {
+      background-color: var(--button-success-bg-light);
+      color: var(--button-success-text-light);
+    }
+    body .btn-success:hover:not(:disabled) {
+      background-color: var(--button-success-hover-bg-light);
+    }
+    
+    /* Destructive Button */
+    .btn-destructive {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    body .btn-destructive {
+      background-color: var(--button-destructive-bg-light);
+      color: var(--button-destructive-text-light);
+    }
+    body .btn-destructive:hover:not(:disabled) {
+      background-color: var(--button-destructive-hover-bg-light);
+    }
+
+
+    /* Responsive, consistent hover feel across feature controls */
+    .btn,
+    .sidebar-item,
+    .input-mode-button,
+    .dropdown-trigger-button,
+    .model-picker-item,
+    .footer-transient-btn,
+    .output-format-btn {
+      transition-property: background-color, color, border-color, box-shadow, transform, opacity !important;
+      transition-duration: 160ms !important;
+      transition-timing-function: ease-out !important;
+      transition-delay: 0ms !important;
+    }
+    .btn:hover:not(:disabled),
+    .dropdown-trigger-button:hover,
+    .model-picker-item:hover,
+    .footer-transient-btn:hover,
+    .output-format-btn:hover:not(:disabled) {
+      transform: translateY(-0.5px);
+    }
+    /* Selector row should not shift text on hover */
+    .footer-transient-btn:hover,
+    .footer-transient-btn:active,
+    .input-mode-button:hover:not(:disabled),
+    .input-mode-button:active:not(:disabled),
+    .sidebar-item:hover,
+    .sidebar-item:active,
+    .dropdown-trigger-button:hover,
+    .dropdown-trigger-button:active,
+    .output-format-btn:hover:not(:disabled),
+    .output-format-btn:active:not(:disabled) {
+      transform: none !important;
+    }
+    .input-mode-selector .input-mode-button:hover:not(:disabled),
+    .input-mode-selector .input-mode-button:active:not(:disabled),
+    .input-mode-selector .input-mode-button:focus-visible,
+    .input-mode-selector .input-mode-button:hover:not(:disabled) > *,
+    .input-mode-selector .input-mode-button:active:not(:disabled) > * {
+      transform: none !important;
+    }
+
+    /* Keep button hover behavior visually calm across the app. */
+    button,
+    .btn,
+    .generation-main-btn,
+    .admin-submit-btn,
+    .admin-inline-btn,
+    .notification-header-btn,
+    .results-toolbar-btn,
+    .footer-transient-btn,
+    .dropdown-trigger-button,
+    .output-format-btn,
+    .input-mode-button,
+    .admin-tabs-button,
+    .footer-selector-pill,
+    .sidebar-item,
+    .logout-btn,
+    .theme-toggle-button,
+    .sidebar-toggle-btn {
+      text-shadow: none !important;
+    }
+    .btn:hover:not(:disabled),
+    .admin-submit-btn:hover:not(:disabled),
+    .admin-inline-btn:hover:not(:disabled),
+    .notification-header-btn:hover:not(:disabled),
+    .results-toolbar-btn:hover:not(:disabled),
+    .footer-transient-btn:hover:not(:disabled),
+    .dropdown-trigger-button:hover:not(:disabled),
+    .output-format-btn:hover:not(:disabled),
+    .input-mode-button:hover:not(:disabled),
+    .admin-tabs-button:hover:not(:disabled),
+    .footer-selector-pill:hover:not(:disabled),
+    .sidebar-item:hover,
+    .logout-btn:hover,
+    .theme-toggle-button:hover,
+    .sidebar-toggle-btn:hover {
+      transform: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+    }
+
+    /* Admin panel buttons keep a consistent hover glow without the old pop-up motion. */
+    .admin-panel-modal .btn:hover:not(:disabled),
+    .admin-panel-modal .admin-submit-btn:hover:not(:disabled),
+    .admin-panel-modal .admin-inline-btn:hover:not(:disabled),
+    .admin-panel-modal .admin-panel-close-btn:hover:not(:disabled),
+    .admin-panel-modal .notification-header-btn:hover:not(:disabled) {
+      box-shadow: none !important;
+    }
+    body .admin-panel-modal .btn:hover:not(:disabled),
+    body .admin-panel-modal .admin-submit-btn:hover:not(:disabled),
+    body .admin-panel-modal .admin-inline-btn:hover:not(:disabled),
+    body .admin-panel-modal .admin-panel-close-btn:hover:not(:disabled),
+    body .admin-panel-modal .notification-header-btn:hover:not(:disabled) {
+      box-shadow: none !important;
+    }
+
+    /* Remove all button glow across the app. */
+    button,
+    button:hover,
+    button:focus,
+    button:focus-visible,
+    button:active,
+    .btn,
+    .btn:hover:not(:disabled),
+    .btn:focus,
+    .btn:focus-visible,
+    .btn:active:not(:disabled),
+    .generation-main-btn,
+    .generation-main-btn:hover:not(:disabled),
+    .admin-submit-btn,
+    .admin-submit-btn:hover:not(:disabled),
+    .admin-inline-btn,
+    .admin-inline-btn:hover:not(:disabled),
+    .notification-header-btn,
+    .notification-header-btn:hover:not(:disabled),
+    .results-toolbar-btn,
+    .results-toolbar-btn:hover:not(:disabled),
+    .logout-btn,
+    .logout-btn:hover,
+    .theme-toggle-button,
+    .theme-toggle-button:hover,
+    .sidebar-toggle-btn,
+    .sidebar-toggle-btn:hover,
+    .image-thumbnail-delete-btn,
+    .image-thumbnail-delete-btn:hover,
+    .video-thumbnail-delete-btn,
+    .video-thumbnail-delete-btn:hover {
+      box-shadow: none !important;
+      text-shadow: none !important;
+      transform: none !important;
+    }
+
+    .toggle-sidebar-btn,
+    .toggle-sidebar-btn:hover {
+      background: transparent !important;
+      opacity: 1 !important;
+      color: inherit !important;
+      box-shadow: none !important;
+      filter: none !important;
+      transform: none !important;
+    }
+    .logo-container .sidebar-close-fade-btn {
+      position: absolute !important;
+      right: 0 !important;
+      top: calc(50% - 6px) !important;
+      transform: translateY(-50%) !important;
+      transition: opacity 220ms ease-out !important;
+    }
+    .logo-container .sidebar-close-fade-btn:hover {
+      background: rgba(148, 163, 184, 0.12) !important;
+      color: inherit !important;
+      transform: translateY(-50%) !important;
+    }
+    .sidebar:not(.open) .sidebar-close-fade-btn {
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-trigger {
+      transition: background-color 180ms ease-out !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-trigger:hover {
+      background: rgba(99, 102, 241, 0.12) !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-mark,
+    .sidebar:not(.open) .sidebar-open-icon {
+      transition: opacity 180ms ease-out !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-trigger:hover .sidebar-logo-collapsed-mark {
+      opacity: 0 !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-trigger:hover .sidebar-open-icon {
+      opacity: 1 !important;
+      color: #818cf8 !important;
+    }
+    .sidebar.open .sidebar-open-icon {
+      opacity: 0 !important;
+    }
+
+    /* Buttons keep their resting color on hover. */
+    .btn-primary:hover:not(:disabled),
+    .btn-action:hover:not(:disabled),
+    .admin-submit-btn:hover:not(:disabled),
+    .admin-inline-btn.confirm:hover:not(:disabled),
+    .login-submit-btn:hover:not(:disabled),
+    .btn-primary.generation-main-btn:hover:not(:disabled) {
+      
+      color: #ffffff !important;
+      border-color: rgba(220, 230, 255, 0.4) !important;
+    }
+    .btn-success:hover:not(:disabled),
+    .admin-activate-btn:hover:not(:disabled),
+    .btn-success.generation-main-btn:hover:not(:disabled) {
+      
+      color: #04110c !important;
+      border-color: rgba(150, 255, 220, 0.4) !important;
+    }
+    .btn-secondary:hover:not(:disabled),
+    .admin-inline-btn.cancel:hover:not(:disabled) {
+      
+      color: var(--text-strong) !important;
+      border-color: rgba(255,255,255,0.12) !important;
+      filter: brightness(1.2) !important;
+    }
+    body .btn-secondary:hover:not(:disabled),
+    body .admin-inline-btn.cancel:hover:not(:disabled) {
+      
+      border-color: rgba(0,0,0,0.15) !important;
+      filter: brightness(0.95) !important;
+    }
+    .btn-destructive:hover:not(:disabled),
+    .admin-inline-btn.confirm-delete:hover:not(:disabled) {
+      
+      color: #fff5f7 !important;
+      border-color: rgba(255, 140, 155, 0.4) !important;
+    }
+
+
+    .input-mode-button:not(.active):hover:not(:disabled),
+    .output-format-btn:not(.active):hover:not(:disabled),
+    .admin-tabs-button:not(.active):hover:not(:disabled) {
+      background: transparent !important;
+      color: var(--text-muted) !important;
+    }
+    .input-mode-button.active:hover:not(:disabled),
+    .output-format-btn.active:hover:not(:disabled),
+    .admin-tabs-button.active:hover:not(:disabled) {
+      background: transparent !important;
+      color: var(--text-strong) !important;
+    }
+    .footer-transient-btn:hover,
+    .dropdown-trigger-button:hover,
+    .footer-selector-pill:hover {
+      background: var(--surface-panel-2) !important;
+      color: var(--text-main) !important;
+      border-color: var(--border-soft) !important;
+    }
+    body .footer-transient-btn:hover,
+    body .dropdown-trigger-button:hover,
+    body .footer-selector-pill:hover {
+      color: #6b7280 !important;
+    }
+    .theme-toggle-button:hover,
+    .sidebar-toggle-btn:hover,
+    .logout-btn:hover,
+    .admin-panel-close-btn:hover,
+    .toggle-sidebar-btn:hover {
+      background: transparent !important;
+      color: inherit !important;
+      border-color: currentColor !important;
+    }
+    .modal-card button.absolute:hover,
+    .modal-card button[class*="hover:text"]:hover {
+      background: transparent !important;
+      color: #9ca3af !important;
+    }
+    .image-thumbnail-delete-btn:hover,
+    .video-thumbnail-delete-btn:hover {
+      background-color: transparent !important;
+      color: inherit !important;
+    }
+
+    /* Keep admin panel tab hover perfectly pill-shaped. */
+    .admin-tabs-selector,
+    .admin-tabs-slider,
+    .admin-tabs-button,
+    .admin-tabs-button.active,
+    .admin-tabs-button:hover:not(:disabled),
+    .admin-tabs-button:focus-visible {
+      border-radius: 9999px !important;
+    }
+
+    body .footer-transient-btn,
+    body .dropdown-trigger-button {
+      background: rgba(15, 23, 42, 0.035) !important;
+      border-color: rgba(15, 23, 42, 0.08) !important;
+    }
+    body .output-format-toggle {
+      background: #f3f4f6 !important;
+      border-color: #d1d5db !important;
+    }
+    body .output-format-slider {
+      background: #ffffff !important;
+      border-color: rgba(15, 23, 42, 0.08) !important;
+      box-shadow: none !important;
+    }
+    body .editorial-command-canvas.unified-input-container {
+      background: rgba(255,255,255,0.82) !important;
+      border: 1px solid var(--border-soft) !important;
+      box-shadow: none !important;
+    }
+    body .editorial-result-card.inner-card {
+      background-color: var(--surface-raised-2) !important;
+      border: 1px solid var(--border-soft) !important;
+      box-shadow: none !important;
+    }
+
+    @media (max-width: 767px) {
+      .editorial-main {
+        min-height: auto;
+      }
+      .editorial-hero {
+        margin-top: 1.5rem !important;
+      }
+      .hero-heading {
+        font-size: 44px !important;
+        max-width: min(560px, calc(100vw - 2rem)) !important;
+        white-space: normal !important;
+      }
+      .hero-heading-line {
+        display: block;
+      }
+      .hero-heading-line + .hero-heading-line::before {
+        content: none;
+      }
+      .editorial-workspace {
+        max-width: 100% !important;
+        padding-left: 0.75rem !important;
+        padding-right: 0.75rem !important;
+      }
+      .editorial-command-canvas.unified-input-container {
+        min-height: 220px !important;
+      }
+      .generation-controls-row {
+        gap: 0.6rem !important;
+      }
+      .generation-main-btn {
+        min-height: 48px !important;
+      }
+    }
+
+    /* Prevent choppy width animations while viewport is being resized/snapped */
+    body.is-viewport-resizing .sidebar,
+    body.is-viewport-resizing #app-container,
+    body.is-viewport-resizing .sidebar-item,
+    body.is-viewport-resizing .title-brand,
+    body.is-viewport-resizing .username-label,
+    body.is-viewport-resizing .logout-btn,
+    body.is-viewport-resizing .input-mode-slider,
+    body.is-viewport-resizing .input-mode-button,
+    body.is-viewport-resizing .unified-input-container .unified-footer,
+    body.is-viewport-resizing .unified-input-container .unified-footer * {
+      transition: none !important;
+      animation: none !important;
+    }
+
+    /* Keep the app visually pinned when the browser restores this tab from the background. */
+    body.is-tab-restoring,
+    body.is-tab-restoring *,
+    body.is-tab-restoring *::before,
+    body.is-tab-restoring *::after {
+      transition: none !important;
+      scroll-behavior: auto !important;
+    }
+
+    /* Keep interaction motion scoped to interactive surfaces only. */
+    .input-mode-selector,
+    .input-mode-selector *,
+    .output-format-toggle,
+    .output-format-toggle *,
+    .admin-tabs-selector,
+    .admin-tabs-selector *,
+    .model-picker-overlay,
+    .model-picker-overlay *,
+    .model-picker-card,
+    .model-picker-card *,
+    .footer-selector-pill,
+    .footer-selector-pill *,
+    .num-prompts-control,
+    .num-prompts-control *,
+    .notification-header-btn,
+    .notification-header-btn * {
+      transition-duration: 180ms !important;
+    }
+    .animate-slide-left,
+    .animate-slide-down,
+    .animate-slide-in-right-center,
+    .animate-slide-in-bottom-right-center {
+      animation-duration: 180ms !important;
+    }
+
+    /* Absolute last guard: buttons must never glow, including hover/focus states. */
+    button,
+    button *:not(.login-spinner):not(.modern-spinner),
+    button::before,
+    button::after,
+    button:hover,
+    button:hover *:not(.login-spinner):not(.modern-spinner),
+    button:hover::before,
+    button:hover::after,
+    button:focus,
+    button:focus-visible,
+    button:active,
+    [role="button"],
+    [role="button"] *,
+    [role="button"]:hover,
+    [role="button"]:hover *,
+    .btn,
+    .btn *,
+    .btn:hover,
+    .btn:hover *,
+    .btn:focus,
+    .btn:focus-visible,
+    .btn:active,
+    .generation-main-btn,
+    .generation-main-btn:hover,
+    .admin-submit-btn,
+    .admin-submit-btn:hover,
+    .admin-inline-btn,
+    .admin-inline-btn:hover,
+    .notification-header-btn,
+    .notification-header-btn:hover,
+    .results-toolbar-btn,
+    .results-toolbar-btn:hover,
+    .login-submit-btn,
+    .login-submit-btn:hover,
+    .sidebar-toggle-btn,
+    .sidebar-toggle-btn:hover,
+    .theme-toggle-button,
+    .theme-toggle-button:hover,
+    .logout-btn,
+    .logout-btn:hover,
+    .image-thumbnail-delete-btn,
+    .image-thumbnail-delete-btn:hover,
+    .video-thumbnail-delete-btn,
+    .video-thumbnail-delete-btn:hover {
+      box-shadow: none !important;
+      text-shadow: none !important;
+      filter: none !important;
+    }
+    .logo-container .sidebar-close-fade-btn,
+    .logo-container .sidebar-close-fade-btn:hover,
+    .logo-container .sidebar-close-fade-btn:focus,
+    .logo-container .sidebar-close-fade-btn:active {
+      background: transparent !important;
+      color: inherit !important;
+      box-shadow: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+      transform: translateY(-50%) !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-trigger:hover {
+      background: rgba(99, 102, 241, 0.12) !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-trigger:hover .sidebar-logo-collapsed-mark {
+      opacity: 0 !important;
+    }
+    .sidebar:not(.open) .sidebar-logo-collapsed-trigger:hover .sidebar-open-icon {
+      opacity: 1 !important;
+      color: #818cf8 !important;
+    }
+    .logo-container .sidebar-close-fade-btn:hover {
+      background: rgba(148, 163, 184, 0.12) !important;
+      color: inherit !important;
+      transform: translateY(-50%) !important;
+    }
+    .admin-tabs-button:not(.active):hover:not(:disabled) {
+      background: rgba(255,255,255,0.075) !important;
+      color: var(--text-main) !important;
+      border-radius: 9999px !important;
+    }
+    body .admin-tabs-button:not(.active):hover:not(:disabled) {
+      background: rgba(15, 23, 42, 0.055) !important;
+      color: #334155 !important;
+    }
+    .input-mode-selector .input-mode-button:not(.active):hover:not(:disabled),
+    .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) {
+      background-color: rgba(255,255,255,0.075) !important;
+      color: #f8fafc !important;
+      border-radius: 9999px !important;
+    }
+    body .input-mode-selector .input-mode-button:not(.active):hover:not(:disabled),
+    body .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) {
+      background-color: rgba(15, 23, 42, 0.055) !important;
+      color: #111827 !important;
+    }
+    .input-mode-selector .input-mode-button:not(.active):hover:not(:disabled) span,
+    .input-mode-selector .input-mode-button:not(.active):hover:not(:disabled) .material-symbols-outlined,
+    .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) span,
+    .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) .output-format-icon,
+    .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) .material-symbols-outlined {
+      color: #f8fafc !important;
+      opacity: 1 !important;
+    }
+    body .input-mode-selector .input-mode-button:not(.active):hover:not(:disabled) span,
+    body .input-mode-selector .input-mode-button:not(.active):hover:not(:disabled) .material-symbols-outlined,
+    body .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) span,
+    body .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) .output-format-icon,
+    body .output-format-toggle .output-format-btn:not(.active):hover:not(:disabled) .material-symbols-outlined {
+      color: #111827 !important;
+      opacity: 1 !important;
+    }
+
+
+    /* Override specifically for Notification Header Buttons to match Admin Refresh button glow */
+    .notification-header-btn:hover {
+      background: #18202c !important;
+      color: var(--text-strong) !important;
+      border-color: rgba(255,255,255,0.12) !important;
+      box-shadow: none !important;
+      transform: none !important;
+      filter: none !important;
+    }
+    body .notification-header-btn:hover {
+      background: #e2e8f0 !important;
+      color: #1e293b !important;
+      border-color: rgba(0,0,0,0.15) !important;
+      box-shadow: none !important;
+      transform: none !important;
+      filter: none !important;
+    }
+
+    .api-provider-dropdown-trigger,
+    .api-provider-dropdown-trigger:hover,
+    .api-provider-dropdown-trigger:active,
+    .api-provider-dropdown-trigger:focus,
+    .api-provider-dropdown-trigger:focus-visible,
+    .api-provider-dropdown-trigger[aria-expanded="true"] {
+      border-radius: var(--app-input-radius) !important;
+      background: #1b2330 !important;
+      border-color: #334155 !important;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+    body .api-provider-dropdown-trigger,
+    body .api-provider-dropdown-trigger:hover,
+    body .api-provider-dropdown-trigger:active,
+    body .api-provider-dropdown-trigger:focus,
+    body .api-provider-dropdown-trigger:focus-visible,
+    body .api-provider-dropdown-trigger[aria-expanded="true"] {
+      background: #f3f4f6 !important;
+      border-color: #d1d5db !important;
+    }
+    body .role-selector-trigger,
+    body .role-selector-trigger:hover,
+    body .role-selector-trigger:active,
+    body .role-selector-trigger:focus,
+    body .role-selector-trigger:focus-visible,
+    body .role-selector-trigger[aria-expanded="true"] {
+      background: #F9FAFB !important;
+      border-color: #D1D5DB !important;
+      color: #111827 !important;
+      box-shadow: none !important;
+      transform: none !important;
+    }
+
+    textarea.api-key-masked-textarea.flat-input {
+      color: transparent !important;
+      -webkit-text-fill-color: transparent !important;
+      text-shadow: none !important;
+      white-space: pre !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+      line-height: 1.5 !important;
+    }
+    body textarea.api-key-masked-textarea.flat-input {
+      caret-color: var(--input-text-light) !important;
+    }
+    .api-key-modal-card {
+      width: min(760px, calc(100vw - 2rem)) !important;
+      max-width: min(760px, calc(100vw - 2rem)) !important;
+      border-radius: 20px !important;
+      transition:
+        width 120ms linear,
+        max-width 120ms linear,
+        transform 120ms linear,
+        opacity 120ms linear !important;
+      will-change: width, transform, opacity;
+    }
+    .api-key-modal-close-btn {
+      z-index: 20 !important;
+      width: 38px;
+      height: 38px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 9999px;
+      pointer-events: auto;
+    }
+    .api-key-modal-close-btn .material-symbols-outlined {
+      pointer-events: none;
+    }
+    .api-key-modal-close-btn:hover {
+      background: rgba(148, 163, 184, 0.14);
+    }
+    .api-key-modal-card .flat-input,
+    .api-key-modal-card textarea,
+    .api-key-modal-card button {
+      transition:
+        background-color 120ms ease-out,
+        border-color 120ms ease-out,
+        color 120ms ease-out,
+        box-shadow 120ms ease-out,
+        opacity 120ms ease-out,
+        transform 120ms ease-out !important;
+    }
+    .api-key-modal-layout {
+      display: grid;
+      grid-template-columns: minmax(136px, 0.28fr) minmax(0, 1fr);
+      gap: 1rem;
+      align-items: start;
+      transition: grid-template-columns 120ms linear !important;
+    }
+    @media (max-width: 640px) {
+      .api-key-modal-card {
+        width: min(100%, calc(100vw - 1rem)) !important;
+        max-width: min(100%, calc(100vw - 1rem)) !important;
+        padding: 1rem !important;
+      }
+      .api-key-modal-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 0.85rem;
+      }
+    }
+    .api-key-mask-overlay {
+      z-index: 1;
+    }
+    .api-key-mask-overlay pre,
+    .api-key-mask-overlay .api-key-mask-line {
+      white-space: pre !important;
+      overflow-wrap: normal !important;
+      word-break: normal !important;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .modern-spinner {
+      display: inline-block;
+      border: 0 !important;
+      border-radius: 9999px !important;
+      background: conic-gradient(from 90deg, transparent 0deg, transparent 72deg, currentColor 360deg);
+      -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+      mask: radial-gradient(farthest-side, transparent calc(100% - 2px), #000 0);
+      transform-origin: center;
+      animation: spin 0.7s linear infinite !important;
+      flex-shrink: 0;
+    }
+
+    .modern-spinner {
+      animation-play-state: running !important;
+    }

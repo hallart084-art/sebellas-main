@@ -1,0 +1,73 @@
+    /* Main App Container (transparent for layout) */
+    .main-container {
+      width: 100%;
+    }
+    /* Modal Card Container */
+    .modal-card {
+      border-radius: 1rem; /* rounded-2xl */
+      border: 1px solid;
+    }
+    body .modal-card {
+      background-color: var(--bg-main-light);
+      border-color: var(--border-light);
+    }
+    
+    /* Inner Card Styles for Prompt Results */
+    .inner-card {
+      border-radius: 0.75rem; /* rounded-xl */
+      border: 1px solid;
+      container-type: inline-size;
+    }
+    body .inner-card {
+      background-color: var(--dropdown-bg-light);
+      border-color: var(--border-light);
+    }
+    
+    /* Folder Card - slightly transparent against the history background */
+    .folder-card {
+      overflow: hidden;
+      border-radius: 0.75rem;
+      border: 1px solid;
+    }
+    body .folder-card {
+      background-color: rgba(255, 255, 255, 0.7) !important;
+      border-color: var(--border-light);
+    }
+
+    /* Glassmorphic Card Container */
+    .glass-card {
+      border-radius: 1.25rem; /* 20px */
+      border: 1px solid;
+      transition: all 0.3s ease;
+      container-type: inline-size;
+    }
+    body .glass-card {
+      background-color: #ffffff;
+      border-color: #e5e7eb;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.06);
+    }
+
+
+    /* Input Main Panel: reduce contrast + make inner area single-tone */
+
+    body .unified-input-container {
+      background: #f8fafc !important;
+      border-color: #e5e7eb !important;
+      box-shadow: none !important;
+    }
+    body .unified-input-container .unified-input-body,
+    body .unified-input-container .unified-footer {
+      background: #f8fafc !important;
+    }
+    body .unified-input-container .flat-input,
+    body .unified-input-container textarea,
+    body .unified-input-container select,
+    body .unified-input-container input {
+      background: #f8fafc !important;
+      background-image: none !important;
+      color: #111827 !important;
+    }
+    body .unified-input-container .unified-footer-divider {
+      background-color: #dbe1ea !important;
+    }
+
