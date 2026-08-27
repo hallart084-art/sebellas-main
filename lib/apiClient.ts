@@ -404,6 +404,8 @@ const MAX_EMPTY_RESPONSE_RETRIES = 4;
  */
 const stripCodeFence = (text: string): string => {
   let s = text.trim();
+  // Strip <think>...</think> reasoning tags returned by reasoning models like Qwen/DeepSeek
+  s = s.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
   if (s.startsWith('```')) {
     const nl = s.indexOf('\n');
     s = nl !== -1 ? s.substring(nl + 1) : s.substring(3);

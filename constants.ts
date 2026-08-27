@@ -13,10 +13,10 @@ export const MODEL_PROVIDER_LABELS: Record<ModelProvider, string> = {
 };
 
 export const GOOGLE_API_KEY_CHECK_MODEL = 'gemini-2.5-flash';
-export const GROQ_API_KEY_CHECK_MODEL = 'llama-3.1-8b-instant';
+export const GROQ_API_KEY_CHECK_MODEL = 'qwen/qwen3.6-27b';
 export const MISTRAL_API_KEY_CHECK_MODEL = 'mistral-small-latest';
-export const OPENROUTER_API_KEY_CHECK_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
 export const GITHUB_API_KEY_CHECK_MODEL = 'gpt-4o-mini';
+export const OPENROUTER_API_KEY_CHECK_MODEL = 'meta-llama/llama-3.3-70b-instruct:free';
 
 export type ModelDefinition = {
   id: string;
@@ -49,13 +49,12 @@ export const AI_MODELS = [
   { id: 'phi-4', provider: 'github', displayName: 'Phi-4 (GitHub)', supportedModes: ['text', 'vector'] },
 
   // --- Groq ---
-  { id: 'llama-3.1-8b-instant', provider: 'groq', displayName: 'Llama 3.1 8B Instant', supportedModes: ['text', 'vector'] },
-  { id: 'llama-3.3-70b-versatile', provider: 'groq', displayName: 'Llama 3.3 70B Versatile', supportedModes: ['text', 'vector'] },
-  { id: 'llama3-70b-8192', provider: 'groq', displayName: 'Llama 3 70B', supportedModes: ['text', 'vector'] },
-  { id: 'llama3-8b-8192', provider: 'groq', displayName: 'Llama 3 8B', supportedModes: ['text', 'vector'] },
-  { id: 'mixtral-8x7b-32768', provider: 'groq', displayName: 'Mixtral 8x7B', supportedModes: ['text', 'vector'] },
-  { id: 'gemma2-9b-it', provider: 'groq', displayName: 'Gemma 2 9B', supportedModes: ['text', 'vector'] },
-  { id: 'deepseek-r1-distill-llama-70b', provider: 'groq', displayName: 'DeepSeek R1 Distill 70B', supportedModes: ['text', 'vector'] },
+  { id: 'qwen/qwen3.6-27b', provider: 'groq', displayName: 'Qwen 3.6 27B', supportedModes: ['text', 'vector'] },
+  { id: 'qwen/qwen3.8-27b', provider: 'groq', displayName: 'Qwen 3.8 27B', supportedModes: ['text', 'vector'] },
+  { id: 'groq/compound-mini', provider: 'groq', displayName: 'Groq Compound Mini', supportedModes: ['text', 'vector'] },
+  { id: 'groq/compound', provider: 'groq', displayName: 'Groq Compound', supportedModes: ['text', 'vector'] },
+  { id: 'openai/gpt-oss-120b', provider: 'groq', displayName: 'GPT OSS 120B', supportedModes: ['text', 'vector'] },
+  { id: 'openai/gpt-oss-20b', provider: 'groq', displayName: 'GPT OSS 20B', supportedModes: ['text', 'vector'] },
 
   // --- OpenRouter ---
   { id: 'google/gemini-flash-latest', provider: 'openrouter', displayName: 'Gemini Flash Latest', supportedModes: ['text', 'image', 'vector', 'video'], supportsQuickGenerate: true },
