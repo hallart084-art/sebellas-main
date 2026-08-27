@@ -352,33 +352,248 @@ ABSOLUTE RULES - violating any of these means complete failure:
  const formatInstruction = buildFootageFormatInstruction(numPrompts);
  return `${baseInstruction}\n${formatInstruction}`;
 };
+export const getFlatIllustrationSuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients"
+    : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients";
+
+  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, modern microstock graphic asset, no complex gradients, no noise, no photorealism, no 3d render.`;
+};
+
+export const FLAT_ILLUSTRATION_SUFFIX = getFlatIllustrationSuffix(true);
+
+export const getMonolineVectorSuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "perfectly isolated on solid pure white background, zero color background, pure white canvas"
+    : "perfectly isolated on clean solid background";
+
+  return `minimalist monoline vector art, continuous uniform single-weight black outline strokes, clean geometric linework, simplified abstract contour shapes, pure black and white line art, no colors, no fills, zero shading, zero gradients, no complex micro-textures, ${bgClause}, modern microstock graphic icon style, clean vector contour.`;
+};
+
+export const MONOLINE_VECTOR_SUFFIX = getMonolineVectorSuffix(true);
+
+export const getGeometricSilhouetteSuffix = (whiteBg: boolean = true) => {
+  const colorClause = whiteBg
+    ? "strictly two colors only, solid black silhouette on solid pure white background, pure white canvas, zero color"
+    : "strictly two colors only, solid white silhouette on solid pure black background, pure black canvas, zero color";
+
+  return `geometric silhouette vector art, minimalist solid flat shape logo mark, bold solid vector masses, simple minimal elegant design, sharp planar facet cuts, clean aerodynamic contours, high-contrast black and white graphic emblem, ${colorClause}, no tiny micro-details, no intricate textures, zero outlines, zero strokes, zero line art, zero shading, zero gradients, clean modern icon asset.`;
+};
+
+export const GEOMETRIC_SILHOUETTE_SUFFIX = getGeometricSilhouetteSuffix(true);
+
+export const getNegativeSpaceCutoutSuffix = (whiteBg: boolean = true) => {
+  const colorClause = whiteBg
+    ? "strictly two colors only, solid black and white, solid black subject on solid pure white background, pure white canvas, zero color"
+    : "strictly two colors only, solid white on solid pure black background, pure black canvas, zero color";
+
+  return `negative space vector art, clever negative space cutout logo emblem, dual-tone optical illusion graphic mark, subject facial features and lighting carved from solid negative space, simple minimal elegant design, clean geometric badge framing, pure black and white dual-tone, ${colorClause}, no tiny micro-details, no intricate textures, strictly solid flat shapes, zero outlines, zero strokes, zero gradients, zero shadows, clean corporate vector icon.`;
+};
+
+export const NEGATIVE_SPACE_CUTOUT_SUFFIX = getNegativeSpaceCutoutSuffix(true);
+
+export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true): string => {
+  const chosenStyle = (artStyle || '').toLowerCase();
+  if (chosenStyle.includes('monoline')) {
+    return getMonolineVectorSuffix(whiteBg);
+  }
+  if (chosenStyle.includes('geometric silhouette')) {
+    return getGeometricSilhouetteSuffix(whiteBg);
+  }
+  if (chosenStyle.includes('negative space')) {
+    return getNegativeSpaceCutoutSuffix(whiteBg);
+  }
+  return getFlatIllustrationSuffix(whiteBg);
+};
+
+const buildVectorTextPrompt = (
+  negativePrompt: string,
+  numPrompts: number,
+  artStyle?: string,
+  preset?: string,
+  pose?: string,
+  attributes?: string,
+  whiteBg?: boolean
+) => {
+  const chosenStyle = artStyle || 'Flat illustration';
+  const chosenPreset = preset || 'Single Image';
+  const isWhiteBg = whiteBg ?? true;
+
+  const isMonolineVector = chosenStyle.toLowerCase().includes('monoline');
+  const isGeometricSilhouette = chosenStyle.toLowerCase().includes('geometric silhouette');
+  const isNegativeSpaceCutout = chosenStyle.toLowerCase().includes('negative space');
+  const isFlatIllustration = chosenStyle.toLowerCase().includes('flat illustration');
+
+  let activeSuffix = '';
+  let styleRules = '';
+
+  if (isMonolineVector) {
+    activeSuffix = getMonolineVectorSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (MONOLINE GEOMETRIC VECTOR):
+1. **LINE ART & UNIFORM STROKES**: Strictly continuous uniform single-weight black outline strokes. Clean, consistent stroke thickness throughout the entire artwork without calligraphic tapering, without hatching, without rough sketch lines.
+2. **GEOMETRIC & ABSTRACT COMPOSITION**: Abstract and deconstruct the concept into clean geometric contour shapes (arcs, circles, polygonal facets, clean linear silhouettes). Keep the composition balanced, stylized, and iconic.
+3. **COLOR & SHADING**: Strictly black line art on pure solid white background. No colors, no color fills, zero shading, zero cel shadows, zero gradients.
+4. **BACKGROUND**: The subject MUST be cleanly isolated on a solid pure white background with zero background clutter, zero floor lines, and zero noise.
+5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "wolf head" -> "A stylized geometric wolf head composed of symmetrical arched clean black lines and sharp polygonal facets, ${activeSuffix}"
+- "desert landscape" -> "A minimalist desert landscape inside an arch frame with simplified rolling dunes, a geometric sun with straight radiant rays, and a stylized single palm tree, ${activeSuffix}"
+- "coffee and plants" -> "A minimalist continuous line composition of a coffee cup with rising steam beside a stylized geometric monstera leaf in a clean vase, ${activeSuffix}"
+- "elephant" -> "A stylized geometric elephant in profile view constructed with clean continuous curved black outlines and arch lines, ${activeSuffix}"`;
+  } else if (isGeometricSilhouette) {
+    activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
+    const subjectColor = isWhiteBg ? 'solid black' : 'solid white';
+    const bgColor = isWhiteBg ? 'pure white' : 'pure black';
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (GEOMETRIC SILHOUETTE):
+1. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} subject on ${bgColor} background. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
+2. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean, sweeping vector masses with sharp planar facet cuts and clean aerodynamic contours. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
+3. **STRICTLY LINELESS (ZERO STROKES)**: Absolutely NO outlines, NO strokes, NO line art, NO hatching. Every shape is a solid flat color block.
+4. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "wolf" -> "A stylized ${subjectColor} wolf in dynamic stalking profile with raised paw and sharp geometric fur facets on ${bgColor} background, ${activeSuffix}"
+- "leaping lion" -> "A bold ${subjectColor} leaping lion silhouette in full stride with sharp geometric mane facets and dynamic angular leg joints on ${bgColor} background, ${activeSuffix}"
+- "warrior chieftain" -> "A noble side-profile silhouette of a ${subjectColor} warrior chieftain wearing a tiered geometric feather headdress composed of clean angular wedge shapes on ${bgColor} background, ${activeSuffix}"
+- "unicorn" -> "A graceful leaping ${subjectColor} unicorn silhouette with a sharp spiraled horn and stylized sweeping aerodynamic mane facets on ${bgColor} background, ${activeSuffix}"`;
+  } else if (isNegativeSpaceCutout) {
+    activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
+    const subjectColor = isWhiteBg ? 'solid black' : 'solid white';
+    const bgColor = isWhiteBg ? 'pure white' : 'pure black';
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (NEGATIVE SPACE CUTOUT):
+1. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} and ${bgColor}. If subject is black, background is white. If subject is white, background is black. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
+2. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean geometric shapes. Clever negative space cutouts for major facial features, lighting, or silhouettes. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
+3. **BADGE & FRAME INTEGRATION**: Seamlessly integrate the subject inside a clean geometric silhouette or framing (e.g. solid circular badge, rounded square tile, or silhouette frame).
+4. **STRICTLY LINELESS (ZERO STROKES)**: Strictly flat solid fills and negative space cuts, zero outlines, zero strokes, zero gradients, zero shadows.
+5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "lion head" -> "A fierce ${subjectColor} lion head emblem centered inside a solid circular badge, where the nose, muzzle, eyes, and mane highlights are ingeniously carved from negative space cutouts on ${bgColor} background, ${activeSuffix}"
+- "heron bird" -> "An elegant ${subjectColor} silhouette of a heron bird in flight seamlessly integrated inside a rounded square frame, with streamlined wing feathers formed by negative space slices on ${bgColor} background, ${activeSuffix}"
+- "bearded god" -> "A majestic bust profile of a bearded Greek god inside a solid circular emblem, with hair locks, chiseled brow, and deep jaw shadows sharply carved out through negative space on ${bgColor} background, ${activeSuffix}"
+- "statue of liberty" -> "A low-angle head emblem of the Statue of Liberty, with the face, eyes, and crown spikes defined purely through high-contrast negative space shadow cuts on ${bgColor} background, ${activeSuffix}"`;
+  } else if (isFlatIllustration) {
+    activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (FLAT ILLUSTRATION):
+1. **ANATOMY & PROPORTIONS**: Simplified chunky rounded anatomy, clean stylized shapes, non-intricate body features, simple friendly facial expressions.
+2. **NO MICRO-DETAILS**: Absolutely DO NOT include tiny badges, small icons, stickers, decals, complex UI charts, graphs, or text on props or surfaces. All props, helmets, laptops, and screens must be solid, blank, and minimalistic.
+3. **COLOR & SHADING**: Colors must be ultra-vibrant, sharp, and cheerful with saturated azure blue and radiant bright orange accents. Shading must be bold, clean-cut, hard-edge 2-tone flat shadow shapes. Strictly zero outlines/strokes.
+4. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**: The background MUST be a single flat solid color with NO floor, NO ground surface, NO floor line, NO scenery, and ZERO gradients. The subject must be cleanly isolated on this single solid background.
+5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "technician" -> "A joyful male electrical technician with chunky build wearing a plain bright orange safety vest and solid yellow hardhat holding a blank tablet next to simple clean solar panels, ${activeSuffix}"
+- "man watering plant" -> "A cheerful man with chunky build and simple smiling face happily kneeling to water a potted plant with a yellow watering can, ${activeSuffix}"
+- "sport player" -> "A cheerful young basketball player with chunky cartoon build wearing a solid orange basketball jersey and blue shorts dribbling a simple basketball, ${activeSuffix}"
+- "robot assistant" -> "A cute chubby white and deep cobalt blue AI robot with bulbous rounded body and glowing cyan visor holding a solid yellow folder, ${activeSuffix}"`;
+  } else {
+    activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE:
+- Every prompt must strictly follow "${chosenStyle}" with clean 2D vector styling, bold simplified shapes, and vivid color schemes.
+- Strictly no photorealism, camera metadata, or 3D noise.`;
+  }
+
+  return `${buildNegativePromptInstruction(negativePrompt)}You are a world-class AI prompt engineer and visionary creative director specializing in 2D vector art and commercial microstock graphic assets.
+Your task is to take the user's concept and generate EXACTLY ${numPrompts} unique, wildly creative, and intellectually rich 2D prompts in English, returned as a JSON array.
+
+CRITICAL CREATIVE INTELLIGENCE & BROAD HORIZON DIVERSIFICATION RULES:
+1. **WILD LATERAL THINKING & NON-CLICHÉ PERSPECTIVES**:
+   - Act as an exceptionally imaginative, smart creative assistant. Break far away from boring, generic, or repetitive clichés!
+   - For ANY concept (e.g. "natal/christmas", "animals", "coffee", "technology", "professions", "sports", "nature", "food", "lifestyle"):
+     * Unpack 10 completely diverse, vibrant visual narratives and micro-scenes across the prompts.
+     * Explore varied scene contexts: cozy atmospheric indoor moments, dynamic outdoor activities, intricate craft/workshops, joyful celebrations, serene nature encounters, and abstract geometric focal emblems.
+     * If theme is a category/collection: Feature a **distinct, iconic entity/species/job** for EVERY prompt (e.g. for Christmas: gingerbread baker, retro postal bicycle in snow, Scandinavian cabin window with knitted stocking, geometric reindeer in birch woods, brass band choir musician, minimalist hot cocoa flatlay, star of Bethlehem archway).
+     * If theme is a single specific subject: Wildly vary the perspective, action dynamics, emotional energy, lighting mood, and interaction with props.
+2. **MULTI-ANGLE & COMPOSITIONAL DYNAMICS**:
+   - Explore diverse viewpoints across prompts: dynamic low-angle silhouettes, intimate focal micro-details, elegant side-profile motions, high overhead flatlay arrangements, and symmetrical geometric emblem framings.
+3. **STYLE-AWARE MORPHOLOGY & POSE**:
+   - If **Flat illustration**: Describe subjects with chunky stylized rounded proportions, cheerful everyday micro-moments, and bold solid color props.
+   - If **Monoline geometric vector**: Describe subjects with abstract geometric deconstruction, linear continuous contour arcs, polygonal facets, and clean symmetrical icon/emblem/archway framing.
+   - If **Geometric silhouette**: Describe subjects as bold solid planar masses with sharp facet cuts, dynamic aerodynamic profiles, and clean contour silhouettes.
+   - If **Negative space cutout**: Describe subjects with clever negative space facial/shadow cutouts and geometric badge framing (circular badge, rounded square tile, or silhouette frame).
+
+Creative Configuration:
+- Art Style: ${chosenStyle}
+- Preset Format: ${chosenPreset}
+${pose ? `- Target Pose: ${pose}` : '- Target Pose: Dynamically vary distinct actions, expressive gestures, and postures across prompts without repetition.'}
+${attributes ? `- Target Attributes: ${attributes}` : '- Target Attributes: Keep props clean, solid, and simplified without intricate surface clutter.'}
+
+${styleRules}
+
+Core Output Rules:
+1. **Process Concept**: Process the main concept and generate EXACTLY ${numPrompts} unique, imaginative prompts in English. NEVER ask questions, NEVER refuse, and NEVER output conversational text.
+2. **JSON Output**: You MUST respond with a single, valid JSON array containing exactly ${numPrompts} strings. Do NOT include any other text, markdown, or code fences outside of the JSON array.
+3. ${actionPoseInstruction}
+4. ${plainPromptFormattingInstruction}
+5. ${jsonStringSafetyInstruction}`;
+};
+
 export const buildTextPrompt = (concept: string, settings: UseSettingsReturn, isQuick: boolean) => {
- let systemInstruction: string;
- let schema: object = promptListSchema;
- let contents = `Process the following concept: "${concept}"`;
- 
- switch (settings.styleOption) {
- case 'isolated':
- systemInstruction = buildIsolatedTextPrompt(settings.negativePrompt, settings.numPrompts);
- break;
- case 'custom':
- const template = settings.customTemplate.trim();
- systemInstruction = buildCustomTextPrompt(template, settings.negativePrompt, settings.numPrompts);
- break;
- case 'footage':
- systemInstruction = buildFootageJsonPrompt(settings.negativePrompt, settings.numPrompts);
- schema = footageListSchema;
- break;
- case 'photographic':
- default:
- systemInstruction = buildFotographicTextPrompt(settings.promptQualityOption, settings.negativePrompt, settings.numPrompts);
- break;
- }
+  let systemInstruction: string;
+  let schema: object = promptListSchema;
+  const entropySeed = Math.random().toString(36).substring(2, 8);
+  let contents = `Process the following concept: "${concept}" [Creative Horizon Seed: ${entropySeed} - Explore wild, non-cliché, highly imaginative, diverse multi-perspective angles]`;
+  
+  switch (settings.styleOption) {
+    case 'isolated':
+      systemInstruction = buildIsolatedTextPrompt(settings.negativePrompt, settings.numPrompts);
+      break;
+    case 'vector': {
+      const chosenArtStyle = settings.vectorArtStyle || 'Flat illustration';
+      const isWhiteBg = settings.vectorWhiteBg ?? true;
+      const isMonoline = chosenArtStyle.toLowerCase().includes('monoline');
+      const isGeometricSilhouette = chosenArtStyle.toLowerCase().includes('geometric silhouette');
+      const isNegativeSpaceCutout = chosenArtStyle.toLowerCase().includes('negative space');
+      
+      let activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
+      if (isMonoline) activeSuffix = getMonolineVectorSuffix(isWhiteBg);
+      else if (isGeometricSilhouette) activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
+      else if (isNegativeSpaceCutout) activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
+
+      systemInstruction = buildVectorTextPrompt(
+        settings.negativePrompt,
+        settings.numPrompts,
+        chosenArtStyle,
+        settings.vectorPreset,
+        settings.vectorPose,
+        settings.vectorAttributes,
+        isWhiteBg
+      );
+      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format. [Session Exploration Seed: ${entropySeed}]
+
+CRITICAL DIVERSITY & FORMULA REQUIREMENT:
+- Act as an ultra-smart, wildly creative assistant. Think broadly and laterally from unexpected angles, rich micro-moments, and diverse sub-entities.
+- Every single prompt in the JSON array MUST strictly follow this exact structure:
+"[AI EXPANDED MAIN CONCEPT WITH SPECIFIC POSE, SUBJECT, AND GEOMETRIC ACTIONS], ${activeSuffix}"
+
+Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
+      break;
+    }
+    case 'custom':
+      const template = settings.customTemplate.trim();
+      systemInstruction = buildCustomTextPrompt(template, settings.negativePrompt, settings.numPrompts);
+      break;
+    case 'footage':
+      systemInstruction = buildFootageJsonPrompt(settings.negativePrompt, settings.numPrompts);
+      schema = footageListSchema;
+      break;
+    case 'photographic':
+    default:
+      systemInstruction = buildFotographicTextPrompt(settings.promptQualityOption, settings.negativePrompt, settings.numPrompts);
+      break;
+  }
  
  const config: any = {
  systemInstruction,
  responseMimeType: 'application/json',
  responseSchema: schema,
+ // Optimasi kecepatan: maxOutputTokens disesuaikan dengan jumlah prompt
+ // 1 prompt ≈ 100-300 token + JSON wrapper, minimum 1024 agar aman untuk semua provider
+ maxOutputTokens: Math.min(8192, Math.max(1024, settings.numPrompts * 300)),
  };
  applyQuickGenerateConfig(config, settings.selectedModel, isQuick);
  return { systemInstruction, contents, config };
@@ -439,6 +654,24 @@ const buildImageFootageAnalysisPrompt = (negativePrompt: string, numPrompts: num
  return { systemInstruction, contents };
 };
 
+const buildImageVectorAnalysisPrompt = (negativePrompt: string, numPrompts: number) => {
+  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are an expert AI visual analyst specializing in 2D vector graphic prompts.
+Task: Analyze the image and generate EXACTLY ${numPrompts} unique vector illustration prompts based on the subject and composition.
+
+Instructions:
+1. **Analyze Subject**: Identify the core subjects, characters, objects, and silhouettes in the image.
+2. **Translate to Vector Style**: Re-imagine the subject in clean 2D vector graphic art style: flat design, crisp vector outlines, smooth curves, stylized shapes, solid and gradient color fills, modern SVG sticker/asset aesthetic, clean background.
+3. **No Photographic Elements**: Do not use camera lenses, focal lengths, ISO, shutter speed, realistic skin pores, or photorealistic terms.
+4. **Consistency**: Maintain ancestry consistency for any visible human subjects across variations.
+5. **JSON Output**: You MUST respond with a single, valid JSON array containing exactly ${numPrompts} strings. Do NOT include any other text, markdown, or code fences outside of the JSON array.
+6. ${humanAncestryInstruction}
+7. ${plainPromptFormattingInstruction}
+8. ${jsonStringSafetyInstruction}`;
+
+  const contents = `Analyze the image and generate EXACTLY ${numPrompts} vector illustration prompts based on the system instructions, returning a JSON array.\n\nRemember: Maintain strict ancestry consistency. Determine the precise ancestry for each human once, and apply that same description to all generated prompts in the array.`;
+  return { systemInstruction, contents };
+};
+
 export const buildImagePrompt = (image: { data: string; mimeType: string }, settings: UseSettingsReturn, isQuick: boolean) => {
  const imagePart = { inlineData: { mimeType: image.mimeType, data: image.data } };
 
@@ -448,6 +681,9 @@ export const buildImagePrompt = (image: { data: string; mimeType: string }, sett
  switch (settings.styleOption) {
  case 'isolated':
  ({ systemInstruction, contents: textContent } = buildImageIsolatedAnalysisPrompt(settings.negativePrompt, settings.numPrompts));
+ break;
+ case 'vector':
+ ({ systemInstruction, contents: textContent } = buildImageVectorAnalysisPrompt(settings.negativePrompt, settings.numPrompts));
  break;
  case 'custom':
  const template = settings.customTemplate.trim();

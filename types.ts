@@ -11,7 +11,7 @@ export interface GeneratedPromptSet {
  sourceFile?: File;
 }
 
-export type StyleOption = 'photographic' | 'sameAsReference' | 'isolated' | 'custom' | 'footage' | 'vector';
+export type StyleOption = 'photographic' | 'sameAsReference' | 'isolated' | 'vector' | 'custom' | 'footage';
 
 export type PromptQualityOptionType = 'default' | 'xml';
 
@@ -32,11 +32,11 @@ export interface UploadedVideo {
 
 export type ModelId = ApiModel;
 
-export type InputMode = 'text' | 'image' | 'video' | 'vector';
+export type InputMode = 'text' | 'image' | 'vector' | 'video';
 
 export interface GenerationSettings {
  inputMode: InputMode;
- // For text/vector mode
+ // For text mode
  conceptsInput: string;
  // For image mode
  imageNames: string[];
@@ -52,12 +52,6 @@ export interface GenerationSettings {
  customTemplate: string;
  negativePrompt: string;
  targetFolderId?: string | null;
- // Vector studio settings
- vectorArtStyle?: string;
- vectorPreset?: string;
- vectorPose?: string;
- vectorAttributes?: string;
- vectorWhiteBg?: boolean;
 }
 
 export interface Folder {

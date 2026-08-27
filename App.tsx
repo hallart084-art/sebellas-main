@@ -9,7 +9,6 @@ import { readStoredProviderApiKeys, useGemini } from './hooks/useGemini';
 
 // Auth
 import { useAuth } from './contexts/AuthContext';
-import LoginPage from './components/LoginPage';
 
 // Hooks & Contexts
 import { LANGUAGES } from './locales';
@@ -20,6 +19,7 @@ import SettingsForm from './components/SettingsForm';
 import GenerationControls from './components/GenerationControls';
 import ResultsDisplay from './components/ResultsDisplay';
 import ApiKeyModal from './components/ApiKeyModal';
+import { GenerationActivityProgress, ActivityLogItem } from './components/GenerationActivityProgress';
 
 // Types & Libs
 import { GeneratedPromptSet, HistoryEntry, GenerationSettings, NotificationKind, NotificationTarget, SentNotificationItem, Folder } from './types';
@@ -29,6 +29,7 @@ import { useNotifications } from './hooks/useNotifications';
 import { generateModelContent, shouldRotateApiKeyOnError, isTransientEmptyResponseError } from './lib/apiClient';
 import { MODEL_PROVIDER_LABELS, getModelProvider, isModelSupportedForMode } from './constants';
 import type { ModelProvider } from './constants';
+import { generateUuid } from './lib/crypto';
 
 const LazyHistoryModal = lazy(() => import('./components/HistoryModal'));
 const LazyJsonMinifierModal = lazy(() => import('./components/JsonMinifierModal'));
@@ -94,7 +95,7 @@ const App: React.FC = () => {
  const settings = useSettings();
  const { uploadedImages, handleImageFiles, handleDeleteImage, isDraggingOverWindow: isDraggingImage, fileInputRef: imageFileInputRef, clearUploadedImages, error: imageUploaderError, clearError: clearImageUploaderError } = useImageUploader(settings.inputMode === 'image', t);
  const videoProcessor = useVideoProcessor(settings.inputMode === 'video', t);
- const { isProviderInitialized, apiKeys, apiStatus, handleSaveApiKeys, handleCheckProviderApiKey, parseApiError } = useGemini(t);
+ const { isProviderInitialized, apiKeys, apiStatus, handleSaveApiKeys, handleSaveProviderApiKey, handleRemoveDeadApiKey, handleCheckProviderApiKey, parseApiError } = useGemini(t);
  const selectedModelProvider = getModelProvider(settings.selectedModel);
  const isSelectedProviderInitialized = isProviderInitialized(selectedModelProvider);
  const hasAnyProviderInitialized = Object.values(apiStatus).some(Boolean);
@@ -104,6 +105,21 @@ const App: React.FC = () => {
  const [isRetryingAll, setIsRetryingAll] = useState<boolean>(false);
  const [retryingIds, setRetryingIds] = useState<Set<string | number>>(new Set());
  const [error, setError] = useState<string | null>(null);
+
+ // Real-time Activity Logs & Concurrency Progress state
+ const [activityLogs, setActivityLogs] = useState<ActivityLogItem[]>([]);
+ const [totalJobsCount, setTotalJobsCount] = useState<number>(0);
+ const [completedJobsCount, setCompletedJobsCount] = useState<number>(0);
+ const [currentProcessingConcept, setCurrentProcessingConcept] = useState<string>('');
+ const [activeWorkersCount, setActiveWorkersCount] = useState<number>(1);
+
+ const addActivityLog = useCallback((message: string, type: 'info' | 'success' | 'warning' | 'error' = 'info', workerIndex?: number) => {
+   const timeStr = new Date().toLocaleTimeString('id-ID', { hour12: false });
+   setActivityLogs(prev => [
+     ...prev.slice(-49),
+     { id: generateUuid(), timestamp: timeStr, message, type, workerIndex }
+   ]);
+ }, []);
 
  type ActiveView = 'generator' | 'history' | 'jsonminifier' | 'admin';
  const [activeView, setActiveView] = useState<ActiveView>(() => {
@@ -135,7 +151,8 @@ const App: React.FC = () => {
  const [folders, setFolders] = useState<Folder[]>([]);
 
  const generationIdRef = useRef<number>(0);
- const apiKeyIndexesRef = useRef<Record<ModelProvider, number>>({ google: 0, groq: 0, mistral: 0, openrouter: 0 });
+ const apiKeyIndexesRef = useRef<Record<ModelProvider, number>>({ google: 0, groq: 0, mistral: 0, openrouter: 0, github: 0 });
+ const keyLastUsedTimeRef = useRef<Record<string, number>>({});
  const wasMobileViewportRef = useRef<boolean>(isMobileViewport);
  const desktopSidebarPrefRef = useRef<boolean>(isSidebarOpen);
  const initialPageShowHandledRef = useRef<boolean>(false);
@@ -413,7 +430,7 @@ const App: React.FC = () => {
  const migratedHistory: HistoryEntry[] = parsedHistory.map(entry => sanitizeHistoryEntryForStorage({
  ...entry,
  settings: { ...entry.settings, inputMode: entry.settings.inputMode ?? (entry.settings.useImageInput ? 'image' : 'text'), videoNames: entry.settings.videoNames ?? (entry.settings.videoName ? [entry.settings.videoName] : []) },
- sets: entry.sets.map((set: any) => ({ ...set, id: set.id || crypto.randomUUID() }))
+ sets: entry.sets.map((set: any) => ({ ...set, id: set.id || generateUuid() }))
  }));
  setHistory(migratedHistory);
  localStorage.setItem('prompt_generation_history', JSON.stringify(migratedHistory.slice(0, 50)));
@@ -463,51 +480,79 @@ const App: React.FC = () => {
  return currentIndex;
  }, [apiKeys]);
 
- const processAndGenerate = useCallback(async (
- placeholder: GeneratedPromptSet,
- promptBuilder: () => { contents: any; config: any; }
- ): Promise<GeneratedPromptSet> => {
- try {
- const provider = getModelProvider(settings.selectedModel);
- const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
- if (!isProviderInitialized(provider) || providerKeys.length === 0) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
- if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
- throw new Error(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
- }
- const { contents, config } = promptBuilder();
+  const processAndGenerate = useCallback(async (
+    placeholder: GeneratedPromptSet,
+    promptBuilder: () => { contents: any; config: any; },
+    assignedKeyIndex?: number
+  ): Promise<GeneratedPromptSet> => {
+    try {
+      const provider = getModelProvider(settings.selectedModel);
+      const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+      if (!isProviderInitialized(provider) || providerKeys.length === 0) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
+      if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
+        throw new Error(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
+      }
+      const { contents, config } = promptBuilder();
 
- let responseText = '';
- let lastGenerationError: unknown = null;
- const startKeyIndex = reserveNextApiKeyStartIndex(provider);
- if (startKeyIndex === null) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
- const isXml = settings.promptQualityOption === 'xml';
+      let responseText = '';
+      let lastGenerationError: unknown = null;
+      const startKeyIndex = assignedKeyIndex !== undefined
+        ? (assignedKeyIndex % providerKeys.length)
+        : (reserveNextApiKeyStartIndex(provider) ?? 0);
+      if (startKeyIndex === null || startKeyIndex === undefined) throw new Error(`No ${provider} API key found. Please add your API key in Settings → API Keys.`);
+      const isXml = settings.promptQualityOption === 'xml';
 
- for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
- const selectedApiKey = providerKeys[(startKeyIndex + attempt) % providerKeys.length];
+      for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
+        const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
+        const selectedApiKey = providerKeys[keyIdx];
 
- try {
- responseText = await generateModelContent({
- model: settings.selectedModel,
- contents,
- config,
- apiKey: selectedApiKey,
- isXmlQuality: isXml,
- });
- lastGenerationError = null;
- break;
- } catch (requestError) {
- lastGenerationError = requestError;
- const canTryAnotherKey = (shouldRotateApiKeyOnError(requestError) || isTransientEmptyResponseError(requestError)) && attempt < providerKeys.length - 1;
- if (!canTryAnotherKey) {
- throw requestError;
- }
- console.warn(`Retrying ${provider} request with the next API key after a key-specific error.`, requestError);
- }
- }
+        try {
+          responseText = await generateModelContent({
+            model: settings.selectedModel,
+            contents,
+            config,
+            apiKey: selectedApiKey,
+            isXmlQuality: isXml,
+          });
+          lastGenerationError = null;
+          break;
+        } catch (requestError) {
+          lastGenerationError = requestError;
+          const errRaw = (requestError instanceof Error ? requestError.message : String(requestError)).toLowerCase();
+          const errParsed = parseApiError(requestError);
 
- if (lastGenerationError) throw lastGenerationError;
- 
- if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
+          // Hanya hapus secara permanen jika key BENAR-BENAR invalid/dicabut.
+          // JANGAN hapus jika hanya kena 429, model_not_found, atau error sementara.
+          const isModelError = errRaw.includes('model_not_found') || errRaw.includes('does not exist');
+          const isPermanentlyInvalid = !isModelError && (
+            errRaw.includes('invalid_api_key') ||
+            errRaw.includes('invalid api key') ||
+            errRaw.includes('api key not valid') ||
+            (errRaw.includes('unauthorized') && errRaw.includes('invalid'))
+          );
+
+          if (isPermanentlyInvalid) {
+            const maskedKey = `${selectedApiKey.slice(0, 6)}...${selectedApiKey.slice(-4)}`;
+            addActivityLog(`⚠️ [Auto-Remove] Key ${maskedKey} tidak valid/dicabut (${errParsed}) dan otomatis dihapus.`, 'warning');
+            handleRemoveDeadApiKey(provider, selectedApiKey, errParsed);
+          } else if (errRaw.includes('429') || errRaw.includes('rate limit') || errRaw.includes('resource exhausted')) {
+            // Adaptive backoff: jeda 5 detik untuk key yang terkena 429 lalu rotasi ke key berikutnya
+            const maskedKey = `${selectedApiKey.slice(0, 6)}...${selectedApiKey.slice(-4)}`;
+            addActivityLog(`⏳ [Backoff 5s] Key ${maskedKey} limit sementara, rotasi ke key berikutnya...`, 'info');
+            keyLastUsedTimeRef.current[selectedApiKey] = Date.now() + 5000;
+          }
+
+          const canTryAnotherKey = attempt < providerKeys.length - 1;
+          if (!canTryAnotherKey) {
+            throw requestError;
+          }
+          console.warn(`Retrying ${provider} request with the next API key after a key-specific error.`, requestError);
+        }
+      }
+
+      if (lastGenerationError) throw lastGenerationError;
+
+      if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
 
   let parsedPrompts: (string | Record<string, any>)[] = [];
   const s = responseText.trim();
@@ -800,6 +845,36 @@ const App: React.FC = () => {
     return s;
   });
 
+  // Guaranteed Vector Suffix Enforcement:
+  // Memastikan 100% setiap prompt mode vektor selalu memiliki sufiks paten yang sesuai di bagian akhir,
+  // bahkan jika model AI lupa atau memotong bagian sufiksnya.
+  const isVectorMode = settings.styleOption === 'vector' || settings.inputMode === 'vector';
+  if (isVectorMode) {
+    const isWhiteBg = settings.vectorWhiteBg ?? true;
+    const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle, isWhiteBg);
+    const chosenStyle = (settings.vectorArtStyle || '').toLowerCase();
+
+    // Gunakan tanda tangan unik spesifik dari masing-masing sufiks (bukan kata umum)
+    let suffixSignature = 'flat illustration style';
+    if (chosenStyle.includes('monoline')) suffixSignature = 'minimalist monoline vector art';
+    else if (chosenStyle.includes('geometric silhouette')) suffixSignature = 'geometric silhouette vector art';
+    else if (chosenStyle.includes('negative space')) suffixSignature = 'clever negative space cutout logo emblem';
+
+    parsedPrompts = parsedPrompts.map(item => {
+      if (typeof item !== 'string') return item;
+      let text = item.trim();
+      text = text.replace(/[,.]\s*$/, '').trim();
+
+      if (!text.toLowerCase().includes(suffixSignature)) {
+        // Hapus potongan parsial di ujung jika AI sempat menulis sebagian
+        text = text.replace(/,?\s*(negative space vector art|geometric silhouette vector art|minimalist monoline vector art|flat illustration style).*$/i, '').trim();
+        text = text.replace(/[,.]\s*$/, '').trim();
+        return `${text}, ${targetSuffix}`;
+      }
+      return item;
+    });
+  }
+
  if (parsedPrompts.some(promptTextIncludesHumanWithoutAncestry)) {
  console.warn("Generated prompts still contain a human subject without an ancestry descriptor after model self-check.");
  }
@@ -825,7 +900,7 @@ const App: React.FC = () => {
  }
  }, [apiKeys, reserveNextApiKeyStartIndex, isProviderInitialized, settings.selectedModel, settings.inputMode, settings.styleOption, settings.numPrompts, t, parseApiError, logError]);
 
- type GenerationJob = () => Promise<GeneratedPromptSet>;
+type GenerationJob = () => Promise<GeneratedPromptSet>;
  type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[] };
 
  const waitForBatchDelay = (seconds: number): Promise<void> => {
@@ -833,51 +908,80 @@ const App: React.FC = () => {
  return new Promise(resolve => window.setTimeout(resolve, seconds * 1000));
  };
 
- const fileToBase64 = (file: File): Promise<string> => {
- return new Promise((resolve, reject) => {
- const reader = new FileReader();
- reader.readAsDataURL(file);
- reader.onload = () => resolve((reader.result as string).split(',')[1]);
- reader.onerror = error => reject(error);
- });
- };
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve((reader.result as string).split(',')[1]);
+      reader.onerror = error => reject(error);
+    });
+  };
 
- const generateForTextMode = useCallback((isQuick: boolean) => {
- const concepts = settings.conceptsInput.split(/[,;]/).map(c => c.trim()).filter(Boolean);
- if (concepts.length === 0) {
- setError(t('errorNoValidConceptsToProcess'));
- return { placeholders: [], jobs: [] };
- }
- const placeholders = concepts.map(concept => ({
- id: crypto.randomUUID(), originalConcept: concept, prompts: [], hasError: false, inputMode: 'text' as const,
- }));
- const jobs = concepts.map((concept, index) =>
- () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, settings, isQuick))
- );
- return { placeholders, jobs };
- }, [settings, processAndGenerate, t]);
- 
- const generateForImageMode = useCallback((isQuick: boolean) => {
- if (uploadedImages.length === 0) {
- setError(t('errorNoImageUploaded'));
- return { placeholders: [], jobs: [] };
- }
- const placeholders = uploadedImages.map(image => ({
- id: crypto.randomUUID(),
- originalConcept: image.name,
- prompts: [],
- hasError: false,
- inputMode: 'image' as const,
- sourceId: image.id,
- sourceFile: image.file,
- thumbnailUrl: image.objectUrl, // Use objectUrl for immediate display, but it won't be saved to history
- }));
- const jobs = uploadedImages.map((image, index) => async () => {
- const base64Data = await fileToBase64(image.file);
- return processAndGenerate(placeholders[index], () => PromptBuilder.buildImagePrompt({ data: base64Data, mimeType: image.type }, settings, isQuick));
- });
- return { placeholders, jobs };
- }, [uploadedImages, settings, processAndGenerate, t]);
+  const generateForTextMode = useCallback((isQuick: boolean) => {
+    const rawConcepts = settings.conceptsInput.split(/[\n,;]/).map(c => c.trim()).filter(Boolean);
+    if (rawConcepts.length === 0) {
+      setError(t('errorNoValidConceptsToProcess'));
+      return { placeholders: [], jobs: [] };
+    }
+
+    const placeholders = rawConcepts.map(concept => ({
+      id: generateUuid(),
+      originalConcept: concept,
+      prompts: [],
+      hasError: false,
+      inputMode: 'text' as const,
+    }));
+
+    const jobs = rawConcepts.map((concept, index) =>
+      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, settings, isQuick))
+    );
+
+    return { placeholders, jobs };
+  }, [settings, processAndGenerate, t]);
+
+  const generateForVectorMode = useCallback((isQuick: boolean) => {
+    const rawConcepts = settings.conceptsInput.split(/[\n,;]/).map(c => c.trim()).filter(Boolean);
+    if (rawConcepts.length === 0) {
+      setError(t('errorNoValidConceptsToProcess'));
+      return { placeholders: [], jobs: [] };
+    }
+
+    const placeholders = rawConcepts.map(concept => ({
+      id: generateUuid(),
+      originalConcept: concept,
+      prompts: [],
+      hasError: false,
+      inputMode: 'vector' as const,
+    }));
+
+    const jobs = rawConcepts.map((concept, index) =>
+      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector' }, isQuick))
+    );
+
+    return { placeholders, jobs };
+  }, [settings, processAndGenerate, t]);
+  
+  const generateForImageMode = useCallback((isQuick: boolean) => {
+    if (uploadedImages.length === 0) {
+      setError(t('errorNoImageUploaded'));
+      return { placeholders: [], jobs: [] };
+    }
+    const placeholders = uploadedImages.map(image => ({
+      id: generateUuid(),
+      originalConcept: image.name,
+      prompts: [],
+      hasError: false,
+      inputMode: 'image' as const,
+      sourceId: image.id,
+      sourceFile: image.file,
+      thumbnailUrl: image.objectUrl, // Use objectUrl for immediate display, but it won't be saved to history
+    }));
+    const jobs = uploadedImages.map((image, index) => async () => {
+      const base64Data = await fileToBase64(image.file);
+      return processAndGenerate(placeholders[index], () => PromptBuilder.buildImagePrompt({ data: base64Data, mimeType: image.type }, settings, isQuick));
+    });
+    return { placeholders, jobs };
+  }, [uploadedImages, settings, processAndGenerate, t]);
 
  const videoToBase64 = (file: File): Promise<{data: string; mimeType: string}> => {
  return new Promise((resolve, reject) => {
@@ -892,14 +996,14 @@ const App: React.FC = () => {
  });
  };
 
- const generateForVideoMode = useCallback(async (isQuick: boolean) => {
- if (videoProcessor.uploadedVideos.length === 0) {
- setError(t('errorNoVideoUploaded'));
- return { placeholders: [], jobs: [] };
- }
- const placeholders = videoProcessor.uploadedVideos.map(video => ({
- id: crypto.randomUUID(), originalConcept: video.name, prompts: [], hasError: false, inputMode: 'video' as const, sourceId: video.id, sourceFile: video.file,
- }));
+  const generateForVideoMode = useCallback(async (isQuick: boolean) => {
+    if (videoProcessor.uploadedVideos.length === 0) {
+      setError(t('errorNoVideoUploaded'));
+      return { placeholders: [], jobs: [] };
+    }
+    const placeholders = videoProcessor.uploadedVideos.map(video => ({
+      id: generateUuid(), originalConcept: video.name, prompts: [], hasError: false, inputMode: 'video' as const, sourceId: video.id, sourceFile: video.file,
+    }));
  
  const jobs = videoProcessor.uploadedVideos.map((video, index) => async () => {
  const placeholder = placeholders[index];
@@ -931,6 +1035,13 @@ const App: React.FC = () => {
  () => PromptBuilder.buildTextPrompt(failedSet.originalConcept, settings, false)
  );
  }
+
+    if (retryMode === 'vector') {
+      return processAndGenerate(
+        retryPlaceholder,
+        () => PromptBuilder.buildTextPrompt(failedSet.originalConcept, { ...settings, styleOption: 'vector' }, false)
+      );
+    }
 
  if (retryMode === 'image') {
  const image = uploadedImages.find(item =>
@@ -1101,70 +1212,97 @@ const App: React.FC = () => {
  setError(t('errorCustomTemplateRequired'));
  return;
  }
- 
- const currentGenerationId = ++generationIdRef.current;
- setIsLoading(true);
- setError(null);
+    
+    const currentGenerationId = ++generationIdRef.current;
+    setIsLoading(true);
+    setError(null);
 
- let generationTask: GenerationTask | undefined;
+    let generationTask: GenerationTask | undefined;
 
- switch (settings.inputMode) {
- case 'text': generationTask = generateForTextMode(isQuick); break;
- case 'image': generationTask = generateForImageMode(isQuick); break;
- case 'video': generationTask = await generateForVideoMode(isQuick); break;
- }
- 
- if (!generationTask || generationTask.jobs.length === 0) {
- setIsLoading(false);
- return;
- }
-
- const finalSets: GeneratedPromptSet[] = [];
- const workerCount = Math.max(1, Math.min(50, settings.workerCount || 1));
- const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
-
- for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += workerCount) {
- const batch = generationTask.jobs.slice(startIndex, startIndex + workerCount);
- const batchStartedAt = Date.now();
- 
- const batchResults = await Promise.all(batch.map(async job => {
- const result = await job();
- // Update state immediately as each job finishes
- if (generationIdRef.current === currentGenerationId) {
- setGeneratedPromptSets(prev => [...prev, result]);
- }
- return result;
- }));
- 
- finalSets.push(...batchResults);
-
- if (generationIdRef.current !== currentGenerationId) return;
-
- const hasMoreBatches = startIndex + workerCount < generationTask.jobs.length;
- if (hasMoreBatches && batchDelaySeconds > 0) {
- await waitForBatchDelay(batchDelaySeconds);
- if (generationIdRef.current !== currentGenerationId) return;
- }
- }
- 
- if (generationIdRef.current !== currentGenerationId) return;
- 
-    if (finalSets.some(s => s.hasError)) {
-      setError(t('errorSomePromptsFailed'));
+    switch (settings.inputMode) {
+      case 'text': generationTask = generateForTextMode(isQuick); break;
+      case 'vector': generationTask = generateForVectorMode(isQuick); break;
+      case 'image': generationTask = generateForImageMode(isQuick); break;
+      case 'video': generationTask = await generateForVideoMode(isQuick); break;
+    }
+    
+    if (!generationTask || generationTask.jobs.length === 0) {
+      setIsLoading(false);
+      return;
     }
 
- setIsLoading(false);
+    const finalSets: GeneratedPromptSet[] = [];
+    const provider = getModelProvider(settings.selectedModel);
+    const workerCount = Math.max(1, Math.min(50, settings.workerCount || 1));
+    const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
 
- if (finalSets.some(s => !s.hasError && s.prompts.length > 0)) {
- const currentSettings: GenerationSettings = {
- ...settings,
- conceptsInput: settings.inputMode === 'text' ? settings.conceptsInput : '',
- imageNames: settings.inputMode === 'image' ? uploadedImages.map(img => img.name) : [],
- videoNames: settings.inputMode === 'video' ? videoProcessor.uploadedVideos.map(v => v.name) : [],
- };
- saveHistory([{ id: Date.now(), timestamp: Date.now(), settings: currentSettings, sets: finalSets, folderId: settings.targetFolderId || null }, ...history]);
- }
-  }, [settings, uploadedImages, videoProcessor.uploadedVideos, saveHistory, history, t, isProviderInitialized, generateForTextMode, generateForImageMode, generateForVideoMode, isLoading, isRetryingAll, retryingIds]);
+    setActiveWorkersCount(workerCount);
+    setTotalJobsCount(generationTask.jobs.length);
+    setCompletedJobsCount(0);
+    setActivityLogs([]);
+    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas dengan ${workerCount} worker paralel aktif (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
+
+    let finishedCount = 0;
+    for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += workerCount) {
+      const batch = generationTask.jobs.slice(startIndex, startIndex + workerCount);
+      
+      const batchResults = await Promise.all(batch.map(async (job, idx) => {
+        const workerIndex = (startIndex + idx) % workerCount + 1;
+        const conceptName = generationTask.placeholders[startIndex + idx]?.originalConcept || '';
+        
+        setCurrentProcessingConcept(conceptName);
+        addActivityLog(`Worker #${workerIndex}: Sedang memproses konsep "${conceptName}"...`, 'info', workerIndex);
+
+        const result = await job();
+        finishedCount += 1;
+        setCompletedJobsCount(finishedCount);
+
+        if (result.hasError) {
+          addActivityLog(`Worker #${workerIndex}: Gagal memproses "${conceptName}"`, 'error', workerIndex);
+        } else {
+          addActivityLog(`Worker #${workerIndex}: Berhasil membuat ${result.prompts.length} prompt untuk "${conceptName}"`, 'success', workerIndex);
+        }
+
+        // Update state immediately as each job finishes
+        if (generationIdRef.current === currentGenerationId) {
+          setGeneratedPromptSets(prev => [...prev, result]);
+        }
+        return result;
+      }));
+      
+      finalSets.push(...batchResults);
+
+      if (generationIdRef.current !== currentGenerationId) return;
+
+      const hasMoreBatches = startIndex + workerCount < generationTask.jobs.length;
+      if (hasMoreBatches && batchDelaySeconds > 0) {
+        addActivityLog(`Menunggu jeda batch ${batchDelaySeconds} detik...`, 'info');
+        await waitForBatchDelay(batchDelaySeconds);
+        if (generationIdRef.current !== currentGenerationId) return;
+      }
+    }
+    
+    if (generationIdRef.current !== currentGenerationId) return;
+
+    if (finalSets.some(s => s.hasError)) {
+      setError(t('errorSomePromptsFailed'));
+      addActivityLog(`Selesai dengan beberapa error.`, 'warning');
+    } else {
+      addActivityLog(`Semua proses berhasil diselesaikan! Total ${finalSets.flatMap(s => s.prompts).length} prompt siap.`, 'success');
+    }
+
+    setIsLoading(false);
+
+    if (finalSets.some(s => !s.hasError && s.prompts.length > 0)) {
+      const currentSettings: GenerationSettings = {
+        ...settings,
+        conceptsInput: (settings.inputMode === 'text' || settings.inputMode === 'vector') ? settings.conceptsInput : '',
+        imageNames: settings.inputMode === 'image' ? uploadedImages.map(img => img.name) : [],
+        videoNames: settings.inputMode === 'video' ? videoProcessor.uploadedVideos.map(v => v.name) : [],
+      };
+      saveHistory([{ id: Date.now(), timestamp: Date.now(), settings: currentSettings, sets: finalSets, folderId: settings.targetFolderId || null }, ...history]);
+    }
+  }, [settings, uploadedImages, videoProcessor.uploadedVideos, saveHistory, history, t, isProviderInitialized, generateForTextMode, generateForVectorMode, generateForImageMode, generateForVideoMode, isLoading, isRetryingAll, retryingIds, addActivityLog, apiKeys]);
  
  const formatPromptsForExport = useCallback((promptsToExport?: (string | Record<string, any>)[]): string => {
  const allPrompts = promptsToExport || generatedPromptSets.filter(set => !set.hasError && set.prompts.length > 0).flatMap(set => set.prompts);
@@ -1197,8 +1335,12 @@ const App: React.FC = () => {
  }, [generatedPromptSets, settings.promptQualityOption, settings.styleOption]);
 
  const handleClearAllResults = useCallback(() => {
- setGeneratedPromptSets([]);
- setError(null);
+  setGeneratedPromptSets([]);
+  setError(null);
+  setActivityLogs([]);
+  setTotalJobsCount(0);
+  setCompletedJobsCount(0);
+  setCurrentProcessingConcept('');
  }, []);
 
  const handleClearUploadedImagesCompletely = useCallback(() => {
@@ -1222,11 +1364,15 @@ const App: React.FC = () => {
  const handleDeleteHistoryEntry = useCallback((id: number) => saveHistory(history.filter(entry => entry.id !== id)), [history, saveHistory]);
  const handleClearHistory = useCallback(() => saveHistory([]), [saveHistory]);
  const handleNewPrompt = useCallback(() => {
- settings.setConceptsInput('');
- handleClearUploadedImagesCompletely();
- handleClearUploadedVideosCompletely();
- setGeneratedPromptSets([]);
- setError(null);
+  settings.setConceptsInput('');
+  handleClearUploadedImagesCompletely();
+  handleClearUploadedVideosCompletely();
+  setGeneratedPromptSets([]);
+  setError(null);
+  setActivityLogs([]);
+  setTotalJobsCount(0);
+  setCompletedJobsCount(0);
+  setCurrentProcessingConcept('');
  }, [settings, handleClearUploadedImagesCompletely, handleClearUploadedVideosCompletely, setGeneratedPromptSets, setError]);
 
  const isDraggingOver = isDraggingImage || videoProcessor.isDraggingOverWindow;
@@ -1321,488 +1467,155 @@ const App: React.FC = () => {
  if (!sessionToken) return { success: false, message: 'Sesi tidak valid. Silakan login ulang.' };
 
  const result = await deleteSentNotification(currentUser.username, sessionToken, dispatchId);
- if (!result.success) {
- return { success: false, message: result.error || 'Gagal menghapus notifikasi.' };
- }
- return { success: true, message: `Notifikasi dihapus (${result.deletedCount}).` };
- },
- [currentUser, isAdmin, getSessionToken]
- );
+      return { success: true, message: `Notifikasi dihapus (${result.deletedCount}).` };
+    },
+    [currentUser, isAdmin, getSessionToken]
+  );
 
- // --- Auth gate ---
- if (authLoading) {
- return <div style={{ minHeight: '100vh' }}></div>;
- }
+  return (
+    <div className="min-h-screen bg-[#0d0d10] text-gray-100 flex flex-col selection:bg-indigo-500 selection:text-white">
+      {/* Clean Top Navigation Bar */}
+      <header className="w-full border-b border-white/[0.08] bg-[#141416]/90 backdrop-blur-md sticky top-0 z-30 px-4 py-3">
+        <div className="max-w-3xl mx-auto flex items-center justify-between">
+          {/* Logo & Branding */}
+          <div 
+            onClick={() => setActiveView('generator')}
+            className="flex items-center gap-2.5 cursor-pointer hover:opacity-90 transition-opacity"
+          >
+            <div className="w-8 h-8 rounded-lg bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center text-indigo-400">
+              <span className="material-symbols-outlined text-xl">polyline</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="font-bold text-base text-white tracking-tight">Sebellas</span>
+              <span className="text-[10px] uppercase font-bold tracking-widest px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                Vector Studio
+              </span>
+            </div>
+          </div>
 
- if (!currentUser) {
- return <LoginPage />;
- }
+          {/* Action Buttons */}
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => setIsApiKeyModalOpen(true)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold border transition-all cursor-pointer ${
+                isSelectedProviderInitialized
+                  ? 'bg-emerald-500/10 text-emerald-300 border-emerald-500/30 hover:bg-emerald-500/20'
+                  : 'bg-amber-500/10 text-amber-300 border-amber-500/30 hover:bg-amber-500/20 ring-1 ring-amber-500/30 animate-pulse'
+              }`}
+            >
+              <span className="material-symbols-outlined text-sm">
+                {isSelectedProviderInitialized ? 'check_circle' : 'key'}
+              </span>
+              <span>
+                {isSelectedProviderInitialized
+                  ? `${MODEL_PROVIDER_LABELS[selectedModelProvider]} Connected`
+                  : `Set ${MODEL_PROVIDER_LABELS[selectedModelProvider]} Key`}
+              </span>
+            </button>
 
- if (!currentUser.isActive) {
- return (
- <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1.5rem' }}>
- <div style={{ textAlign: 'center', maxWidth: 360 }}>
- <span className="material-symbols-outlined" style={{ fontSize: '3rem', color: '#EF4444' }}>block</span>
- <h2 style={{ margin: '0.75rem 0 0.5rem', fontWeight: 700 }}>Akun Dinonaktifkan</h2>
- <p style={{ color: '#6B7280', marginBottom: '1.5rem' }}>Akun Anda telah dinonaktifkan oleh admin. Hubungi admin untuk informasi lebih lanjut.</p>
- <button className="btn btn-primary btn-action" onClick={logout}>
- <span className="material-symbols-outlined">logout</span>
- Keluar
- </button>
- </div>
- </div>
- );
- }
+            <button
+              type="button"
+              onClick={() => setActiveView(activeView === 'history' ? 'generator' : 'history')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-white/[0.05] hover:bg-white/[0.1] text-gray-300 border border-white/[0.08] transition-all cursor-pointer"
+            >
+              <span className="material-symbols-outlined text-sm">history</span>
+              <span>Riwayat ({history.length})</span>
+            </button>
+          </div>
+        </div>
+      </header>
 
- return (
- <>
- {/* Sidebar Panel */}
- <aside
- ref={sidebarRef}
- data-notification-trigger="true"
- className={`sidebar border-border-default ${sidebarOpenForView ? 'open' : ''} ${isMobileViewport ? 'mobile-viewport' : 'desktop-viewport'}`}
- style={{ width: `${sidebarWidthForView}px` }}
- >
- <div className="flex flex-col h-full p-4 justify-between">
- 
- <div className="flex flex-col gap-4">
- {/* Logo / Header Branding */}
- <div className="flex items-center justify-between pb-3 border-b results-item-divider group logo-container relative">
- <div className="flex items-center gap-2 logo-wrapper pl-3">
- <div 
- className="relative flex items-center gap-2 cursor-pointer" 
- onClick={() => {
- if (!sidebarOpenForView) {
- openSidebar();
- } else {
- setActiveView('generator');
- }
- }}
- >
- <div className={`relative w-[38px] h-[38px] flex items-center justify-center shrink-0 rounded-lg ${!sidebarOpenForView ? 'sidebar-logo-collapsed-trigger' : ''}`}>
- <svg className={`app-brand-icon w-8 h-8 fill-current absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ${!sidebarOpenForView ? 'sidebar-logo-collapsed-mark' : ''}`} viewBox="0 0 720 720" xmlns="http://www.w3.org/2000/svg">
- <path d="M456.55,38.52H267.52c-4.19,0-8.07,2.2-10.21,5.8L137.03,246.21c-2.14,3.6-6.02,5.8-10.21,5.8H25.41
- c-9.22,0-14.93,10.05-10.21,17.97l113.23,190.04c2.14,3.6,6.02,5.8,10.21,5.8h189.04c9.22,0,14.93-10.05,10.21-17.97L232.1,270.3
- c-4.72-7.92,0.99-17.97,10.21-17.97h101.02c4.19,0,8.07-2.2,10.21-5.8L466.77,56.49C471.49,48.57,465.78,38.52,456.55,38.52z"/>
- <path d="M263.45,681.48h189.04c4.19,0,8.07-2.2,10.21-5.8l120.28-201.88c2.14-3.6,6.02-5.8,10.21-5.8h101.4
- c9.22,0,14.93-10.05,10.21-17.97L591.57,259.99c-2.14-3.6-6.02-5.8-10.21-5.8H392.33c-9.22,0-14.93,10.05-10.21,17.97L487.9,449.7
- c4.72,7.92-0.99,17.97-10.21,17.97H376.67c-4.19,0-8.07,2.2-10.21,5.8L253.23,663.51C248.51,671.43,254.22,681.48,263.45,681.48z"/>
- </svg>
- {!sidebarOpenForView && (
- <span className="material-symbols-rounded text-xl text-indigo-500 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 sidebar-open-icon">
- left_panel_open
- </span>
- )}
- </div>
- <span className="font-bold text-lg tracking-tight sora-brand title-brand">Sebellas</span>
- </div>
- </div>
- {shouldRenderSidebarCloseButton && (
- <button 
- type="button"
- onClick={closeSidebar}
- className={`sidebar-close-fade-btn w-[38px] h-[38px] flex items-center justify-center rounded-lg toggle-sidebar-btn ${sidebarOpenForView ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
- aria-label="Close menu"
- aria-hidden={!sidebarOpenForView}
- disabled={!sidebarOpenForView}
- >
- <span className="material-symbols-rounded text-xl text-gray-500">left_panel_close</span>
- </button>
- )}
- </div>
+      {/* Main Content Workspace */}
+      <main className="w-full max-w-3xl mx-auto px-4 py-8 flex-1 flex flex-col gap-6">
+        {activeView === 'generator' && (
+          <>
+            {/* Minimal Header */}
+            <div className="text-center mb-1">
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-1.5">
+                Vector Prompt Generator
+              </h1>
+              <p className="text-sm text-gray-400">
+                Brainstorming ide & kembangkan prompt ilustrasi vektor 2D berkualitas tinggi
+              </p>
+            </div>
 
+            {/* Simple Brainstorming Card */}
+            <InputArea
+              isLoading={isLoading}
+              disabled={isLoading}
+              settings={settings}
+              onGenerate={() => {
+                if (!isSelectedProviderInitialized) {
+                  setIsApiKeyModalOpen(true);
+                  return;
+                }
+                handleGeneratePrompts(false);
+              }}
+            />
 
+            {/* Real-time Activity Logs & Concurrency Progress Bar */}
+            {(isLoading || activityLogs.length > 0) && (
+              <GenerationActivityProgress
+                isLoading={isLoading}
+                totalJobs={totalJobsCount}
+                completedJobs={completedJobsCount}
+                activeWorkers={activeWorkersCount}
+                currentConcept={currentProcessingConcept}
+                logs={activityLogs}
+                onClearLogs={() => setActivityLogs([])}
+              />
+            )}
 
- {/* Tools Menu Section */}
- <div className="flex flex-col gap-1 mt-1">
- <button 
- type="button"
- onClick={() => {
- setIsNotificationInboxOpen(false);
- setActiveView('generator');
- }}
- className={`sidebar-item ${activeSidebarItem === 'generator' ? 'active' : ''}`}
- >
- <span className="material-symbols-rounded text-xl">auto_awesome</span>
- <span>{t('generateMenuLabel')}</span>
- </button>
- <button 
- type="button"
- onClick={() => {
- setIsNotificationInboxOpen(false);
- setActiveView('history');
- }}
- className={`sidebar-item ${activeSidebarItem === 'history' ? 'active' : ''}`}
- >
- <svg
- xmlns="http://www.w3.org/2000/svg"
- width="20"
- height="20"
- viewBox="0 0 24 24"
- fill="none"
- stroke="currentColor"
- strokeWidth="1.6"
- strokeLinecap="round"
- strokeLinejoin="round"
- className="sidebar-library-icon"
- aria-hidden="true"
- >
- <path d="m16 6 4 14" />
- <path d="M12 6v14" />
- <path d="M8 8v12" />
- <path d="M4 4v16" />
- </svg>
- <span>{t('historyButtonLabel')}</span>
- </button>
- <button 
- type="button"
- onClick={() => {
- setIsNotificationInboxOpen(false);
- setActiveView('jsonminifier');
- }}
- className={`sidebar-item ${activeSidebarItem === 'jsonminifier' ? 'active' : ''}`}
- >
- <span className="material-symbols-rounded text-xl sidebar-compress-icon">compress</span>
- <span>{t('jsonMinifierButtonLabel')}</span>
- </button>
- {!isMobileViewport && (
- <button
- type="button"
- data-notification-trigger="true"
- onClick={() => setIsNotificationInboxOpen((prev) => !prev)}
- className={`sidebar-item relative ${activeSidebarItem === 'notifications' ? 'active' : ''}`}
- >
- <span className="material-symbols-rounded text-xl">notifications</span>
- <span>Notifications</span>
- {notifications.unreadCount > 0 && (
- <span className="notification-count-badge absolute right-3">
- <span className="notification-count-number">{notifications.unreadCount > 99 ? '99+' : notifications.unreadCount}</span>
- </span>
- )}
- </button>
- )}
+            {/* Error Alert */}
+            {error && (
+              <div role="alert" className="p-3.5 text-sm bg-red-500/10 border border-red-500/30 text-red-300 rounded-xl flex items-center gap-2.5">
+                <span className="material-symbols-outlined text-base">error</span>
+                <span className="flex-1">{error}</span>
+              </div>
+            )}
 
- </div>
+            {/* Results Display */}
+            {generatedPromptSets.length > 0 && (
+              <div className="mt-2">
+                <ResultsDisplay
+                  generatedPromptSets={generatedPromptSets}
+                  totalPrompts={totalSuccessfullyGeneratedPrompts}
+                  onClearAll={handleClearAllResults}
+                  onRetryFailed={handleRetryFailedSet}
+                  onRetryAllFailed={handleRetryAllFailedSets}
+                  formatPromptsForExport={formatPromptsForExport}
+                  inputMode={settings.inputMode}
+                  isRetryingAll={isRetryingAll}
+                  retryingIds={retryingIds}
+                />
+              </div>
+            )}
+          </>
+        )}
 
- </div>
+        {activeView === 'history' && (
+          <Suspense fallback={null}>
+            <LazyHistoryModal
+              onClose={() => setActiveView('generator')}
+              history={history}
+              folders={folders}
+              onDelete={handleDeleteHistoryEntry}
+              onClear={handleClearHistory}
+              formatPromptsForExport={formatPromptsForExport}
+              onUpdateHistory={(updated) => saveHistory(updated)}
+              onUpdateFolders={(updated) => saveFolders(updated)}
+            />
+          </Suspense>
+        )}
+      </main>
 
- <div className="flex flex-col gap-1 pt-3">
- {isAdmin && (
- <button 
- type="button"
- onClick={() => {
- setActiveView('admin');
- if (isMobileViewport) setIsMobileSidebarOpen(false);
- }}
- className={`sidebar-item ${activeSidebarItem === 'admin' ? 'active' : ''}`}
- >
- <span className="material-symbols-rounded text-xl">admin_panel_settings</span>
- <span>Admin Panel</span>
- </button>
- )}
- <button 
- type="button"
- onClick={() => {
- setIsNotificationInboxOpen(false);
- setIsApiKeyModalOpen(true);
- }}
- className={`sidebar-item ${activeSidebarItem === 'apikey' ? 'active' : ''}`}
- >
- <span className="material-symbols-rounded text-xl">key</span>
- <span>{t('setApiKeyButtonLabel')}</span>
- </button>
- {/* Sociabuzz Link */}
- <a 
- href="https://sociabuzz.com/sebelasproject/tribe" 
- target="_blank" 
- rel="noopener noreferrer" 
- className="sidebar-item"
- >
- <span className="material-symbols-rounded text-xl">coffee</span>
- <span>Dukung Kreator</span>
- </a>
+      {/* Minimal Clean Footer */}
+      <footer className="w-full text-center py-6 text-xs text-gray-500 border-t border-white/[0.05]">
+        &copy; 2026 Sebellas Studio. All rights reserved.
+      </footer>
 
- {/* Logout / User Info */}
- <div className="user-footer-container flex items-center justify-between gap-2 border-t border-gray-200/50 pt-3 pl-3 pr-0">
- <div className="user-info-wrapper flex items-center gap-2 overflow-hidden" title={currentUser?.username}>
- <div className="w-8 h-8 rounded-full flex shrink-0 items-center justify-center text-xs font-bold text-white bg-indigo-500">
- {currentUser?.username.charAt(0).toUpperCase()}
- </div>
- <span className="username-label profile-username truncate max-w-[80px] pr-1">{currentUser?.username}</span>
- </div>
- <button 
- type="button"
- onClick={logout} 
- className="logout-btn w-[38px] h-[38px] flex items-center justify-center rounded-lg hover:bg-red-500/15 text-red-500 transition-colors"
- title="Keluar"
- >
- <span className="material-symbols-rounded text-xl">logout</span>
- </button>
- </div>
-
- </div>
- </div>
- </aside>
-
- {/* Mobile Top Navigation */}
- <div className="md:hidden flex items-center justify-between w-full p-4 border-b border-gray-200 bg-white sticky top-0 z-40">
- <button 
- type="button"
- onClick={openSidebar}
- className="w-[38px] h-[38px] flex items-center justify-center rounded-lg hover:bg-gray-500/10 transition-colors"
- aria-label="Open menu"
- >
- <span className="material-symbols-outlined">menu</span>
- </button>
- <div className="flex items-center gap-1.5">
- <svg className="app-brand-icon w-6 h-6 fill-current" viewBox="0 0 720 720" xmlns="http://www.w3.org/2000/svg">
- <path d="M456.55,38.52H267.52c-4.19,0-8.07,2.2-10.21,5.8L137.03,246.21c-2.14,3.6-6.02,5.8-10.21,5.8H25.41
- c-9.22,0-14.93,10.05-10.21,17.97l113.23,190.04c2.14,3.6,6.02,5.8,10.21,5.8h189.04c9.22,0,14.93-10.05,10.21-17.97L232.1,270.3
- c-4.72-7.92,0.99-17.97,10.21-17.97h101.02c4.19,0,8.07-2.2,10.21-5.8L466.77,56.49C471.49,48.57,465.78,38.52,456.55,38.52z"/>
- <path d="M263.45,681.48h189.04c4.19,0,8.07-2.2,10.21-5.8l120.28-201.88c2.14-3.6,6.02-5.8,10.21-5.8h101.4
- c9.22,0,14.93-10.05,10.21-17.97L591.57,259.99c-2.14-3.6-6.02-5.8-10.21-5.8H392.33c-9.22,0-14.93,10.05-10.21,17.97L487.9,449.7
- c4.72,7.92-0.99,17.97-10.21,17.97H376.67c-4.19,0-8.07,2.2-10.21,5.8L253.23,663.51C248.51,671.43,254.22,681.48,263.45,681.48z"/>
- </svg>
- <span className="font-bold text-sm sora-brand title-brand">Sebellas</span>
- </div>
- <button
- type="button"
- data-notification-trigger="true"
- ref={notificationTriggerRef}
- onClick={() => setIsNotificationInboxOpen((prev) => !prev)}
- className="relative w-[38px] h-[38px] flex items-center justify-center rounded-lg hover:bg-gray-500/10 transition-colors"
- aria-label="Open notifications"
- >
- <span className="material-symbols-outlined">notifications</span>
- {notifications.unreadCount > 0 && (
- <span className="notification-count-badge absolute -top-0.5 -right-0.5">
- <span className="notification-count-number">{notifications.unreadCount > 99 ? '99+' : notifications.unreadCount}</span>
- </span>
- )}
- </button>
- </div>
-
- {/* Sidebar Backdrop Overlay on Mobile */}
- {isMobileViewport && isMobileSidebarOpen && (
- <div 
- onClick={closeSidebar}
- className="md:hidden fixed inset-0 overlay-darkness z-[999] transition-opacity"
- />
- )}
-
- <div className="editorial-main w-full mx-auto p-0 main-container mt-0">
- {activeView !== 'history' && activeView !== 'admin' && activeView !== 'jsonminifier' && (
- <>
- {/* Hero Header */}
- <div className="editorial-hero text-center mt-8 mb-8 px-4 host-grotesk-hero">
- <div className="editorial-hero-brand hidden sm:flex items-center justify-center gap-3.5 mb-4">
- <svg className="app-brand-icon w-11 h-11 fill-current" viewBox="0 0 720 720" xmlns="http://www.w3.org/2000/svg">
- <path d="M456.55,38.52H267.52c-4.19,0-8.07,2.2-10.21,5.8L137.03,246.21c-2.14,3.6-6.02,5.8-10.21,5.8H25.41
- c-9.22,0-14.93,10.05-10.21,17.97l113.23,190.04c2.14,3.6,6.02,5.8,10.21,5.8h189.04c9.22,0,14.93-10.05,10.21-17.97L232.1,270.3
- c-4.72-7.92,0.99-17.97,10.21-17.97h101.02c4.19,0,8.07-2.2,10.21-5.8L466.77,56.49C471.49,48.57,465.78,38.52,456.55,38.52z"/>
- <path d="M263.45,681.48h189.04c4.19,0,8.07-2.2,10.21-5.8l120.28-201.88c2.14-3.6,6.02-5.8,10.21-5.8h101.4
- c9.22,0,14.93-10.05,10.21-17.97L591.57,259.99c-2.14-3.6-6.02-5.8-10.21-5.8H392.33c-9.22,0-14.93,10.05-10.21,17.97L487.9,449.7
- c4.72,7.92-0.99,17.97-10.21,17.97H376.67c-4.19,0-8.07,2.2-10.21,5.8L253.23,663.51C248.51,671.43,254.22,681.48,263.45,681.48z"/>
- </svg>
- <span className="text-2xl md:text-3xl font-semibold tracking-tight sora-brand title-brand">
- Sebellas
- </span>
- </div>
- <h1 className="hero-heading text-[44px] font-[400] tracking-tight text-gray-900 ">
- <span className="hero-heading-line">Turn raw concept into</span>
- <span className="hero-heading-line">great prompt</span>
- </h1>
- <p className="hero-subheading mt-1 text-[19px] font-[400] text-gray-800 ">
- Your Advanced prompt generator for AI images and videos
- </p>
- </div>
-
- <div className="editorial-workspace flex flex-col gap-6 w-full max-w-3xl mx-auto mt-4 relative px-4 md:px-0">
- 
- {/* Main Input Area - Floats directly, card container removed! */}
- <div className="editorial-input-block relative">
- {!hasAnyProviderInitialized && (
- <div
- className="absolute inset-0 z-10 cursor-pointer rounded-2xl"
- onClick={() => setIsApiKeyModalOpen(true)}
- role="button"
- aria-label={t('apiKeyStatusMissing')}
- />
- )}
- 
- <InputArea
- isLoading={isLoading}
- isDraggingOverDropzone={isDraggingOver}
- settings={settings}
- uploadedImages={uploadedImages}
- handleImageFiles={handleImageFiles}
- handleDeleteImage={handleDeleteImage}
- imageFileInputRef={imageFileInputRef}
- clearUploadedImages={handleClearUploadedImagesCompletely}
- imageUploaderError={imageUploaderError}
- clearImageUploaderError={clearImageUploaderError}
- uploadedVideos={videoProcessor.uploadedVideos}
- videoUrlInput={videoProcessor.videoUrlInput}
- isLoadingFromUrl={videoProcessor.isLoadingFromUrl}
- videoUploaderError={videoProcessor.videoUploaderError}
- handleVideoFile={videoProcessor.handleVideoFile}
- handleLoadFromUrl={videoProcessor.handleLoadFromUrl}
- handleUrlInputClick={videoProcessor.handleUrlInputClick}
- setVideoUrlInput={videoProcessor.setVideoUrlInput}
- clearAllVideos={handleClearUploadedVideosCompletely}
- handleDeleteVideo={videoProcessor.handleDeleteVideo}
- videoFileInputRef={videoProcessor.fileInputRef}
- disabled={!hasAnyProviderInitialized || isLoading}
- />
- 
- <div className="editorial-input-meta flex items-center justify-between pt-[4px] pb-[5px]">
- <button
- type="button"
- onClick={() => setIsConfigOpen(!isConfigOpen)}
- className="negative-prompt-toggle inline-flex items-center gap-1 hover:opacity-85 transition-opacity ml-0.5"
- style={{ fontFamily: "'Manrope', sans-serif", fontWeight: 500, fontSize: '12px', lineHeight: 1 }}
- aria-expanded={isConfigOpen}
- >
- <span>Advanced settings</span>
- <svg
- className="inline-block w-4 h-4 transition-transform ease-linear duration-[180ms] flex-shrink-0"
- style={{ transform: isConfigOpen ? 'rotate(180deg)' : 'rotate(0deg)' }}
- fill="none"
- stroke="currentColor"
- viewBox="0 0 24 24"
- xmlns="http://www.w3.org/2000/svg"
- >
- <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path>
- </svg>
- </button>
-
- {/* Clear Button — always rendered to prevent layout shift, just hidden when not needed */}
- {(() => {
- const hasContent =
- (settings.inputMode === 'text' && settings.conceptsInput.trim().length > 0) ||
- (settings.inputMode === 'image' && uploadedImages.length > 0) ||
- (settings.inputMode === 'video' && videoProcessor.uploadedVideos.length > 0);
- const clearCounterText =
- settings.inputMode === 'text'
- ? `Concepts: ${settings.conceptsInput.split(/[,;]/).map(c => c.trim()).filter(Boolean).length}`
- : settings.inputMode === 'image'
- ? `Images: ${uploadedImages.length}`
- : `Videos: ${videoProcessor.uploadedVideos.length}`;
-
- const onClick =
- settings.inputMode === 'text' ? () => settings.setConceptsInput('') :
- settings.inputMode === 'image' ? handleClearUploadedImagesCompletely :
- handleClearUploadedVideosCompletely;
-
- return (
- <div className={`flex items-center gap-2 ${hasContent ? 'opacity-100 pointer-events-auto' : 'invisible pointer-events-none'}`}>
- <span className="counter-text-spec">
- {clearCounterText}
- </span>
- <button
- onClick={onClick}
- disabled={isLoading}
- style={!isSelectedProviderInitialized && !isLoading ? { cursor: 'not-allowed' } : undefined}
- className="btn btn-destructive flex items-center gap-1 !py-1 !px-2.5 rounded-full border border-transparent transition-all duration-[560ms]"
- aria-label={t('clearTextConceptsAriaLabel')}
- title={t('clearButtonLabel')}
- >
- <span className="material-symbols-outlined !text-[16px]">delete_sweep</span>
- <span className="text-[12px] font-semibold">{t('clearButtonLabel')}</span>
- </button>
- </div>
- );
- })()}
- </div>
-
- {/* Collapsible SettingsForm */}
- <div className={`advanced-settings-panel ${isConfigOpen ? 'is-open' : 'pointer-events-none'}`}>
- <SettingsForm isLoading={isLoading} settings={settings} disabled={isLoading} folders={folders} onUpdateFolders={saveFolders} />
- </div>
-
- <div className="editorial-generate-row mt-[3px]">
-        <GenerationControls
-          isApiInitialized={isSelectedProviderInitialized}
-          isLoading={isLoading}
-          isDisabled={isRetryingAll || retryingIds.size > 0}
-          selectedModel={settings.selectedModel}
-          inputMode={settings.inputMode}
-          onGenerate={handleGeneratePrompts}
-        />
- </div>
- </div>
-
- {/* Error display */}
- {error && (
- <div role="alert" className="error-box flex items-center p-3 text-sm shadow-md rounded-xl">
- <span className="material-symbols-outlined mr-2" aria-hidden="true">error</span>
- <span className="flex-1">{error}</span>
- </div>
- )}
-
- {/* Results display flowing directly below */}
- {generatedPromptSets.length > 0 && (
- <div className="editorial-results-wrap mt-2">
- <ResultsDisplay
- generatedPromptSets={generatedPromptSets}
- totalPrompts={totalSuccessfullyGeneratedPrompts}
- onClearAll={handleClearAllResults}
- onRetryFailed={handleRetryFailedSet}
- onRetryAllFailed={handleRetryAllFailedSets}
- formatPromptsForExport={formatPromptsForExport}
- inputMode={settings.inputMode}
- isRetryingAll={isRetryingAll}
- retryingIds={retryingIds}
- />
- </div>
- )}
- </div>
- </>
- )}
-
- {activeView === 'history' && (
- <Suspense fallback={null}>
- <LazyHistoryModal
- onClose={() => setActiveView('generator')}
- history={history}
- folders={folders}
- onDelete={handleDeleteHistoryEntry}
- onClear={handleClearHistory}
- formatPromptsForExport={formatPromptsForExport}
- onUpdateHistory={(updated) => saveHistory(updated)}
- onUpdateFolders={(updated) => saveFolders(updated)}
- />
- </Suspense>
- )}
-
- {activeView === 'admin' && (
- <Suspense fallback={null}>
- <LazyAdminPanel
- isOpen={true}
- onClose={() => setActiveView('generator')}
- isSidebarOpen={isSidebarOpen}
- onSendNotification={handleSendNotification}
- onListSentNotifications={handleListSentNotifications}
- onUpdateSentNotification={handleUpdateSentNotification}
- onDeleteSentNotification={handleDeleteSentNotification}
- />
- </Suspense>
- )}
-
- {activeView === 'jsonminifier' && (
- <Suspense fallback={null}>
- <LazyJsonMinifierModal
- onClose={() => setActiveView('generator')}
- isSidebarOpen={isSidebarOpen}
- />
- </Suspense>
- )}
- </div>
- {activeView !== 'history' && activeView !== 'admin' && activeView !== 'jsonminifier' && (
- <footer className="w-full max-w-none text-center py-6 text-xs footer-text">
-          &copy; 2026 Sebellas Studio. All rights reserved.
-        </footer>
-      )}
+      {/* API Key Modal */}
       {isApiKeyModalOpen && (
         <ApiKeyModal
           onClose={() => setIsApiKeyModalOpen(false)}
@@ -1811,31 +1624,12 @@ const App: React.FC = () => {
           currentApiKeys={apiKeys}
           apiStatus={apiStatus}
           selectedModel={settings.selectedModel}
-          isSidebarOpen={isSidebarOpen}
+          isSidebarOpen={false}
+          onModelChange={settings.setSelectedModel}
         />
       )}
-      {(isNotificationInboxOpen || hasLoadedNotificationInbox) && (
-        <Suspense fallback={null}>
-          <LazyNotificationInbox
-            isOpen={isNotificationInboxOpen}
-            isMobileViewport={isMobileViewport}
-            mobileAnchorTop={notificationTriggerRef.current?.getBoundingClientRect().bottom ?? null}
-            mobileAnchorRight={notificationTriggerRef.current?.getBoundingClientRect().right ?? null}
-            sidebarWidth={sidebarWidthForView}
-            items={notifications.items}
-            unreadCount={notifications.unreadCount}
-            isLoading={notifications.isLoading}
-            error={notifications.error}
-            onClose={() => setIsNotificationInboxOpen(false)}
-            onMarkRead={notifications.markRead}
-            onMarkAllRead={notifications.markAllRead}
-          />
-        </Suspense>
-      )}
-    </>
+    </div>
   );
 };
 
 export default memo(App);
-
-

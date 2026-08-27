@@ -23,5 +23,9 @@ dist-ssr
 *.sln
 *.sw?
 
-# Environment variables (contains Supabase credentials — DO NOT COMMIT)
+# Environment variables
 .env
+.env*.local
+
+.git_alt/
+dist/

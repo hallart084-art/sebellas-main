@@ -13,6 +13,7 @@ type GeneratePromptRequest = {
 const groqEndpoint = 'https://api.groq.com/openai/v1/chat/completions';
 const mistralEndpoint = 'https://api.mistral.ai/v1/chat/completions';
 const openrouterEndpoint = 'https://openrouter.ai/api/v1/chat/completions';
+const githubEndpoint = 'https://models.inference.ai.azure.com/chat/completions';
 
 export class ApiRequestError extends Error {
  status?: number;
@@ -126,38 +127,88 @@ const toChatCompletionUserContent = (contents: any): string | Array<Record<strin
 };
 
 const generateWithGoogle = async ({ model, contents, config, apiKey }: GeneratePromptRequest): Promise<string> => {
- if (!apiKey || typeof apiKey !== 'string') {
- throw new Error('Google API key is missing. Please configure your API key in Settings.');
- }
- const freshAi = new GoogleGenAI({ apiKey: apiKey.trim() });
- const finalConfig = { 
-    ...config, 
-    maxOutputTokens: 8192,
-    responseMimeType: 'application/json' 
-  };
- const response = await freshAi.models.generateContent({ model, contents, config: finalConfig });
+  if (!apiKey || typeof apiKey !== 'string') {
+    throw new Error('Google API key is missing. Please configure your API key in Settings.');
+  }
+  const key = apiKey.trim();
+  const isBearerToken = key.startsWith('AQ.') || key.startsWith('ya29.');
+  const effectiveMaxTokens = config?.maxOutputTokens || 8192;
 
- const finishReason = response?.candidates?.[0]?.finishReason;
- if (finishReason === 'MAX_TOKENS') {
-   throw new TruncatedResponseError('Gemini');
- }
+  if (isBearerToken) {
+    const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`;
+    const requestBody: Record<string, any> = {
+      contents: typeof contents === 'string'
+        ? [{ role: 'user', parts: [{ text: contents }] }]
+        : Array.isArray(contents?.parts)
+        ? [{ role: 'user', parts: contents.parts }]
+        : [{ role: 'user', parts: [{ text: String(contents) }] }],
+      generationConfig: {
+        maxOutputTokens: effectiveMaxTokens,
+        temperature: config?.temperature ?? 1.0,
+        topP: 0.95,
+        responseMimeType: 'application/json',
+      },
+    };
 
- // Safely extract text — response.text is a getter that can return undefined
- // or throw if the response has no valid candidates.
- let text: string | undefined;
- try {
-  text = response.text;
- } catch (e) {
-  // SDK getter threw (e.g. no candidates, safety block, etc.)
-  console.warn('[Gemini] response.text getter threw:', e);
-  throw new EmptyResponseError('Gemini');
- }
+    if (config?.systemInstruction) {
+      requestBody.systemInstruction = { parts: [{ text: config.systemInstruction }] };
+    }
 
- const trimmed = (text ?? '').trim();
- if (!trimmed) {
-  throw new EmptyResponseError('Gemini');
- }
- return trimmed;
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requestBody),
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new ApiRequestError(
+        errorText || `Google API request failed with status ${response.status}`,
+        response.status,
+        errorText
+      );
+    }
+
+    const payload = await response.json();
+    const candidate = payload?.candidates?.[0];
+    const textPart = candidate?.content?.parts?.[0]?.text;
+    if (typeof textPart === 'string' && textPart.trim()) {
+      return textPart.trim();
+    }
+    throw new EmptyResponseError('Gemini');
+  }
+
+  const freshAi = new GoogleGenAI({ apiKey: key });
+  const finalConfig = { 
+     ...config, 
+     maxOutputTokens: effectiveMaxTokens,
+     temperature: config?.temperature ?? 1.0,
+     topP: 0.95,
+     responseMimeType: 'application/json' 
+   };
+  const response = await freshAi.models.generateContent({ model, contents, config: finalConfig });
+
+  const finishReason = response?.candidates?.[0]?.finishReason;
+  if (finishReason === 'MAX_TOKENS') {
+    throw new TruncatedResponseError('Gemini');
+  }
+
+  let text: string | undefined;
+  try {
+   text = response.text;
+  } catch (e) {
+   console.warn('[Gemini] response.text getter threw:', e);
+   throw new EmptyResponseError('Gemini');
+  }
+
+  const trimmed = (text ?? '').trim();
+  if (!trimmed) {
+   throw new EmptyResponseError('Gemini');
+  }
+  return trimmed;
 };
 
 const getChatCompletionText = (payload: any, providerLabel: string): string => {
@@ -209,8 +260,9 @@ const generateWithChatCompletion = async (
  body: JSON.stringify({
  model,
  messages,
- temperature: 0.7,
- max_tokens: maxTokens,
+ temperature: config?.temperature ?? 1.0,
+ top_p: 0.95,
+ max_tokens: config?.maxOutputTokens || maxTokens,
  }),
  });
 
@@ -342,8 +394,20 @@ export const generateModelContent = async (request: GeneratePromptRequest): Prom
   
   const maxTokens = 8192;
 
-  const callProvider = (): Promise<string> => {
-    if (provider === 'groq') return generateWithChatCompletion(request, groqEndpoint, 'Groq', undefined, maxTokens);
+  const callProvider = async (): Promise<string> => {
+    if (provider === 'groq') {
+      try {
+        return await generateWithChatCompletion(request, groqEndpoint, 'Groq', undefined, maxTokens);
+      } catch (err: any) {
+        const errMsg = String(err?.responseText || err?.message || '').toLowerCase();
+        if (errMsg.includes('model_not_found') || errMsg.includes('does not exist')) {
+          console.warn(`[Groq] Model ${request.model} not found, falling back to llama-3.1-8b-instant`);
+          return await generateWithChatCompletion({ ...request, model: 'llama-3.1-8b-instant' }, groqEndpoint, 'Groq', undefined, maxTokens);
+        }
+        throw err;
+      }
+    }
+    if (provider === 'github') return generateWithChatCompletion(request, githubEndpoint, 'GitHub', undefined, maxTokens);
     if (provider === 'mistral') return generateWithChatCompletion(request, mistralEndpoint, 'Mistral', undefined, maxTokens);
     if (provider === 'openrouter') return generateWithOpenRouter(request);
     return generateWithGoogle(request);

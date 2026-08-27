@@ -4,7 +4,7 @@ import Spinner from './Spinner';
 
 import { useLocalizationContext } from '../contexts/LocalizationContext';
 import { useDropdownPosition } from '../hooks/useDropdownPosition';
-import { MODEL_PROVIDER_LABELS } from '../constants';
+import { MODEL_PROVIDER_LABELS, getModelProvider } from '../constants';
 import type { ApiModel, ModelProvider } from '../constants';
 import { normalizeApiKeyList, type ApiKeyCheckResult, type ProviderApiKeys, type ProviderApiStatus } from '../hooks/useGemini';
 
@@ -18,21 +18,31 @@ interface ApiKeyModalProps {
   apiStatus: ProviderApiStatus;
   selectedModel: ApiModel;
   isSidebarOpen: boolean;
+  onModelChange?: (model: ApiModel) => void;
 }
 
-const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, currentApiKeys, apiStatus, selectedModel, isSidebarOpen }) => {
+const DEFAULT_PROVIDER_MODELS: Record<ModelProvider, ApiModel> = {
+  google: 'gemini-2.5-flash',
+  github: 'gpt-4o-mini',
+  groq: 'llama-3.1-8b-instant',
+  mistral: 'mistral-large-latest',
+  openrouter: 'google/gemini-2.5-flash',
+};
+
+const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, currentApiKeys, apiStatus, selectedModel, isSidebarOpen, onModelChange }) => {
   
   const { t } = useLocalizationContext();
   const [localApiKeyText, setLocalApiKeyText] = useState<Record<ModelProvider, string>>({
     google: currentApiKeys.google.join('\n'),
+    github: currentApiKeys.github?.join('\n') ?? '',
     groq: currentApiKeys.groq.join('\n'),
     mistral: currentApiKeys.mistral.join('\n'),
     openrouter: currentApiKeys.openrouter?.join('\n') ?? '',
   });
-  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>('google');
-  const [isChecking, setIsChecking] = useState<Record<ModelProvider, boolean>>({ google: false, groq: false, mistral: false, openrouter: false });
-  const [checkResult, setCheckResult] = useState<Record<ModelProvider, {status: 'success' | 'warning' | 'error', message: string} | null>>({ google: null, groq: null, mistral: null, openrouter: null });
-  const [keyCheckStatuses, setKeyCheckStatuses] = useState<Record<ModelProvider, Record<string, 'valid' | 'limited' | 'invalid'>>>({ google: {}, groq: {}, mistral: {}, openrouter: {} });
+  const [selectedProvider, setSelectedProvider] = useState<ModelProvider>(() => getModelProvider(selectedModel));
+  const [isChecking, setIsChecking] = useState<Record<ModelProvider, boolean>>({ google: false, github: false, groq: false, mistral: false, openrouter: false });
+  const [checkResult, setCheckResult] = useState<Record<ModelProvider, {status: 'success' | 'warning' | 'error', message: string} | null>>({ google: null, github: null, groq: null, mistral: null, openrouter: null });
+  const [keyCheckStatuses, setKeyCheckStatuses] = useState<Record<ModelProvider, Record<string, 'valid' | 'limited' | 'invalid'>>>({ google: {}, github: {}, groq: {}, mistral: {}, openrouter: {} });
   const [isProviderDropdownOpen, setIsProviderDropdownOpen] = useState(false);
   const [apiKeyTextareaScrollTop, setApiKeyTextareaScrollTop] = useState(0);
   const [isClosing, setIsClosing] = useState(false);
@@ -52,6 +62,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   useEffect(() => {
     setLocalApiKeyText({
       google: currentApiKeys.google.join('\n'),
+      github: currentApiKeys.github?.join('\n') ?? '',
       groq: currentApiKeys.groq.join('\n'),
       mistral: currentApiKeys.mistral.join('\n'),
       openrouter: currentApiKeys.openrouter?.join('\n') ?? '',
@@ -59,7 +70,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   }, [currentApiKeys]);
   
   useEffect(() => {
-    setCheckResult({ google: null, groq: null, mistral: null, openrouter: null });
+    setCheckResult({ google: null, github: null, groq: null, mistral: null, openrouter: null });
   }, []);
 
   const requestClose = useCallback(() => {
@@ -99,10 +110,14 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   const handleSave = () => {
     onSave({
       google: normalizeApiKeyList(localApiKeyText.google),
+      github: normalizeApiKeyList(localApiKeyText.github),
       groq: normalizeApiKeyList(localApiKeyText.groq),
       mistral: normalizeApiKeyList(localApiKeyText.mistral),
       openrouter: normalizeApiKeyList(localApiKeyText.openrouter),
     });
+    if (onModelChange) {
+      onModelChange(DEFAULT_PROVIDER_MODELS[selectedProvider]);
+    }
     requestClose();
   };
 
@@ -132,6 +147,23 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
         setCheckResult(prev => ({ ...prev, [provider]: { status: 'error', message: t('apiKeyCheckAllFailed', { limited: limitedCount, invalid: invalidCount }) } }));
     }
     setIsChecking(prev => ({ ...prev, [provider]: false }));
+  };
+
+  const handleRemoveDeadKeysFromModal = (provider: ModelProvider) => {
+    const currentKeys = normalizeApiKeyList(localApiKeyText[provider]);
+    const statuses = keyCheckStatuses[provider] || {};
+    const validOnlyKeys = currentKeys.filter(k => statuses[k] !== 'invalid' && statuses[k] !== 'limited');
+    const removedCount = currentKeys.length - validOnlyKeys.length;
+
+    setLocalApiKeyText(prev => ({ ...prev, [provider]: validOnlyKeys.join('\n') }));
+    setKeyCheckStatuses(prev => ({ ...prev, [provider]: {} }));
+    setCheckResult(prev => ({
+      ...prev,
+      [provider]: {
+        status: 'success',
+        message: `${removedCount} API Key yang mati/limit telah berhasil dihapus.`,
+      },
+    }));
   };
   
   const handleInputChange = (provider: ModelProvider, value: string) => {
@@ -194,6 +226,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
 
   const providerOptions: Array<{ provider: ModelProvider; label: string; apiLabel: string }> = [
     { provider: 'google', label: 'Gemini', apiLabel: 'Gemini API Key' },
+    { provider: 'github', label: 'GitHub', apiLabel: 'GitHub Token (PAT)' },
     { provider: 'groq', label: 'Groq', apiLabel: 'Groq API Key' },
     { provider: 'mistral', label: 'Mistral', apiLabel: 'Mistral API Key' },
     { provider: 'openrouter', label: 'OpenRouter', apiLabel: 'OpenRouter API Key' },
@@ -205,6 +238,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   const selectedOption = providerOptions.find(option => option.provider === selectedProvider) ?? providerOptions[0];
   const selectedKeyCount = normalizeApiKeyList(localApiKeyText[selectedProvider]).length;
   const hasAnyLocalKey = normalizeApiKeyList(localApiKeyText.google).length > 0
+    || normalizeApiKeyList(localApiKeyText.github).length > 0
     || normalizeApiKeyList(localApiKeyText.groq).length > 0
     || normalizeApiKeyList(localApiKeyText.mistral).length > 0
     || normalizeApiKeyList(localApiKeyText.openrouter).length > 0;
@@ -213,6 +247,9 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
     setSelectedProvider(provider);
     setIsProviderDropdownOpen(false);
     setApiKeyTextareaScrollTop(0);
+    if (onModelChange) {
+      onModelChange(DEFAULT_PROVIDER_MODELS[provider]);
+    }
   };
 
   const providerDropdownMenu = (
@@ -329,6 +366,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
                     selectedProvider === 'google' ? 'https://aistudio.google.com/app/apikey' : 
                     selectedProvider === 'groq' ? 'https://console.groq.com/keys' : 
                     selectedProvider === 'openrouter' ? 'https://openrouter.ai/settings/keys' :
+                    selectedProvider === 'github' ? 'https://github.com/settings/tokens' :
                     'https://console.mistral.ai/api-keys/'
                   } 
                   target="_blank" 
@@ -373,6 +411,68 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
                 )}
               </div>
 
+              {/* Detailed Breakdown Per-Key List if checked */}
+              {Object.keys(keyCheckStatuses[selectedProvider] || {}).length > 0 && (
+                <div className="mt-2.5 max-h-40 overflow-y-auto rounded-xl border border-white/[0.08] bg-black/40 p-2 flex flex-col gap-1.5 scrollbar-thin">
+                  {normalizeApiKeyList(localApiKeyText[selectedProvider]).map((key, idx) => {
+                    const status = keyCheckStatuses[selectedProvider]?.[key];
+                    const masked = `${key.slice(0, 6)}...${key.slice(-4)}`;
+                    const isValid = status === 'valid';
+                    const isDead = status === 'invalid' || status === 'limited';
+
+                    return (
+                      <div
+                        key={`${idx}-${key}`}
+                        className={`flex items-center justify-between px-2.5 py-1.5 rounded-lg text-xs border ${
+                          isValid
+                            ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-300'
+                            : isDead
+                            ? 'bg-red-500/10 border-red-500/20 text-red-300'
+                            : 'bg-white/[0.04] border-white/[0.06] text-gray-300'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2 font-mono">
+                          <span className="text-[10px] text-gray-400">#{idx + 1}</span>
+                          <span className="font-semibold">{masked}</span>
+                        </div>
+
+                        <div className="flex items-center gap-2">
+                          <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${
+                            isValid
+                              ? 'bg-emerald-500/20 text-emerald-300'
+                              : isDead
+                              ? 'bg-red-500/20 text-red-300'
+                              : 'bg-gray-700 text-gray-400'
+                          }`}>
+                            {isValid ? 'Aktif' : isDead ? 'Mati / Limit' : 'Belum Dicek'}
+                          </span>
+
+                          {isDead && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                const currentKeys = normalizeApiKeyList(localApiKeyText[selectedProvider]);
+                                const updated = currentKeys.filter(k => k !== key);
+                                setLocalApiKeyText(prev => ({ ...prev, [selectedProvider]: updated.join('\n') }));
+                                setKeyCheckStatuses(prev => {
+                                  const next = { ...prev[selectedProvider] };
+                                  delete next[key];
+                                  return { ...prev, [selectedProvider]: next };
+                                });
+                              }}
+                              className="text-red-400 hover:text-red-300 hover:bg-red-500/20 p-1 rounded transition-colors cursor-pointer"
+                              title="Hapus key ini"
+                            >
+                              <span className="material-symbols-outlined text-sm">delete</span>
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
               <div className="min-h-[2rem] flex items-start mt-1">
                 {selectedResult ? (
                   <div className={`w-full mt-1 max-h-32 overflow-y-auto custom-scrollbar break-words ${
@@ -411,6 +511,16 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
              >
                 {t('apiKeyImportButton')}
              </button>
+             {Object.values(keyCheckStatuses[selectedProvider] || {}).some(s => s === 'invalid' || s === 'limited') && (
+               <button
+                  type="button"
+                  onClick={() => handleRemoveDeadKeysFromModal(selectedProvider)}
+                  className="btn btn-destructive text-red-400 hover:text-red-300 border border-red-500/30"
+                  style={{ fontSize: '13px' }}
+               >
+                  Hapus Key Mati/Limit ({Object.values(keyCheckStatuses[selectedProvider] || {}).filter(s => s === 'invalid' || s === 'limited').length})
+               </button>
+             )}
              <button
                 onClick={() => handleCheck(selectedProvider)}
                 className="btn btn-secondary"

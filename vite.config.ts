@@ -32,9 +32,6 @@ export default defineConfig(({ mode }) => {
               if (id.includes('node_modules/@google/genai')) {
                 return 'vendor-genai';
               }
-              if (id.includes('node_modules/@supabase')) {
-                return 'vendor-supabase';
-              }
               if (id.includes('node_modules/@fingerprintjs')) {
                 return 'vendor-fingerprint';
               }
