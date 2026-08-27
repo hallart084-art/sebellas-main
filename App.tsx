@@ -488,81 +488,105 @@ const App: React.FC = () => {
     try {
       const provider = getModelProvider(settings.selectedModel);
       const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-      if (providerKeys.length === 0) {
-        throw new Error(`API key untuk ${MODEL_PROVIDER_LABELS[provider]} belum diatur. Silakan atur di menu Set API Key.`);
+      if (!isProviderInitialized(provider) || providerKeys.length === 0) {
+        throw new Error(`No ${MODEL_PROVIDER_LABELS[provider]} API key found. Please add your API key in Settings → API Keys.`);
+      }
+      if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
+        throw new Error(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
       }
 
       const { contents, config } = promptBuilder();
+      let responseText = '';
+      let lastGenerationError: unknown = null;
       const startKeyIndex = assignedKeyIndex !== undefined
         ? (assignedKeyIndex % providerKeys.length)
         : (reserveNextApiKeyStartIndex(provider) ?? 0);
 
-      let responseText = '';
-      let lastError: any = null;
-
-      for (let attempt = 0; attempt < providerKeys.length; attempt++) {
+      for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
         const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
-        const currentKey = providerKeys[keyIdx];
+        const selectedApiKey = providerKeys[keyIdx];
 
         try {
           responseText = await generateModelContent({
             model: settings.selectedModel,
             contents,
             config,
-            apiKey: currentKey,
+            apiKey: selectedApiKey,
+            isXmlQuality: settings.promptQualityOption === 'xml',
           });
-          lastError = null;
+          lastGenerationError = null;
           break;
-        } catch (err) {
-          lastError = err;
+        } catch (requestError) {
+          lastGenerationError = requestError;
+          const canTryAnotherKey = attempt < providerKeys.length - 1;
+          if (!canTryAnotherKey) {
+            throw requestError;
+          }
+          console.warn(`Retrying ${provider} with next API key after error:`, requestError);
         }
       }
 
-      if (lastError) throw lastError;
+      if (lastGenerationError) throw lastGenerationError;
+      if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
 
-      let prompts: string[] = [];
+      // Parse JSON array / responses
+      let parsedPrompts: string[] = [];
       try {
         const parsed = JSON.parse(responseText);
         if (Array.isArray(parsed)) {
-          prompts = parsed.map(item => typeof item === 'string' ? item : JSON.stringify(item));
+          parsedPrompts = parsed.map(p => typeof p === 'string' ? p : JSON.stringify(p));
         } else if (parsed && typeof parsed === 'object') {
-          const arr = Object.values(parsed).find(v => Array.isArray(v));
-          if (arr) prompts = (arr as any[]).map(item => typeof item === 'string' ? item : JSON.stringify(item));
-          else prompts = [responseText];
+          const firstArr = Object.values(parsed).find(v => Array.isArray(v));
+          if (firstArr) {
+            parsedPrompts = (firstArr as any[]).map(p => typeof p === 'string' ? p : JSON.stringify(p));
+          } else {
+            parsedPrompts = [responseText];
+          }
         } else {
-          prompts = [responseText];
+          parsedPrompts = [responseText];
         }
       } catch {
-        prompts = [responseText];
+        parsedPrompts = responseText.split('\n').map(l => l.trim()).filter(Boolean);
       }
 
-      prompts = prompts.map(p => p.trim()).filter(Boolean);
-
-      if (settings.inputMode === 'vector' || settings.styleOption === 'vector') {
+      // Ensure vector art suffix if in vector mode
+      const isVectorMode = settings.styleOption === 'vector' || settings.inputMode === 'vector';
+      if (isVectorMode) {
         const isWhiteBg = settings.vectorWhiteBg ?? true;
-        const suffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle, isWhiteBg);
-        prompts = prompts.map(p => {
-          if (!p.toLowerCase().includes('flat illustration') && !p.toLowerCase().includes('monoline') && !p.toLowerCase().includes('vector')) {
-            return `${p}, ${suffix}`;
+        const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle, isWhiteBg);
+        const chosenStyle = (settings.vectorArtStyle || '').toLowerCase();
+        let suffixSig = 'flat illustration style';
+        if (chosenStyle.includes('monoline')) suffixSig = 'minimalist monoline vector art';
+        else if (chosenStyle.includes('geometric silhouette')) suffixSig = 'geometric silhouette vector art';
+        else if (chosenStyle.includes('negative space')) suffixSig = 'clever negative space cutout logo emblem';
+
+        parsedPrompts = parsedPrompts.map(item => {
+          let text = item.trim().replace(/[,.]\s*$/, '').trim();
+          if (!text.toLowerCase().includes(suffixSig)) {
+            text = text.replace(/,?\s*(negative space vector art|geometric silhouette vector art|minimalist monoline vector art|flat illustration style).*$/i, '').trim();
+            text = text.replace(/[,.]\s*$/, '').trim();
+            return `${text}, ${targetSuffix}`;
           }
-          return p;
+          return item;
         });
       }
 
       return {
         ...placeholder,
-        prompts,
+        prompts: parsedPrompts.slice(0, settings.numPrompts),
         hasError: false,
       };
     } catch (err: any) {
-      const errorMessage = parseApiError(err);
+      const providerLabel = MODEL_PROVIDER_LABELS[getModelProvider(settings.selectedModel)];
+      const errorMessageWithProvider = `[${providerLabel}] ${parseApiError(err)}`;
+      logError(errorMessageWithProvider, settings.selectedModel, String(err), settings.styleOption);
       return {
         ...placeholder,
-        prompts: [`[${MODEL_PROVIDER_LABELS[getModelProvider(settings.selectedModel)]}] ${errorMessage}`],
+        prompts: [t('errorFailedToGeneratePromptsApiError', { displayName: placeholder.originalConcept, errorMessage: errorMessageWithProvider })],
         hasError: true,
       };
     }
-  }, [apiKeys, reserveNextApiKeyStartIndex, settings, parseApiError]);
+  }, [settings, apiKeys, isProviderInitialized, reserveNextApiKeyStartIndex, parseApiError, logError, t]);
 
 type GenerationJob = () => Promise<GeneratedPromptSet>;
  type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[] };
@@ -913,11 +937,14 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
   const handleGeneratePrompts = useCallback(async (isQuick: boolean = false) => {
     if (settings.numPrompts <= 0) { setError(t('errorNumPromptsPositive')); return; }
     if (isLoading || isRetryingAll || retryingIds.size > 0) return;
-
     const provider = getModelProvider(settings.selectedModel);
-    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-    if (providerKeys.length === 0) {
-      setError(`Silakan masukkan ${MODEL_PROVIDER_LABELS[provider]} API key di menu Set API Key.`);
+    if (!isProviderInitialized(provider)) {
+      const providerLabel = MODEL_PROVIDER_LABELS[provider];
+      setError(`Please add your ${providerLabel} API key before generating.`);
+      return;
+    }
+    if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
+      setError(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
       return;
     }
 
@@ -938,6 +965,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       return;
     }
 
+    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
     const workerCount = Math.max(1, Math.min(50, Math.max(settings.workerCount || 1, providerKeys.length || 1)));
     const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
 
@@ -946,7 +974,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     setTotalJobsCount(generationTask.jobs.length);
     setCompletedJobsCount(0);
     setActivityLogs([]);
-    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas paralel di ${providerKeys.length || workerCount} worker (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
+    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas di ${workerCount} worker paralel (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
 
     let finishedCount = 0;
     for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += workerCount) {
@@ -954,8 +982,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
 
       await Promise.all(batch.map(async (job, idx) => {
         const workerIndex = (startIndex + idx) % workerCount + 1;
-        const conceptName = generationTask.placeholders[0]?.originalConcept || '';
-
+        const conceptName = generationTask!.placeholders[0]?.originalConcept || '';
         setCurrentProcessingConcept(conceptName);
         addActivityLog(`Worker #${workerIndex}: Sedang memproses "${conceptName}"...`, 'info', workerIndex);
 
@@ -1011,7 +1038,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       }
       return currentSets;
     });
-  }, [settings, uploadedImages, videoProcessor.uploadedVideos, saveHistory, history, t, generateForTextMode, generateForVectorMode, generateForImageMode, generateForVideoMode, isLoading, isRetryingAll, retryingIds, addActivityLog, apiKeys]);
+  }, [settings, uploadedImages, videoProcessor.uploadedVideos, saveHistory, history, t, isProviderInitialized, generateForTextMode, generateForVectorMode, generateForImageMode, generateForVideoMode, isLoading, isRetryingAll, retryingIds, addActivityLog, apiKeys]);
  
  const formatPromptsForExport = useCallback((promptsToExport?: (string | Record<string, any>)[]): string => {
  const allPrompts = promptsToExport || generatedPromptSets.filter(set => !set.hasError && set.prompts.length > 0).flatMap(set => set.prompts);

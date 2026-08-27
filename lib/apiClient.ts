@@ -39,7 +39,7 @@ export const ENDPOINTS: Record<ModelProvider, string> = {
 
 export const CHECK_MODELS: Record<ModelProvider, string> = {
   google: 'gemini-2.5-flash',
-  groq: 'llama-3.2-11b-vision-preview',
+  groq: 'qwen/qwen3.6-27b',
   github: 'gpt-4o-mini',
   mistral: 'mistral-small-latest',
   openai: 'gpt-4o-mini',
@@ -47,18 +47,22 @@ export const CHECK_MODELS: Record<ModelProvider, string> = {
 };
 
 /**
- * Pembersih respons teks persis seperti fungsi parseMetadata di mata data app
+ * Hapus tag <think> dan markdown code fence (```json ... ```) dari respons AI.
  */
-export const stripCodeFence = (rawText: string): string => {
-  let cleaned = (rawText || '').trim();
-  cleaned = cleaned.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
-  if (cleaned.startsWith('```json')) cleaned = cleaned.substring(7);
-  if (cleaned.startsWith('```')) cleaned = cleaned.substring(3);
-  if (cleaned.endsWith('```')) cleaned = cleaned.substring(0, cleaned.length - 3);
-  return cleaned.trim();
+export const stripCodeFence = (text: string): string => {
+  let s = (text || '').trim();
+  s = s.replace(/<think>[\s\S]*?<\/think>/gi, '').trim();
+  if (s.startsWith('```')) {
+    const nl = s.indexOf('\n');
+    s = nl !== -1 ? s.substring(nl + 1) : s.substring(3);
+  }
+  if (s.endsWith('```')) {
+    s = s.substring(0, s.length - 3);
+  }
+  return s.trim();
 };
 
-const toChatCompletionUserContent = (contents: any): any => {
+const toChatCompletionUserContent = (contents: any): string | Array<Record<string, any>> => {
   if (typeof contents === 'string') return contents;
 
   if (Array.isArray(contents)) {
@@ -94,58 +98,67 @@ const toChatCompletionUserContent = (contents: any): any => {
 };
 
 /**
- * Cara kerja API call Vision & Text sama persis seperti fungsi callVisionAPI di server.js (mata data)
+ * Pemanggilan API Universal (Sama Persis Arsitektur 'mata data')
  */
 export const generateModelContent = async (request: GeneratePromptRequest): Promise<string> => {
   const provider: ModelProvider = getModelProvider(request.model);
-  const currentKey = (request.apiKey || '').trim();
+  const apiKey = (request.apiKey || '').trim();
 
-  if (!currentKey) {
-    throw new Error(`API key untuk provider ${provider} belum diatur. Silakan masukkan key di menu Set API Key.`);
+  if (!apiKey) {
+    throw new Error(`No ${provider} API key found. Please configure your key in Settings.`);
   }
 
-  let endpoint = ENDPOINTS[provider] || ENDPOINTS.google;
+  const endpoint = ENDPOINTS[provider] || ENDPOINTS.google;
+  const userContent = toChatCompletionUserContent(request.contents);
+
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${currentKey}`,
+    'Authorization': `Bearer ${apiKey}`,
   };
 
   if (provider === 'github') {
-    headers['api-key'] = currentKey;
+    headers['api-key'] = apiKey;
   } else if (provider === 'openrouter') {
     headers['HTTP-Referer'] = 'https://sebelaspromptgen.app';
     headers['X-Title'] = 'SebelasPromptGen';
   }
 
-  const promptContent = toChatCompletionUserContent(request.contents);
-  const systemInstruction = request.config?.systemInstruction || 'You are an expert AI prompt creator. Output valid JSON formatted array of prompts: ["prompt 1", "prompt 2", ...]';
+  const systemInstruction = request.config?.systemInstruction
+    ? `${request.config.systemInstruction}\nYou MUST output valid JSON format.`
+    : 'You MUST output valid JSON format.';
 
   const messages: Array<{ role: string; content: any }> = [];
   if (systemInstruction) {
     messages.push({ role: 'system', content: systemInstruction });
   }
+  messages.push({ role: 'user', content: userContent });
 
-  if (Array.isArray(promptContent)) {
-    messages.push({ role: 'user', content: promptContent });
-  } else {
-    messages.push({ role: 'user', content: String(promptContent) });
+  // Map model name jika diperlukan
+  let modelName = request.model;
+  if (provider === 'google' && modelName.startsWith('google/')) {
+    modelName = modelName.replace('google/', '') as ApiModel;
   }
 
-  const body = {
-    model: request.model,
+  const body: Record<string, any> = {
+    model: modelName,
+    messages,
     temperature: request.config?.temperature ?? 0.7,
-    messages: messages,
+    max_tokens: request.config?.maxOutputTokens || 8192,
   };
 
   const res = await fetch(endpoint, {
     method: 'POST',
-    headers: headers,
+    headers,
     body: JSON.stringify(body),
   });
 
   if (!res.ok) {
     const errText = await res.text();
-    throw new ApiRequestError(`API error ${res.status}: ${errText.slice(0, 200)}`, res.status, errText);
+    throw new ApiRequestError(
+      errText || `${provider} API request failed with status ${res.status}`,
+      res.status,
+      errText
+    );
   }
 
   const resData = await res.json();
@@ -168,7 +181,7 @@ export const generateModelContent = async (request: GeneratePromptRequest): Prom
 };
 
 /**
- * Pengecekan API Key sama persis seperti checkApiKey di server.js (mata data)
+ * Pengecekan API Key Online (Sama Persis Arsitektur 'mata data')
  */
 export async function checkApiKeyOnline(provider: ModelProvider, key: string): Promise<{
   success: boolean;
@@ -186,7 +199,7 @@ export async function checkApiKeyOnline(provider: ModelProvider, key: string): P
   }
 
   try {
-    let endpoint = ENDPOINTS[provider] || ENDPOINTS.google;
+    const endpoint = ENDPOINTS[provider] || ENDPOINTS.google;
     const testModel = CHECK_MODELS[provider] || 'gemini-2.5-flash';
 
     const headers: Record<string, string> = {
@@ -224,6 +237,21 @@ export async function checkApiKeyOnline(provider: ModelProvider, key: string): P
     }
   } catch (err: any) {
     const latency = Date.now() - tStart;
-    return { key: maskedKey, status: 'error', reason: 'invalid', success: false, message: (err?.message || 'Network error').slice(0, 50), latency } as any;
+    return { key: maskedKey, status: 'error', reason: 'invalid', success: false, message: (err?.message || 'Network error').slice(0, 60), latency } as any;
   }
 }
+
+export const isTransientEmptyResponseError = (_error: unknown): boolean => false;
+export const shouldRotateApiKeyOnError = (error: unknown): boolean => {
+  const text = (error instanceof Error ? error.message : String(error)).toLowerCase();
+  return (
+    text.includes('429') ||
+    text.includes('rate limit') ||
+    text.includes('resource exhausted') ||
+    text.includes('limit exceeded') ||
+    text.includes('401') ||
+    text.includes('403') ||
+    text.includes('unauthorized') ||
+    text.includes('invalid')
+  );
+};

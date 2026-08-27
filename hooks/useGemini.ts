@@ -8,37 +8,37 @@ export type ProviderApiStatus = Record<ModelProvider, boolean>;
 const emptyApiKeys: ProviderApiKeys = {
   google: [],
   groq: [],
-  github: [],
   mistral: [],
-  openai: [],
   openrouter: [],
+  github: [],
+  openai: [],
 };
 
 const emptyApiStatus: ProviderApiStatus = {
   google: false,
   groq: false,
-  github: false,
   mistral: false,
-  openai: false,
   openrouter: false,
+  github: false,
+  openai: false,
 };
 
 const providerStorageKeys: Record<ModelProvider, string> = {
   google: 'gemini_api_keys',
   groq: 'groq_api_keys',
-  github: 'github_api_keys',
   mistral: 'mistral_api_keys',
-  openai: 'openai_api_keys',
   openrouter: 'openrouter_api_keys',
+  github: 'github_api_keys',
+  openai: 'openai_api_keys',
 };
 
 const legacyProviderStorageKeys: Record<ModelProvider, string> = {
   google: 'gemini_api_key',
   groq: 'groq_api_key',
-  github: 'github_api_key',
   mistral: 'mistral_api_key',
-  openai: 'openai_api_key',
   openrouter: 'openrouter_api_key',
+  github: 'github_api_key',
+  openai: 'openai_api_key',
 };
 
 export const normalizeApiKeyList = (value: string | string[] | null | undefined): string[] => {
@@ -73,10 +73,10 @@ const readProviderKeysFromStorage = (provider: ModelProvider): string[] => {
 export const readStoredProviderApiKeys = (): ProviderApiKeys => ({
   google: readProviderKeysFromStorage('google'),
   groq: readProviderKeysFromStorage('groq'),
-  github: readProviderKeysFromStorage('github'),
   mistral: readProviderKeysFromStorage('mistral'),
-  openai: readProviderKeysFromStorage('openai'),
   openrouter: readProviderKeysFromStorage('openrouter'),
+  github: readProviderKeysFromStorage('github'),
+  openai: readProviderKeysFromStorage('openai'),
 });
 
 const writeProviderKeysToStorage = (provider: ModelProvider, keys: string[]) => {
@@ -96,10 +96,10 @@ export const useGemini = (t: (key: string, params?: Record<string, string | numb
     return {
       google: keys.google.length > 0,
       groq: keys.groq.length > 0,
-      github: keys.github.length > 0,
       mistral: keys.mistral.length > 0,
-      openai: keys.openai.length > 0,
       openrouter: keys.openrouter.length > 0,
+      github: keys.github.length > 0,
+      openai: keys.openai.length > 0,
     };
   });
 
@@ -113,28 +113,28 @@ export const useGemini = (t: (key: string, params?: Record<string, string | numb
     const normalizedKeys: ProviderApiKeys = {
       google: normalizeApiKeyList(keys.google),
       groq: normalizeApiKeyList(keys.groq),
-      github: normalizeApiKeyList(keys.github ?? []),
       mistral: normalizeApiKeyList(keys.mistral),
-      openai: normalizeApiKeyList(keys.openai ?? []),
       openrouter: normalizeApiKeyList(keys.openrouter ?? []),
+      github: normalizeApiKeyList(keys.github ?? []),
+      openai: normalizeApiKeyList(keys.openai ?? []),
     };
 
     setApiKeys(normalizedKeys);
     setApiStatus({
       google: normalizedKeys.google.length > 0,
       groq: normalizedKeys.groq.length > 0,
-      github: normalizedKeys.github.length > 0,
       mistral: normalizedKeys.mistral.length > 0,
-      openai: normalizedKeys.openai.length > 0,
       openrouter: normalizedKeys.openrouter.length > 0,
+      github: normalizedKeys.github.length > 0,
+      openai: normalizedKeys.openai.length > 0,
     });
 
     writeProviderKeysToStorage('google', normalizedKeys.google);
     writeProviderKeysToStorage('groq', normalizedKeys.groq);
-    writeProviderKeysToStorage('github', normalizedKeys.github);
     writeProviderKeysToStorage('mistral', normalizedKeys.mistral);
-    writeProviderKeysToStorage('openai', normalizedKeys.openai);
     writeProviderKeysToStorage('openrouter', normalizedKeys.openrouter);
+    writeProviderKeysToStorage('github', normalizedKeys.github);
+    writeProviderKeysToStorage('openai', normalizedKeys.openai);
   }, []);
 
   const handleSaveProviderApiKey = useCallback((provider: ModelProvider, key: string | string[], _isSilent: boolean = false) => {

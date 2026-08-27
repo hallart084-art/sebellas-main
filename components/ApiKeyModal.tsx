@@ -25,19 +25,19 @@ const DEFAULT_PROVIDER_MODELS: Record<ModelProvider, ApiModel> = {
   google: 'gemini-2.5-flash',
   groq: 'llama-3.2-11b-vision-preview',
   github: 'gpt-4o-mini',
-  mistral: 'pixtral-12b-2409',
+  mistral: 'mistral-small-latest',
   openai: 'gpt-4o-mini',
-  openrouter: 'meta-llama/llama-3.2-11b-vision-instruct:free',
+  openrouter: 'meta-llama/llama-3.3-70b-instruct:free',
 };
 
 const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, currentApiKeys, apiStatus, selectedModel, isSidebarOpen, onModelChange }) => {
   
   const { t } = useLocalizationContext();
   const [localApiKeyText, setLocalApiKeyText] = useState<Record<ModelProvider, string>>({
-    google: currentApiKeys.google.join('\n'),
-    groq: currentApiKeys.groq.join('\n'),
+    google: currentApiKeys.google?.join('\n') ?? '',
+    groq: currentApiKeys.groq?.join('\n') ?? '',
     github: currentApiKeys.github?.join('\n') ?? '',
-    mistral: currentApiKeys.mistral.join('\n'),
+    mistral: currentApiKeys.mistral?.join('\n') ?? '',
     openai: currentApiKeys.openai?.join('\n') ?? '',
     openrouter: currentApiKeys.openrouter?.join('\n') ?? '',
   });
@@ -63,16 +63,17 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
 
   useEffect(() => {
     setLocalApiKeyText({
-      google: currentApiKeys.google.join('\n'),
+      google: currentApiKeys.google?.join('\n') ?? '',
+      groq: currentApiKeys.groq?.join('\n') ?? '',
       github: currentApiKeys.github?.join('\n') ?? '',
-      groq: currentApiKeys.groq.join('\n'),
-      mistral: currentApiKeys.mistral.join('\n'),
+      mistral: currentApiKeys.mistral?.join('\n') ?? '',
+      openai: currentApiKeys.openai?.join('\n') ?? '',
       openrouter: currentApiKeys.openrouter?.join('\n') ?? '',
     });
   }, [currentApiKeys]);
   
   useEffect(() => {
-    setCheckResult({ google: null, github: null, groq: null, mistral: null, openrouter: null });
+    setCheckResult({ google: null, groq: null, github: null, mistral: null, openai: null, openrouter: null });
   }, []);
 
   const requestClose = useCallback(() => {
@@ -112,8 +113,8 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   const handleSave = () => {
     onSave({
       google: normalizeApiKeyList(localApiKeyText.google),
-      groq: normalizeApiKeyList(localApiKeyText.groq),
       github: normalizeApiKeyList(localApiKeyText.github),
+      groq: normalizeApiKeyList(localApiKeyText.groq),
       mistral: normalizeApiKeyList(localApiKeyText.mistral),
       openai: normalizeApiKeyList(localApiKeyText.openai),
       openrouter: normalizeApiKeyList(localApiKeyText.openrouter),
@@ -228,11 +229,12 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
   };
 
   const providerOptions: Array<{ provider: ModelProvider; label: string; apiLabel: string }> = [
-    { provider: 'google', label: 'Gemini', apiLabel: 'Gemini API Key' },
-    { provider: 'github', label: 'GitHub', apiLabel: 'GitHub Token (PAT)' },
-    { provider: 'groq', label: 'Groq', apiLabel: 'Groq API Key' },
-    { provider: 'mistral', label: 'Mistral', apiLabel: 'Mistral API Key' },
-    { provider: 'openrouter', label: 'OpenRouter', apiLabel: 'OpenRouter API Key' },
+    { provider: 'google', label: 'Gemini API', apiLabel: 'Gemini API Key' },
+    { provider: 'groq', label: 'Groq API', apiLabel: 'Groq API Key' },
+    { provider: 'github', label: 'GitHub Models API', apiLabel: 'GitHub Token (PAT)' },
+    { provider: 'mistral', label: 'Mistral API', apiLabel: 'Mistral API Key' },
+    { provider: 'openai', label: 'OpenAI API', apiLabel: 'OpenAI API Key' },
+    { provider: 'openrouter', label: 'OpenRouter API', apiLabel: 'OpenRouter API Key' },
   ];
 
   const selectedResult = checkResult[selectedProvider];
@@ -244,6 +246,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
     || normalizeApiKeyList(localApiKeyText.github).length > 0
     || normalizeApiKeyList(localApiKeyText.groq).length > 0
     || normalizeApiKeyList(localApiKeyText.mistral).length > 0
+    || normalizeApiKeyList(localApiKeyText.openai).length > 0
     || normalizeApiKeyList(localApiKeyText.openrouter).length > 0;
 
   const handleProviderSelect = (provider: ModelProvider) => {
@@ -370,6 +373,7 @@ const ApiKeyModal: React.FC<ApiKeyModalProps> = ({ onClose, onSave, onCheck, cur
                     selectedProvider === 'groq' ? 'https://console.groq.com/keys' : 
                     selectedProvider === 'openrouter' ? 'https://openrouter.ai/settings/keys' :
                     selectedProvider === 'github' ? 'https://github.com/settings/tokens' :
+                    selectedProvider === 'openai' ? 'https://platform.openai.com/api-keys' :
                     'https://console.mistral.ai/api-keys/'
                   } 
                   target="_blank" 
