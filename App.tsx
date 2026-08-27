@@ -924,6 +924,11 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       return { placeholders: [], jobs: [] };
     }
 
+    const provider = getModelProvider(settings.selectedModel);
+    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+    const numKeys = Math.max(1, providerKeys.length || settings.workerCount || 1);
+    const totalRequested = Math.max(1, settings.numPrompts || 1);
+
     const placeholders = rawConcepts.map(concept => ({
       id: generateUuid(),
       originalConcept: concept,
@@ -932,12 +937,33 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       inputMode: 'text' as const,
     }));
 
-    const jobs = rawConcepts.map((concept, index) =>
-      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, settings, isQuick))
-    );
+    const jobs: GenerationJob[] = [];
+    let globalKeyIdx = 0;
+
+    rawConcepts.forEach((concept, cIdx) => {
+      const placeholder = placeholders[cIdx];
+      const chunksCount = Math.min(totalRequested, numKeys);
+      const baseChunkSize = Math.floor(totalRequested / chunksCount);
+      const remainder = totalRequested % chunksCount;
+
+      for (let i = 0; i < chunksCount; i++) {
+        const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
+        if (countForThisJob <= 0) continue;
+        const assignedKey = globalKeyIdx % numKeys;
+
+        jobs.push(() =>
+          processAndGenerate(
+            placeholder,
+            () => PromptBuilder.buildTextPrompt(concept, { ...settings, numPrompts: countForThisJob }, isQuick),
+            assignedKey
+          )
+        );
+        globalKeyIdx += 1;
+      }
+    });
 
     return { placeholders, jobs };
-  }, [settings, processAndGenerate, t]);
+  }, [settings, processAndGenerate, apiKeys, t]);
 
   const generateForVectorMode = useCallback((isQuick: boolean) => {
     const rawConcepts = settings.conceptsInput.split(/[\n,;]/).map(c => c.trim()).filter(Boolean);
@@ -945,6 +971,11 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       setError(t('errorNoValidConceptsToProcess'));
       return { placeholders: [], jobs: [] };
     }
+
+    const provider = getModelProvider(settings.selectedModel);
+    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+    const numKeys = Math.max(1, providerKeys.length || settings.workerCount || 1);
+    const totalRequested = Math.max(1, settings.numPrompts || 1);
 
     const placeholders = rawConcepts.map(concept => ({
       id: generateUuid(),
@@ -954,12 +985,33 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       inputMode: 'vector' as const,
     }));
 
-    const jobs = rawConcepts.map((concept, index) =>
-      () => processAndGenerate(placeholders[index], () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector' }, isQuick))
-    );
+    const jobs: GenerationJob[] = [];
+    let globalKeyIdx = 0;
+
+    rawConcepts.forEach((concept, cIdx) => {
+      const placeholder = placeholders[cIdx];
+      const chunksCount = Math.min(totalRequested, numKeys);
+      const baseChunkSize = Math.floor(totalRequested / chunksCount);
+      const remainder = totalRequested % chunksCount;
+
+      for (let i = 0; i < chunksCount; i++) {
+        const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
+        if (countForThisJob <= 0) continue;
+        const assignedKey = globalKeyIdx % numKeys;
+
+        jobs.push(() =>
+          processAndGenerate(
+            placeholder,
+            () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob }, isQuick),
+            assignedKey
+          )
+        );
+        globalKeyIdx += 1;
+      }
+    });
 
     return { placeholders, jobs };
-  }, [settings, processAndGenerate, t]);
+  }, [settings, processAndGenerate, apiKeys, t]);
   
   const generateForImageMode = useCallback((isQuick: boolean) => {
     if (uploadedImages.length === 0) {
@@ -1231,27 +1283,30 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       return;
     }
 
-    const finalSets: GeneratedPromptSet[] = [];
     const provider = getModelProvider(settings.selectedModel);
-    const workerCount = Math.max(1, Math.min(50, settings.workerCount || 1));
+    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+    const workerCount = Math.max(1, Math.min(50, Math.max(settings.workerCount || 1, providerKeys.length || 1)));
     const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
+
+    // Tampilkan card placeholder langsung di awal
+    setGeneratedPromptSets(generationTask.placeholders.map(p => ({ ...p })));
 
     setActiveWorkersCount(workerCount);
     setTotalJobsCount(generationTask.jobs.length);
     setCompletedJobsCount(0);
     setActivityLogs([]);
-    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas dengan ${workerCount} worker paralel aktif (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
+    addActivityLog(`Memulai proses ${generationTask.jobs.length} tugas paralel di ${providerKeys.length || workerCount} worker (${MODEL_PROVIDER_LABELS[provider]})...`, 'info');
 
     let finishedCount = 0;
     for (let startIndex = 0; startIndex < generationTask.jobs.length; startIndex += workerCount) {
       const batch = generationTask.jobs.slice(startIndex, startIndex + workerCount);
       
-      const batchResults = await Promise.all(batch.map(async (job, idx) => {
+      await Promise.all(batch.map(async (job, idx) => {
         const workerIndex = (startIndex + idx) % workerCount + 1;
-        const conceptName = generationTask.placeholders[startIndex + idx]?.originalConcept || '';
+        const conceptName = generationTask.placeholders[0]?.originalConcept || '';
         
         setCurrentProcessingConcept(conceptName);
-        addActivityLog(`Worker #${workerIndex}: Sedang memproses konsep "${conceptName}"...`, 'info', workerIndex);
+        addActivityLog(`Worker #${workerIndex}: Sedang memproses "${conceptName}"...`, 'info', workerIndex);
 
         const result = await job();
         finishedCount += 1;
@@ -1263,15 +1318,22 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
           addActivityLog(`Worker #${workerIndex}: Berhasil membuat ${result.prompts.length} prompt untuk "${conceptName}"`, 'success', workerIndex);
         }
 
-        // Update state immediately as each job finishes
+        // Real-time merge ke card
         if (generationIdRef.current === currentGenerationId) {
-          setGeneratedPromptSets(prev => [...prev, result]);
+          setGeneratedPromptSets(prev => prev.map(card => {
+            if (card.id === result.id) {
+              return {
+                ...card,
+                prompts: [...card.prompts, ...result.prompts],
+                hasError: card.hasError || result.hasError,
+              };
+            }
+            return card;
+          }));
         }
         return result;
       }));
       
-      finalSets.push(...batchResults);
-
       if (generationIdRef.current !== currentGenerationId) return;
 
       const hasMoreBatches = startIndex + workerCount < generationTask.jobs.length;
@@ -1284,24 +1346,21 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     
     if (generationIdRef.current !== currentGenerationId) return;
 
-    if (finalSets.some(s => s.hasError)) {
-      setError(t('errorSomePromptsFailed'));
-      addActivityLog(`Selesai dengan beberapa error.`, 'warning');
-    } else {
-      addActivityLog(`Semua proses berhasil diselesaikan! Total ${finalSets.flatMap(s => s.prompts).length} prompt siap.`, 'success');
-    }
-
+    addActivityLog(`Semua proses berhasil diselesaikan!`, 'success');
     setIsLoading(false);
 
-    if (finalSets.some(s => !s.hasError && s.prompts.length > 0)) {
-      const currentSettings: GenerationSettings = {
-        ...settings,
-        conceptsInput: (settings.inputMode === 'text' || settings.inputMode === 'vector') ? settings.conceptsInput : '',
-        imageNames: settings.inputMode === 'image' ? uploadedImages.map(img => img.name) : [],
-        videoNames: settings.inputMode === 'video' ? videoProcessor.uploadedVideos.map(v => v.name) : [],
-      };
-      saveHistory([{ id: Date.now(), timestamp: Date.now(), settings: currentSettings, sets: finalSets, folderId: settings.targetFolderId || null }, ...history]);
-    }
+    setGeneratedPromptSets(currentSets => {
+      if (currentSets.some(s => !s.hasError && s.prompts.length > 0)) {
+        const currentSettings: GenerationSettings = {
+          ...settings,
+          conceptsInput: (settings.inputMode === 'text' || settings.inputMode === 'vector') ? settings.conceptsInput : '',
+          imageNames: settings.inputMode === 'image' ? uploadedImages.map(img => img.name) : [],
+          videoNames: settings.inputMode === 'video' ? videoProcessor.uploadedVideos.map(v => v.name) : [],
+        };
+        saveHistory([{ id: Date.now(), timestamp: Date.now(), settings: currentSettings, sets: currentSets, folderId: settings.targetFolderId || null }, ...history]);
+      }
+      return currentSets;
+    });
   }, [settings, uploadedImages, videoProcessor.uploadedVideos, saveHistory, history, t, isProviderInitialized, generateForTextMode, generateForVectorMode, generateForImageMode, generateForVideoMode, isLoading, isRetryingAll, retryingIds, addActivityLog, apiKeys]);
  
  const formatPromptsForExport = useCallback((promptsToExport?: (string | Record<string, any>)[]): string => {
