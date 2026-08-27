@@ -354,40 +354,40 @@ ABSOLUTE RULES - violating any of these means complete failure:
 };
 export const getFlatIllustrationSuffix = (whiteBg: boolean = true) => {
   const bgClause = whiteBg
-    ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients"
-    : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients";
+    ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients, no gradients"
+    : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients, no gradients";
 
-  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, modern microstock graphic asset, no complex gradients, no noise, no photorealism, no 3d render.`;
+  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no noise, no photorealism, no 3d render.`;
 };
 
 export const FLAT_ILLUSTRATION_SUFFIX = getFlatIllustrationSuffix(true);
 
 export const getMonolineVectorSuffix = (whiteBg: boolean = true) => {
   const bgClause = whiteBg
-    ? "perfectly isolated on solid pure white background, zero color background, pure white canvas"
-    : "perfectly isolated on clean solid background";
+    ? "perfectly isolated on solid pure white background, zero color background, pure white canvas, zero gradients, no gradients"
+    : "perfectly isolated on clean solid background, zero gradients, no gradients";
 
-  return `minimalist monoline vector art, continuous uniform single-weight black outline strokes, clean geometric linework, simplified abstract contour shapes, pure black and white line art, no colors, no fills, zero shading, zero gradients, no complex micro-textures, ${bgClause}, modern microstock graphic icon style, clean vector contour.`;
+  return `minimalist monoline vector art, continuous uniform single-weight black outline strokes, clean geometric linework, simplified abstract contour shapes, pure black and white line art, no colors, no fills, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no complex micro-textures, ${bgClause}, modern microstock graphic icon style, clean vector contour.`;
 };
 
 export const MONOLINE_VECTOR_SUFFIX = getMonolineVectorSuffix(true);
 
 export const getGeometricSilhouetteSuffix = (whiteBg: boolean = true) => {
   const colorClause = whiteBg
-    ? "strictly two colors only, solid black silhouette on solid pure white background, pure white canvas, zero color"
-    : "strictly two colors only, solid white silhouette on solid pure black background, pure black canvas, zero color";
+    ? "strictly two colors only, solid black silhouette on solid pure white background, pure white canvas, zero color, zero gradients, no gradients"
+    : "strictly two colors only, solid white silhouette on solid pure black background, pure black canvas, zero color, zero gradients, no gradients";
 
-  return `geometric silhouette vector art, minimalist solid flat shape logo mark, bold solid vector masses, simple minimal elegant design, sharp planar facet cuts, clean aerodynamic contours, high-contrast black and white graphic emblem, ${colorClause}, no tiny micro-details, no intricate textures, zero outlines, zero strokes, zero line art, zero shading, zero gradients, clean modern icon asset.`;
+  return `geometric silhouette vector art, minimalist solid flat shape logo mark, bold solid vector masses, simple minimal elegant design, sharp planar facet cuts, clean aerodynamic contours, high-contrast black and white graphic emblem, ${colorClause}, no tiny micro-details, no intricate textures, zero outlines, zero strokes, zero line art, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, clean modern icon asset.`;
 };
 
 export const GEOMETRIC_SILHOUETTE_SUFFIX = getGeometricSilhouetteSuffix(true);
 
 export const getNegativeSpaceCutoutSuffix = (whiteBg: boolean = true) => {
   const colorClause = whiteBg
-    ? "strictly two colors only, solid black and white, solid black subject on solid pure white background, pure white canvas, zero color"
-    : "strictly two colors only, solid white on solid pure black background, pure black canvas, zero color";
+    ? "strictly two colors only, solid black and white, solid black subject on solid pure white background, pure white canvas, zero color, zero gradients, no gradients"
+    : "strictly two colors only, solid white on solid pure black background, pure black canvas, zero color, zero gradients, no gradients";
 
-  return `negative space vector art, clever negative space cutout logo emblem, dual-tone optical illusion graphic mark, subject facial features and lighting carved from solid negative space, simple minimal elegant design, clean geometric badge framing, pure black and white dual-tone, ${colorClause}, no tiny micro-details, no intricate textures, strictly solid flat shapes, zero outlines, zero strokes, zero gradients, zero shadows, clean corporate vector icon.`;
+  return `negative space vector art, clever negative space cutout logo emblem, dual-tone optical illusion graphic mark, subject facial features and lighting carved from solid negative space, simple minimal elegant design, clean geometric badge framing, pure black and white dual-tone, ${colorClause}, no tiny micro-details, no intricate textures, strictly solid flat shapes, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows, clean corporate vector icon.`;
 };
 
 export const NEGATIVE_SPACE_CUTOUT_SUFFIX = getNegativeSpaceCutoutSuffix(true);
@@ -432,7 +432,7 @@ const buildVectorTextPrompt = (
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (MONOLINE GEOMETRIC VECTOR):
 1. **LINE ART & UNIFORM STROKES**: Strictly continuous uniform single-weight black outline strokes. Clean, consistent stroke thickness throughout the entire artwork without calligraphic tapering, without hatching, without rough sketch lines.
 2. **GEOMETRIC & ABSTRACT COMPOSITION**: Abstract and deconstruct the concept into clean geometric contour shapes (arcs, circles, polygonal facets, clean linear silhouettes). Keep the composition balanced, stylized, and iconic.
-3. **COLOR & SHADING**: Strictly black line art on pure solid white background. No colors, no color fills, zero shading, zero cel shadows, zero gradients.
+3. **COLOR, ZERO GRADIENTS & ZERO FAKE LIGHTING**: Strictly black line art on pure solid white background. No colors, no color fills, zero shading, zero cel shadows, zero gradients, no gradients, zero fake lighting, no glow, no lens flare.
 4. **BACKGROUND**: The subject MUST be cleanly isolated on a solid pure white background with zero background clutter, zero floor lines, and zero noise.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
@@ -449,7 +449,7 @@ FEW-SHOT EXAMPLES:
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (GEOMETRIC SILHOUETTE):
 1. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} subject on ${bgColor} background. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
 2. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean, sweeping vector masses with sharp planar facet cuts and clean aerodynamic contours. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
-3. **STRICTLY LINELESS (ZERO STROKES)**: Absolutely NO outlines, NO strokes, NO line art, NO hatching. Every shape is a solid flat color block.
+3. **STRICTLY LINELESS, ZERO GRADIENTS & ZERO FAKE LIGHTING**: Absolutely NO outlines, NO strokes, NO line art, NO hatching, zero gradients, no gradients, no fake lighting, zero glow, no lens flare. Every shape is a solid flat color block.
 4. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
@@ -466,7 +466,7 @@ FEW-SHOT EXAMPLES:
 1. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} and ${bgColor}. If subject is black, background is white. If subject is white, background is black. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
 2. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean geometric shapes. Clever negative space cutouts for major facial features, lighting, or silhouettes. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
 3. **BADGE & FRAME INTEGRATION**: Seamlessly integrate the subject inside a clean geometric silhouette or framing (e.g. solid circular badge, rounded square tile, or silhouette frame).
-4. **STRICTLY LINELESS (ZERO STROKES)**: Strictly flat solid fills and negative space cuts, zero outlines, zero strokes, zero gradients, zero shadows.
+4. **STRICTLY LINELESS, ZERO GRADIENTS & ZERO FAKE LIGHTING**: Strictly flat solid fills and negative space cuts, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
@@ -480,8 +480,8 @@ FEW-SHOT EXAMPLES:
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (FLAT ILLUSTRATION):
 1. **ANATOMY & PROPORTIONS**: Simplified chunky rounded anatomy, clean stylized shapes, non-intricate body features, simple friendly facial expressions.
 2. **NO MICRO-DETAILS**: Absolutely DO NOT include tiny badges, small icons, stickers, decals, complex UI charts, graphs, or text on props or surfaces. All props, helmets, laptops, and screens must be solid, blank, and minimalistic.
-3. **COLOR & SHADING**: Colors must be ultra-vibrant, sharp, and cheerful with saturated azure blue and radiant bright orange accents. Shading must be bold, clean-cut, hard-edge 2-tone flat shadow shapes. Strictly zero outlines/strokes.
-4. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**: The background MUST be a single flat solid color with NO floor, NO ground surface, NO floor line, NO scenery, and ZERO gradients. The subject must be cleanly isolated on this single solid background.
+3. **COLOR & SHADING**: Colors must be ultra-vibrant, sharp, and cheerful with saturated azure blue and radiant bright orange accents. Shading must be bold, clean-cut, hard-edge 2-tone flat shadow shapes. Strictly zero outlines/strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare.
+4. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**: The background MUST be a single flat solid color with NO floor, NO ground surface, NO floor line, NO scenery, zero gradients, no gradients, and zero fake lighting. The subject must be cleanly isolated on this single solid background.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
@@ -493,7 +493,7 @@ FEW-SHOT EXAMPLES:
   } else {
     activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE:
-- Every prompt must strictly follow "${chosenStyle}" with clean 2D vector styling, bold simplified shapes, and vivid color schemes.
+- Every prompt must strictly follow "${chosenStyle}" with clean 2D vector styling, bold simplified shapes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, and vivid color schemes.
 - Strictly no photorealism, camera metadata, or 3D noise.`;
   }
 
