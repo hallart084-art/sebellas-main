@@ -538,53 +538,56 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn, is
   const entropySeed = Math.random().toString(36).substring(2, 8);
   let contents = `Process the following concept: "${concept}" [Creative Horizon Seed: ${entropySeed} - Explore wild, non-cliché, highly imaginative, diverse multi-perspective angles]`;
   
-  switch (settings.styleOption) {
-    case 'isolated':
-      systemInstruction = buildIsolatedTextPrompt(settings.negativePrompt, settings.numPrompts);
-      break;
-    case 'vector': {
-      const chosenArtStyle = settings.vectorArtStyle || 'Flat illustration';
-      const isWhiteBg = settings.vectorWhiteBg ?? true;
-      const isMonoline = chosenArtStyle.toLowerCase().includes('monoline');
-      const isGeometricSilhouette = chosenArtStyle.toLowerCase().includes('geometric silhouette');
-      const isNegativeSpaceCutout = chosenArtStyle.toLowerCase().includes('negative space');
-      
-      let activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
-      if (isMonoline) activeSuffix = getMonolineVectorSuffix(isWhiteBg);
-      else if (isGeometricSilhouette) activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
-      else if (isNegativeSpaceCutout) activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
+  const isVector = settings.styleOption === 'vector' || settings.inputMode === 'vector' || !!settings.vectorArtStyle;
 
-      systemInstruction = buildVectorTextPrompt(
-        settings.negativePrompt,
-        settings.numPrompts,
-        chosenArtStyle,
-        settings.vectorPreset,
-        settings.vectorPose,
-        settings.vectorAttributes,
-        isWhiteBg
-      );
-      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format. [Session Exploration Seed: ${entropySeed}]
+  if (isVector) {
+    const chosenArtStyle = settings.vectorArtStyle || 'Flat illustration';
+    const isWhiteBg = settings.vectorWhiteBg ?? true;
+    const isMonoline = chosenArtStyle.toLowerCase().includes('monoline');
+    const isGeometricSilhouette = chosenArtStyle.toLowerCase().includes('geometric silhouette');
+    const isNegativeSpaceCutout = chosenArtStyle.toLowerCase().includes('negative space');
+    
+    let activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
+    if (isMonoline) activeSuffix = getMonolineVectorSuffix(isWhiteBg);
+    else if (isGeometricSilhouette) activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
+    else if (isNegativeSpaceCutout) activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
+
+    systemInstruction = buildVectorTextPrompt(
+      settings.negativePrompt,
+      settings.numPrompts,
+      chosenArtStyle,
+      settings.vectorPreset,
+      settings.vectorPose,
+      settings.vectorAttributes,
+      isWhiteBg
+    );
+    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format. [Session Exploration Seed: ${entropySeed}]
 
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 - Act as an ultra-smart, wildly creative assistant. Think broadly and laterally from unexpected angles, rich micro-moments, and diverse sub-entities.
+- Selected Art Style: "${chosenArtStyle}"
 - Every single prompt in the JSON array MUST strictly follow this exact structure:
 "[AI EXPANDED MAIN CONCEPT WITH SPECIFIC POSE, SUBJECT, AND GEOMETRIC ACTIONS], ${activeSuffix}"
 
 Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
-      break;
+  } else {
+    switch (settings.styleOption) {
+      case 'isolated':
+        systemInstruction = buildIsolatedTextPrompt(settings.negativePrompt, settings.numPrompts);
+        break;
+      case 'custom':
+        const template = settings.customTemplate.trim();
+        systemInstruction = buildCustomTextPrompt(template, settings.negativePrompt, settings.numPrompts);
+        break;
+      case 'footage':
+        systemInstruction = buildFootageJsonPrompt(settings.negativePrompt, settings.numPrompts);
+        schema = footageListSchema;
+        break;
+      case 'photographic':
+      default:
+        systemInstruction = buildFotographicTextPrompt(settings.promptQualityOption, settings.negativePrompt, settings.numPrompts);
+        break;
     }
-    case 'custom':
-      const template = settings.customTemplate.trim();
-      systemInstruction = buildCustomTextPrompt(template, settings.negativePrompt, settings.numPrompts);
-      break;
-    case 'footage':
-      systemInstruction = buildFootageJsonPrompt(settings.negativePrompt, settings.numPrompts);
-      schema = footageListSchema;
-      break;
-    case 'photographic':
-    default:
-      systemInstruction = buildFotographicTextPrompt(settings.promptQualityOption, settings.negativePrompt, settings.numPrompts);
-      break;
   }
  
  const config: any = {
