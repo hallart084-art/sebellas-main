@@ -958,8 +958,9 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     const conceptNames: string[] = [];
     let globalJobIdx = 0;
 
-    // Round-Robin: 1 placeholder per concept, N jobs (1 prompt per API call)
-    // Key bergantian: K1→K2→K3→K1→K2→... setiap key istirahat selagi key lain bekerja
+    // High-Speed Parallel Key Distribution:
+    // Bagi total requested prompts ke sejumlah API key yang tersedia secara paralel.
+    // Contoh: 70 prompt & 4 key -> 4 job paralel (@ 17-18 prompt) -> selesai dalam ~2.5 detik!
     rawConcepts.forEach((concept) => {
       const placeholderIdx = placeholders.length;
       const placeholder: GeneratedPromptSet = {
@@ -971,14 +972,22 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       };
       placeholders.push(placeholder);
 
-      for (let i = 0; i < totalRequested; i++) {
+      // Tentukan jumlah chunk: maksimal sebanyak jumlah key atau jika prompt sedikit, 1 chunk
+      const chunksCount = Math.min(totalRequested, numKeys);
+      const baseChunkSize = Math.floor(totalRequested / chunksCount);
+      const remainder = totalRequested % chunksCount;
+
+      for (let i = 0; i < chunksCount; i++) {
+        const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
+        if (countForThisJob <= 0) continue;
+
         const assignedKeyIdx = globalJobIdx % numKeys;
         jobToPlaceholderMap.push(placeholderIdx);
         conceptNames.push(concept);
         jobs.push(() =>
           processAndGenerate(
             placeholder,
-            () => PromptBuilder.buildTextPrompt(concept, { ...settings, numPrompts: 1 }, isQuick),
+            () => PromptBuilder.buildTextPrompt(concept, { ...settings, numPrompts: countForThisJob }, isQuick),
             assignedKeyIdx
           )
         );
@@ -1008,7 +1017,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     const conceptNames: string[] = [];
     let globalJobIdx = 0;
 
-    // Round-Robin: 1 placeholder per concept, N jobs (1 prompt per API call)
+    // High-Speed Parallel Key Distribution untuk Vector Mode
     rawConcepts.forEach((concept) => {
       const placeholderIdx = placeholders.length;
       const placeholder: GeneratedPromptSet = {
@@ -1020,14 +1029,21 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       };
       placeholders.push(placeholder);
 
-      for (let i = 0; i < totalRequested; i++) {
+      const chunksCount = Math.min(totalRequested, numKeys);
+      const baseChunkSize = Math.floor(totalRequested / chunksCount);
+      const remainder = totalRequested % chunksCount;
+
+      for (let i = 0; i < chunksCount; i++) {
+        const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
+        if (countForThisJob <= 0) continue;
+
         const assignedKeyIdx = globalJobIdx % numKeys;
         jobToPlaceholderMap.push(placeholderIdx);
         conceptNames.push(concept);
         jobs.push(() =>
           processAndGenerate(
             placeholder,
-            () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: 1 }, isQuick),
+            () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob }, isQuick),
             assignedKeyIdx
           )
         );
@@ -1314,16 +1330,9 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     const isRoundRobin = !!generationTask.jobToPlaceholderMap;
     const numKeys = Math.max(1, providerKeys.length || 1);
 
-    // Round-Robin: concurrency adaptif berdasarkan jumlah key
-    // Per-key cooldown sudah handle rate limit, jadi bisa paralel lebih banyak
-    let effectiveWorkerCount: number;
-    if (isRoundRobin) {
-      if (numKeys <= 2) effectiveWorkerCount = 1;       // 1-2 key: sequential
-      else if (numKeys <= 5) effectiveWorkerCount = 2;   // 3-5 key: 2 paralel
-      else effectiveWorkerCount = 3;                     // 6+ key: 3 paralel
-    } else {
-      effectiveWorkerCount = Math.max(1, Math.min(50, Math.max(settings.workerCount || 1, numKeys)));
-    }
+    // Multi-Key Parallel Concurrency:
+    // Jalankan worker paralel sesuai jumlah key yang tersedia
+    const effectiveWorkerCount = Math.max(1, Math.min(50, Math.max(settings.workerCount || 1, numKeys)));
     const batchDelaySeconds = Math.max(0, Math.min(300, settings.batchDelaySeconds || 0));
 
     setActiveWorkersCount(effectiveWorkerCount);
@@ -1332,7 +1341,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     setActivityLogs([]);
 
     if (isRoundRobin) {
-      addActivityLog(`🔄 Round-Robin: ${generationTask.jobs.length} prompt (1/call), ${effectiveWorkerCount} paralel, ${numKeys} key bergantian (${MODEL_PROVIDER_LABELS[provider]})`, 'info');
+      addActivityLog(`⚡ Multi-Key Turbo: ${generationTask.placeholders.length} konsep, ${generationTask.jobs.length} worker paralel (${numKeys} key aktif, ${MODEL_PROVIDER_LABELS[provider]})`, 'info');
       // Tampilkan placeholder kosong di awal agar card langsung muncul
       setGeneratedPromptSets([...generationTask.placeholders]);
     } else {
@@ -1344,10 +1353,9 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       const batch = generationTask.jobs.slice(startIndex, startIndex + effectiveWorkerCount);
       
       const batchResults = await Promise.all(batch.map(async (job, idx) => {
-        // Staggered start: worker berikutnya mulai 800ms setelah sebelumnya
-        // Cukup untuk spacing, tidak terlalu lama
+        // Stagger halus 200ms agar request network tidak bentrok di milidetik yang sama
         if (isRoundRobin && idx > 0) {
-          await new Promise(resolve => window.setTimeout(resolve, idx * 800));
+          await new Promise(resolve => window.setTimeout(resolve, idx * 200));
         }
         const absoluteJobIdx = startIndex + idx;
         const workerIndex = idx + 1;
@@ -1357,8 +1365,8 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
         
         setCurrentProcessingConcept(conceptName);
         if (isRoundRobin) {
-          const promptNum = finishedCount + idx + 1;
-          addActivityLog(`🔑 Key #${(absoluteJobIdx % providerKeys.length) + 1} → Prompt #${promptNum} "${conceptName}"`, 'info', workerIndex);
+          const keyNumber = (absoluteJobIdx % numKeys) + 1;
+          addActivityLog(`🔑 Key #${keyNumber}: Men-generate batch untuk "${conceptName}"...`, 'info', workerIndex);
         } else {
           addActivityLog(`Worker #${workerIndex}: Sedang memproses konsep "${conceptName}"...`, 'info', workerIndex);
         }
