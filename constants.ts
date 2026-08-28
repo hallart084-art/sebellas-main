@@ -124,6 +124,7 @@ export const VECTOR_ART_STYLES = [
   'Negative space cutout',
   'Abstract pictogram logo',
   'Seamless vector pattern',
+  'Car wrap livery',
 ] as const;
 
 export const DEFAULT_VECTOR_ART_STYLE = VECTOR_ART_STYLES[0];

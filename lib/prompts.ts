@@ -421,8 +421,21 @@ export const getSeamlessVectorPatternSuffix = (whiteBg: boolean = true) => {
 
 export const SEAMLESS_VECTOR_PATTERN_SUFFIX = getSeamlessVectorPatternSuffix(true);
 
+export const getCarWrapLiverySuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "isolated on solid pure white background, solid white canvas, zero floor, no ground shadow, zero gradients, no gradients"
+    : "isolated on clean solid background, zero floor, no ground shadow, zero gradients, no gradients";
+
+  return `professional car wrap livery vector design, dual split 50:50 presentation layout: top half displays a clean flat 2d vector side-profile illustration of an unbranded generic vehicle with the livery graphic seamlessly applied, bottom half is the EXACT IDENTICAL full-bleed edge-to-edge flat 2d vector livery wrap graphic touching all canvas edges with strictly zero border lines, zero outer frame, no margins, no bounding box, no car blueprints, and no car silhouette outlines, 100% flat 2d vector art, clean-cut hard-edge high-contrast solid flat color planes, ultra-vibrant sharp palette, auto-trace friendly, strictly no gradients, zero gradients, no photographic reflections, zero fake lighting, no glow, no bloom, no soft shadows, no car brand logos, no text, zero typography, no words, no letters, no sponsor badges, no watermark, ${bgClause}, commercial automotive vector stock asset.`;
+};
+
+export const CAR_WRAP_LIVERY_SUFFIX = getCarWrapLiverySuffix(true);
+
 export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true): string => {
   const chosenStyle = (artStyle || '').toLowerCase();
+  if (chosenStyle.includes('livery') || chosenStyle.includes('wrap')) {
+    return getCarWrapLiverySuffix(whiteBg);
+  }
   if (chosenStyle.includes('pattern') || chosenStyle.includes('seamless')) {
     return getSeamlessVectorPatternSuffix(whiteBg);
   }
@@ -457,18 +470,40 @@ const buildVectorTextPrompt = (
   const chosenPreset = preset || 'Single Image';
   const isWhiteBg = whiteBg ?? true;
 
-  const isSeamlessPattern = chosenStyle.toLowerCase().includes('pattern') || chosenStyle.toLowerCase().includes('seamless');
-  const isAbstractPictogramLogo = !isSeamlessPattern && (chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo'));
-  const isFlatObjectIllustration = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('object');
-  const isMonolineVector = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
-  const isGeometricSilhouette = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
-  const isNegativeSpaceCutout = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
-  const isFlatIllustration = !isSeamlessPattern && !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
+  const isCarWrapLivery = chosenStyle.toLowerCase().includes('livery') || chosenStyle.toLowerCase().includes('wrap');
+  const isSeamlessPattern = !isCarWrapLivery && (chosenStyle.toLowerCase().includes('pattern') || chosenStyle.toLowerCase().includes('seamless'));
+  const isAbstractPictogramLogo = !isCarWrapLivery && !isSeamlessPattern && (chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo'));
+  const isFlatObjectIllustration = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('object');
+  const isMonolineVector = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
+  const isGeometricSilhouette = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
+  const isNegativeSpaceCutout = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
+  const isFlatIllustration = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
 
   let activeSuffix = '';
   let styleRules = '';
 
-  if (isSeamlessPattern) {
+  if (isCarWrapLivery) {
+    activeSuffix = getCarWrapLiverySuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (CAR WRAP LIVERY):
+1. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
+   - **TOP HALF (50%)**: Displays a clean, flat 2D vector side-profile illustration of a generic unbranded vehicle with the livery graphic seamlessly applied across its body panels. Dynamically vary vehicle types across prompts (supercar, rally hot hatch, 4x4 pickup truck, commercial cargo box van/truck, performance drift sedan, widebody GT coupe) with strictly ZERO manufacturer brand logos.
+   - **BOTTOM HALF (50%)**: Displays the EXACT IDENTICAL full-bleed edge-to-edge flat 2D vector livery wrap graphic touching all canvas edges. STRICTLY NO outer border lines, NO framing margins, NO bounding boxes, NO car blueprints, and NO car silhouette outlines in the bottom half.
+2. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
+   - Both the vehicle preview and the wrap graphic must be rendered with hard-edge, solid flat color planes without photographic reflections, without soft gradients, without 3D shading, and without glowing bloom.
+3. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
+   - Use bold, high-contrast racing color combinations (e.g. electric cyan + midnight black, fiery orange + charcoal grey, crimson red + stark white, neon lime + slate gray, purple violet + golden yellow).
+4. **STRICTLY ZERO TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
+   - Absolutely NO car brand emblems, NO sponsor text, NO letters, NO typography, NO watermark.
+5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "geometric speed shards" -> "Aggressive geometric speed shard car wrap livery on a sleek modern supercar, featuring interlocking sharp angled electric cyan blades, white arrow accents, and dark charcoal grey speed stripes with ultra-high contrast, ${activeSuffix}"
+- "rally racing sweep" -> "Dynamic aerodynamic rally racing car wrap livery on a widebody hot hatchback, featuring bold swooping crimson red speed curves, razor white winglet cuts, and solid charcoal grey geometric facet blocks, ${activeSuffix}"
+- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe livery on a modern commercial cargo box van, featuring bold diagonal electric blue chevron bands, sharp canary yellow forward arrows, and solid charcoal grey base blocks across the cargo body, ${activeSuffix}"
+- "4x4 trophy truck" -> "Rugged desert race livery on a heavy-duty 4x4 trophy pickup truck, featuring sharp geometric camouflage polygon shards and aggressive speed claw streaks in neon lime green, stealth matte black, and gunmetal gray, ${activeSuffix}"
+- "drift wave camo" -> "Modern fluid liquid drift camouflage car wrap livery on a performance sports sedan, featuring dynamic flowing cyan wave ribbons, deep navy blue speed contours, and sharp slate-gray motion trail splatters, ${activeSuffix}"`;
+  } else if (isSeamlessPattern) {
     activeSuffix = getSeamlessVectorPatternSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (SEAMLESS VECTOR PATTERN):
 1. **FULL-BLEED SEAMLESS ALL-OVER REPEAT**:
