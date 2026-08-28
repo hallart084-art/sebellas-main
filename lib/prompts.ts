@@ -405,8 +405,21 @@ export const getNegativeSpaceCutoutSuffix = (whiteBg: boolean = true) => {
 
 export const NEGATIVE_SPACE_CUTOUT_SUFFIX = getNegativeSpaceCutoutSuffix(true);
 
+export const getAbstractPictogramLogoSuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "isolated on solid pure white background, solid white background, zero floor, no ground line, zero gradients, no gradients"
+    : "isolated on clean solid background, zero floor, no ground line, zero gradients, no gradients";
+
+  return `minimalist geometric logo mark, modern brand identity icon, radical abstraction, radical shape reduction, rhythmic repetition of geometric forms, minimalist pictogram silhouette, bold flat solid shapes, clever negative space silhouette, elegant geometric minimalism, Swiss graphic design aesthetic, pure flat vector on ${bgClause}, strictly lineless, no outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no drop shadows, no text, zero typography, no words, no watermark, master logo design.`;
+};
+
+export const ABSTRACT_PICTOGRAM_LOGO_SUFFIX = getAbstractPictogramLogoSuffix(true);
+
 export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true): string => {
   const chosenStyle = (artStyle || '').toLowerCase();
+  if (chosenStyle.includes('pictogram') || chosenStyle.includes('logo') || chosenStyle.includes('abstract')) {
+    return getAbstractPictogramLogoSuffix(whiteBg);
+  }
   if (chosenStyle.includes('object')) {
     return getFlatObjectIllustrationSuffix(whiteBg);
   }
@@ -435,16 +448,41 @@ const buildVectorTextPrompt = (
   const chosenPreset = preset || 'Single Image';
   const isWhiteBg = whiteBg ?? true;
 
-  const isFlatObjectIllustration = chosenStyle.toLowerCase().includes('object');
-  const isMonolineVector = chosenStyle.toLowerCase().includes('monoline');
-  const isGeometricSilhouette = chosenStyle.toLowerCase().includes('geometric silhouette');
-  const isNegativeSpaceCutout = chosenStyle.toLowerCase().includes('negative space');
-  const isFlatIllustration = !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
+  const isAbstractPictogramLogo = chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo');
+  const isFlatObjectIllustration = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('object');
+  const isMonolineVector = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
+  const isGeometricSilhouette = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
+  const isNegativeSpaceCutout = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
+  const isFlatIllustration = !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
 
   let activeSuffix = '';
   let styleRules = '';
 
-  if (isFlatObjectIllustration) {
+  if (isAbstractPictogramLogo) {
+    activeSuffix = getAbstractPictogramLogoSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (ABSTRACT PICTOGRAM LOGO):
+1. **RADICAL ABSTRACTION & SHAPE REDUCTION**:
+   - Deconstruct any subject into an ultra-minimalist, iconic brand symbol or geometric pictogram.
+   - Do NOT write complex literal anatomy or over-detailed descriptions. Treat the subject as a unified iconic mark (Swiss design / Sagi Haviv / Zalo Estévez style).
+2. **RHYTHMIC REPETITION OF GEOMETRIC FORMS**:
+   - Utilize rhythmic repetition (e.g. parallel curved slats, comb tines, fanned wing rays, layered planar arches, or repeating geometric cuts) to create movement and harmony.
+3. **CLEVER NEGATIVE SPACE SILHOUETTES**:
+   - Major internal features, eyes, feathers, horns, or steam/speed lines must be carved as clean negative space channels and slits.
+4. **STRICTLY LINELESS, ZERO GRADIENTS & ZERO FAKE LIGHTING**:
+   - Solid flat color planes only. Zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero drop shadows.
+5. **STRICTLY ZERO TEXT / ZERO WATERMARKS**:
+   - Absolutely NO letters, NO words, NO typography, NO watermark, NO signatures.
+6. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "deer / gazelle" -> "An elegant stylized deer logo mark, sleek minimalist silhouette with rhythmic comb antler tines and fluid geometric body planes, ${activeSuffix}"
+- "falcon / eagle" -> "A modern bird in flight emblem, stylized curved neck silhouette with three fanned rhythmic wing slats sculpted in negative space, ${activeSuffix}"
+- "burger" -> "An iconic culinary burger emblem, modern food symbol formed by rhythmic horizontal solid bar slabs and a smooth semi-circle bun silhouette, ${activeSuffix}"
+- "coffee" -> "A sleek modern coffee cup emblem, minimalist crescent cup silhouette paired with dual ascending rhythmic steam curves in negative space, ${activeSuffix}"
+- "runner" -> "A dynamic athletic speed runner mark, abstract aerodynamic silhouette formed by three sweeping rhythmic forward-angled geometric shards, ${activeSuffix}"
+- "queen / female face" -> "An elegant regal queen profile emblem, minimalist geometric head silhouette framed by flowing stylized hair ribbons and crowned with a bold three-point geometric crown in negative space, ${activeSuffix}"`;
+  } else if (isFlatObjectIllustration) {
     activeSuffix = getFlatObjectIllustrationSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (FLAT OBJECT ILLUSTRATION - INANIMATE OBJECTS & PROPS ONLY):
 1. **STRICTLY INANIMATE OBJECTS ONLY (ZERO HUMANS, ZERO CHARACTERS, ZERO FACES)**:
@@ -610,14 +648,7 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
   if (isVector) {
     const chosenArtStyle = settings.vectorArtStyle || 'Flat illustration';
     const isWhiteBg = settings.vectorWhiteBg ?? true;
-    const isMonoline = chosenArtStyle.toLowerCase().includes('monoline');
-    const isGeometricSilhouette = chosenArtStyle.toLowerCase().includes('geometric silhouette');
-    const isNegativeSpaceCutout = chosenArtStyle.toLowerCase().includes('negative space');
-    
-    let activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
-    if (isMonoline) activeSuffix = getMonolineVectorSuffix(isWhiteBg);
-    else if (isGeometricSilhouette) activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
-    else if (isNegativeSpaceCutout) activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
+    const activeSuffix = getActiveVectorSuffix(chosenArtStyle, isWhiteBg);
 
     systemInstruction = buildVectorTextPrompt(
       settings.negativePrompt,

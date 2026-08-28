@@ -122,6 +122,7 @@ export const VECTOR_ART_STYLES = [
   'Monoline geometric vector',
   'Geometric silhouette',
   'Negative space cutout',
+  'Abstract pictogram logo',
 ] as const;
 
 export const DEFAULT_VECTOR_ART_STYLE = VECTOR_ART_STYLES[0];
