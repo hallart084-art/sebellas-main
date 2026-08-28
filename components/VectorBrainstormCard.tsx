@@ -15,61 +15,94 @@ export const VECTOR_PRESETS = [
 ] as const;
 
 export const MICROSTOCK_VECTOR_IDEAS = [
-  // Popular Professions & Jobs (Broad Microstock Themes)
-  'construction worker',
-  'ui ux designer',
-  'solar energy technician',
-  'doctor and nurse',
-  'chef cooking',
-  'gardener watering plant',
-  'delivery courier',
-  'software engineer',
-  'business team meeting',
-  'teacher and student',
-  'farmer harvesting',
-  'firefighter on duty',
-  'laboratory scientist',
-  'photographer shooting',
-  'coffee barista',
-  'architect working',
-  'car mechanic',
-  'police officer',
+  // 1. Renewable Energy & Sustainability
+  'solar panel installer on rooftop',
+  'wind turbine maintenance engineer',
+  'electric vehicle charging station',
+  'urban rooftop organic garden',
+  'smart water irrigation system',
+  'hydroponic vertical farming',
+  'recycled plastic craft artisan',
+  'electric battery research scientist',
 
-  // Activities, Sports & Lifestyle
-  'basketball player',
-  'marathon runner',
-  'soccer player',
-  'yoga meditation',
-  'cycling in park',
-  'traveler backpacker',
-  'musician playing guitar',
-  'children playing',
-  'online shopping delivery',
-  'financial investment growth',
-  'family picnic',
-  'charity volunteer',
+  // 2. Health, Medicine & Wellness
+  'pediatrician examining child',
+  'surgeon preparing sterile instruments',
+  'physical therapist assisting patient',
+  'yoga instructor in mountain pose',
+  'pharmacist dispensing medicine',
+  'microbiologist with electron microscope',
+  'paramedic in ambulance rescue',
+  'dentist checking dental mirror tool',
 
-  // Technology & Modern Life
-  'space astronaut exploration',
-  'cloud data engineer',
-  'friendly robot mascot',
-  'smart home technology',
-  'cyber security specialist',
+  // 3. Specialized Crafts & Artisans
+  'ceramic pottery wheel artisan',
+  'leather shoes cobbler workshop',
+  'woodworker carving furniture joint',
+  'glassblower shaping molten vase',
+  'blacksmith forging heated steel',
+  'watchmaker repairing antique gear',
+  'specialty coffee roaster sampling beans',
+  'tailor measuring suit fabric',
 
-  // Animals & Cute Mascots
-  'cute playful cat',
-  'happy pet dog',
-  'wise cute owl',
-  'cheerful clownfish',
-  'cute fluffy bunny',
-  'playful bear cub',
-  'lively little fox',
+  // 4. Logistics, Supply Chain & Urban Services
+  'electric cargo bicycle delivery courier',
+  'automated warehouse logistics robot',
+  'air cargo freight loader',
+  'refrigerated food delivery van',
+  'harbor container crane operator',
+  'postal worker sorting mail parcels',
+  'electric bus rapid transit commute',
 
-  // Vehicles & Industry
-  'construction excavator',
-  'electric car charging',
-  'logistics cargo truck',
-  'delivery scooter motorcycle',
+  // 5. Tech, Engineering & Science
+  'data center fiber optic technician',
+  'satellite antenna telecommunications specialist',
+  'quantum processor testing engineer',
+  'cyber security analyst with firewall shield',
+  'drone pilot mapping agricultural fields',
+  'space telescope astrophysicist',
+  'friendly smart service robot assistant',
+
+  // 6. Culinary & Artisan Food
+  'artisan sourdough baker scoring dough',
+  'pastry chef piping delicate macaron',
+  'sushi master slicing fresh sashimi',
+  'barista pouring swan latte art',
+  'chocolatier tempering dark cocoa',
+  'wood fired pizza pizzaiolo',
+
+  // 7. Sports, Fitness & Outdoor Adventure
+  'bouldering rock climber reaching grip',
+  'gravel bike cyclist on forest trail',
+  'swimmer diving off starting block',
+  'badminton player smashing shuttlecock',
+  'trail runner crossing wooden bridge',
+  'kayaker paddling through calm river',
+  'archer aiming at target bullseye',
+
+  // 8. Nature, Wildlife & Animals
+  'playful golden retriever puppy running',
+  'curious red fox in snowy meadow',
+  'majestic stag deer in misty birch forest',
+  'fluffy calico cat napping on bookshelf',
+  'humpback whale breaching ocean wave',
+  'barn owl perched on oak branch',
+  'sea turtle gliding over coral reef',
+
+  // 9. Creative Arts & Media
+  'landscape photographer with tripod at sunrise',
+  'ui designer sketching mobile app wireframe',
+  'sound engineer adjusting mixing console',
+  'calligrapher with ink brush on paper',
+  'architect reviewing blueprint with scale ruler',
+  'animator with digital drawing tablet',
+
+  // 10. Modern Finance & Business
+  'financial analyst reviewing growth chart',
+  'startup founders pitching on whiteboard',
+  'global market currency exchange icon',
+  'fintech digital wallet payment',
+  'secure cloud computing data vault',
 ];
 
 interface VectorBrainstormCardProps {
@@ -96,6 +129,20 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
     if (disabled || isLoading || isRolling) return;
     setIsRolling(true);
 
+    const INDUSTRY_DOMAINS = [
+      'renewable green energy and environmental engineering',
+      'specialized medical healthcare and modern wellness',
+      'artisan craft workshop and handmade manufacturing',
+      'logistics supply chain and smart delivery commute',
+      'cutting-edge STEM laboratory science and robotics',
+      'culinary gastronomy and artisan specialty baking',
+      'outdoor athletics sports and active lifestyle',
+      'wildlife nature encounters and adorable domestic pets',
+      'creative visual design architecture and photography',
+      'fintech smart business analysis and investment growth',
+    ];
+    const pickedDomain = INDUSTRY_DOMAINS[Math.floor(Math.random() * INDUSTRY_DOMAINS.length)];
+
     try {
       const storedKeys = readStoredProviderApiKeys();
       const provider = getModelProvider(settings.selectedModel);
@@ -103,7 +150,7 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
 
       // Fallback to any available provider key if current model has no key
       if (!activeKey) {
-        for (const p of ['google', 'github', 'groq', 'mistral', 'openrouter'] as const) {
+        for (const p of ['google', 'github', 'groq', 'mistral', 'openrouter', 'openai'] as const) {
           if (storedKeys[p]?.[0]) {
             activeKey = storedKeys[p][0];
             break;
@@ -115,7 +162,7 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
         const rawContent = await generateModelContent({
           model: settings.selectedModel,
           apiKey: activeKey,
-          contents: "Generate 1 real-world, commercial 2D microstock vector theme in English (2 to 4 words only, e.g. 'solar energy technician', 'gardener watering plant', 'children playing in park', 'happy delivery courier', 'baking pastry chef', 'cute puppy dog'). STRICT RULE: NEVER output buzzwords or meta words like 'AI', 'AI-powered', 'AI assistant', 'generated', 'vector', or 'prompt'. Focus purely on real-world human jobs, activities, sports, hobbies, nature, cute animals, and lifestyle. Output ONLY the raw subject phrase without quotes or explanation.",
+          contents: `Generate 1 fresh, highly specific, high-value commercial 2D microstock vector theme in English (2 to 5 words only). Focus on the domain of: "${pickedDomain}". STRICT RULE: NEVER output meta words like 'AI', 'vector', 'illustration', or 'prompt'. Output ONLY the raw subject phrase without quotes or explanation.`,
           config: {
             temperature: 1.0,
             maxOutputTokens: 60,
