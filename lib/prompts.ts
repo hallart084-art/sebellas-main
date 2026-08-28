@@ -536,36 +536,46 @@ FEW-SHOT EXAMPLES:
 
   return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
 
-Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, MULTI-DIMENSIONAL COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-value prompt variations in English, returned as a JSON array.
+Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
 
-═══════════════════════════════════════════════════════════════
-🏆 ELITE COMMERCIAL MICROSTOCK DIVERSITY & INTELLIGENCE RULES
-═══════════════════════════════════════════════════════════════
+═══════════════════════════════════════════════════════════════════════════════════════
+👑 HIERARCHICAL HIGH-SEO MICROSTOCK EXPANSION RULES (MANDATORY ORDER OF PRIORITIZATION)
+═══════════════════════════════════════════════════════════════════════════════════════
 
-1. **MAXIMUM DIVERSITY & ZERO-REPETITION MANDATE (STRICT)**:
+When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", "kopi/coffee", "kendaraan/vehicles", "medis/medical", "alat tukang/tools", "natal/christmas", "olahraga/sports"):
+
+1. 🎯 **TIER 1 (MANDATORY FIRST PRIORITY — CORE DIRECT HIGH-SEO ENTITIES)**:
+   - YOU MUST PRIORITIZE THE MOST DIRECT, POPULAR, HIGH-SEARCH-VOLUME, AND COMMERCIALLY IN-DEMAND SPECIFIC ITEMS OF THE CONCEPT FIRST!
+   - Examples of how to prioritize Tier 1:
+     * Concept "makanan / food" ➔ Prioritize iconic, high-demand popular food dishes first (e.g. gourmet double cheeseburger with melting cheddar, fresh salmon nigiri sushi roll set with wasabi, crispy pepperoni pizza slice with stringy mozzarella, rich tonkotsu ramen bowl with soft-boiled egg, golden glazed donut, spicy beef taco al pastor, stacked fluffy pancakes with maple syrup, golden French croissant, steamed dim sum dumplings, spaghetti bolognese).
+     * Concept "hewan / animal" ➔ Prioritize high-SEO popular species first (e.g. golden retriever puppy, fluffy calico cat, majestic stag deer, arctic wolf, giant panda, soaring bald eagle, playful river otter, humpback whale, barn owl).
+     * Concept "kendaraan / vehicle / mobil" ➔ Prioritize popular direct vehicles first (e.g. modern electric SUV, commercial delivery cargo van, vintage convertible roadster, sleek commuter motorcycle, city transit electric bus, heavy construction excavator).
+     * Concept "alat / tools" ➔ Prioritize core direct essential tools first (e.g. cordless power drill, chrome adjustable wrench, claw hammer, heavy-duty socket wrench set, sharp hand saw, precision utility knife).
+     * Concept "kopi / coffee" ➔ Prioritize core direct coffee preparations first (e.g. rich espresso extraction with golden crema, swan latte art cup, iced cold brew glass with condensation, copper V60 pour-over setup).
+     * Concept "medis / medical" ➔ Prioritize core direct medical items/scenarios first (e.g. stethoscope on doctor, digital ultrasound scan display, surgical scalpel instrument kit, first aid emergency trauma kit).
+
+2. ⚙️ **TIER 2 (SECONDARY EXPANSION — RELATED EQUIPMENT, PROPS, INGREDIENTS & WORKFLOWS)**:
+   - ONLY after the core direct items of Tier 1 are thoroughly covered (or for subsequent variations in a larger batch of prompts), smoothly expand into directly related high-value peripheral items:
+     * For "food" ➔ High-grade chef santoku knife on wooden cutting board, vintage manual brass pepper grinder, cast iron skillet with sizzling olive oil, glass condiment dispenser bottle, take-out kraft paper food packaging box.
+     * For "vehicles" ➔ EV fast-charging station pillar, hydraulic mechanic car lift, digital tire pressure gauge, automotive spark plug and battery cluster.
+     * For "coffee" ➔ Manual coffee bean grinder with brass crank, stainless steel espresso portafilter, botanical branch of Coffea arabica with ripe red cherries.
+     * For "tools" ➔ Heavy-duty steel toolbox with organized compartments, rugged leather tool belt with pouches, cast iron workbench vise grip.
+
+3. 🎨 **TIER 3 (TERTIARY EXPANSION — SPECIALIZED ARTISAN WORKFLOWS & MICRO-SCENES)**:
+   - If the art style permits human characters (e.g. Flat illustration), feature focused artisan craftsmanship and high-value commercial actions (e.g. pastry chef scoring sourdough bread dough, technician inspecting solar panel connections).
+
+4. 🚫 **STRICT ZERO-REPETITION & SEARCH VOLUME VARIETY**:
    - In ANY batch of prompts, NO TWO PROMPTS MAY SHARE THE SAME ACTION, POSE, COMPOSITION, OR PRIMARY SUBJECT.
-   - For ANY concept (e.g. "natal/christmas", "coffee", "technology", "gym/fitness", "animals", "construction", "business", "medical", "food", "lifestyle"):
-     * Systematically UNPACK the concept into completely distinct, rich commercial sub-domains.
-     * Feature DIFFERENT specific entities/species/roles/tools/scenarios in EVERY prompt.
-     * Example for "Coffee":
-       - Prompt 1: Artisan barista pouring delicate tulip latte art with stainless pitcher.
-       - Prompt 2: Minimalist isometric espresso machine portafilter extracting golden crema.
-       - Prompt 3: Vintage manual cast iron coffee bean grinder with wooden catch drawer.
-       - Prompt 4: Cozy flatlay of ceramic mug with steam beside open sketchbook and roasted beans.
-       - Prompt 5: Copper gooseneck kettle pouring hot water over ceramic V60 pour-over dripper.
-       - Prompt 6: Botanical branch of Coffea arabica plant with ripe red cherries and dark green leaves.
-       - Prompt 7: Cold brew tower extraction apparatus with glass coils and ice chamber.
-       - Prompt 8: Modern insulated travel tumbler with sleek silicone grip on minimalist desk.
-     * Look how VIBRANT, DIVERSE, INTELLECTUAL, and COMMERCIAL this is! Every prompt is 100% unique and ready for commercial microstock stock licensing!
+   - Every single generated prompt MUST describe a DIFFERENT specific dish, tool, species, vehicle, or scenario targeting a distinct top-selling commercial microstock keyword!
 
-2. **AUTHENTIC MICRO-DETAILS & TANGIBLE PROPS**:
+5. 💎 **AUTHENTIC MICRO-DETAILS & TANGIBLE PROPS**:
    - Avoid vague generic words like "a person with a tool" or "a machine".
    - Use precise, vivid, tangible terminology (e.g. "a chunky chrome torque wrench tightening an engine bolt", "an ergonomic pruning shear trimming a bonsai branch", "a high-precision laser level projected on concrete").
 
-3. **MULTI-ANGLE COMPOSITIONAL BALANCING**:
+6. 📐 **MULTI-ANGLE COMPOSITIONAL BALANCING**:
    - Dynamically rotate perspectives across the prompts: dynamic low-angle heroic view, 3/4 isometric perspective, intimate eye-level craftsmanship, balanced overhead top-down flatlay, and sleek side-profile action.
 
-4. **ART-STYLE SPECIALIZED MORPHOLOGY**:
+7. 🎨 **ART-STYLE SPECIALIZED MORPHOLOGY**:
    - **Flat illustration**: Chunky stylized anatomical proportions, friendly expressive micro-moments, clean solid blank props (no fake text/badges), ultra-vibrant contrast palettes (azure blue, warm amber, bright orange), and sharp 2-tone flat shadow blocking.
    - **Flat object illustration**: Purely inanimate physical objects, vehicles, gear, tools, and props with chunky 2D geometry, vibrant contrast colors, sharp hard-edge flat shadows, strictly zero humans, zero characters, zero faces.
    - **Monoline geometric vector**: Pure continuous uniform single-weight black contour line art, abstract geometric planar deconstruction, zero colors, zero gradients, zero shadows.
@@ -618,10 +628,10 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
       settings.vectorAttributes,
       isWhiteBg
     );
-    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
+    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority (Tier 1 core direct items first ➔ Tier 2 related equipment/tools/ingredients second). [Session Exploration Seed: ${entropySeed}${angleClause}]
 
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
-- Act as an ultra-smart, wildly creative commercial microstock director. Think broadly and laterally from unexpected angles, rich micro-moments, and diverse sub-entities.
+- Act as an ultra-smart, wildly creative commercial microstock director. Prioritize the most popular, high-SEO direct specific items of the concept first before expanding to related accessories.
 - Selected Art Style: "${chosenArtStyle}"
 - Every single prompt in the JSON array MUST strictly follow this exact structure:
 "[AI EXPANDED MAIN CONCEPT WITH SPECIFIC POSE, SUBJECT, AND GEOMETRIC ACTIONS], ${activeSuffix}"
