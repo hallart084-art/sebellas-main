@@ -631,15 +631,24 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       const baseChunkSize = Math.floor(totalRequested / chunksCount);
       const remainder = totalRequested % chunksCount;
 
+      const THEMATIC_PILLARS = [
+        'Focus on dynamic action postures, ergonomic professional tools, and specialized artisan craft interactions',
+        'Focus on atmospheric micro-moments, cozy storytelling narratives, and secondary sub-entities or species',
+        'Focus on minimalist modern equipment, geometric planar compositions, and high-value commercial microstock scenes',
+        'Focus on stylized isometric flatlays, unique iconic angles, and innovative non-cliché visual metaphors',
+        'Focus on precision technical workflows, specialized machinery, and intricate functional props',
+      ];
+
       for (let i = 0; i < chunksCount; i++) {
         const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
         if (countForThisJob <= 0) continue;
         const assignedKey = globalKeyIdx % numKeys;
+        const angle = THEMATIC_PILLARS[i % THEMATIC_PILLARS.length];
 
         jobs.push(() =>
           processAndGenerate(
             placeholder,
-            () => PromptBuilder.buildTextPrompt(concept, { ...settings, numPrompts: countForThisJob }, isQuick),
+            () => PromptBuilder.buildTextPrompt(concept, { ...settings, numPrompts: countForThisJob, thematicAngle: angle }, isQuick),
             assignedKey
           )
         );
@@ -673,6 +682,14 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
     const jobs: GenerationJob[] = [];
     let globalKeyIdx = 0;
 
+    const THEMATIC_PILLARS = [
+      'Focus on dynamic action postures, ergonomic professional tools, and specialized artisan craft interactions',
+      'Focus on atmospheric micro-moments, cozy storytelling narratives, and secondary sub-entities or species',
+      'Focus on minimalist modern equipment, geometric planar compositions, and high-value commercial microstock scenes',
+      'Focus on stylized isometric flatlays, unique iconic angles, and innovative non-cliché visual metaphors',
+      'Focus on precision technical workflows, specialized machinery, and intricate functional props',
+    ];
+
     rawConcepts.forEach((concept, cIdx) => {
       const placeholder = placeholders[cIdx];
       const chunksCount = Math.min(totalRequested, numKeys);
@@ -683,11 +700,12 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
         const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
         if (countForThisJob <= 0) continue;
         const assignedKey = globalKeyIdx % numKeys;
+        const angle = THEMATIC_PILLARS[i % THEMATIC_PILLARS.length];
 
         jobs.push(() =>
           processAndGenerate(
             placeholder,
-            () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob }, isQuick),
+            () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, thematicAngle: angle }, isQuick),
             assignedKey
           )
         );

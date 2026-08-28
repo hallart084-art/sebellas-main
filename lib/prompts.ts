@@ -534,22 +534,38 @@ FEW-SHOT EXAMPLES:
 - Strictly no photorealism, camera metadata, or 3D noise.`;
   }
 
-  return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding.
+  return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
 
-Your core mission is to analyze the user's concept and perform a SUPER-INTELLIGENT, MULTI-DIMENSIONAL CREATIVE EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, and highly diverse prompt variations in English, returned as a JSON array.
+Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, MULTI-DIMENSIONAL COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-value prompt variations in English, returned as a JSON array.
 
 ═══════════════════════════════════════════════════════════════
-🧠 MASTER-LEVEL CREATIVE INTELLIGENCE & HORIZON EXPANSION RULES
+🏆 ELITE COMMERCIAL MICROSTOCK DIVERSITY & INTELLIGENCE RULES
 ═══════════════════════════════════════════════════════════════
 
-1. **DEEP CONCEPTUAL DECONSTRUCTION & ZERO-CLICHÉ GUARANTEE**:
-   - NEVER repeat the user's prompt blindly or produce shallow, generic copies with only 1 word changed.
-   - Deeply unpack the theme into distinct sub-professions, unique species, specialized tools, intimate micro-moments, and rich storytelling vignettes.
+1. **MAXIMUM DIVERSITY & ZERO-REPETITION MANDATE (STRICT)**:
+   - In ANY batch of prompts, NO TWO PROMPTS MAY SHARE THE SAME ACTION, POSE, COMPOSITION, OR PRIMARY SUBJECT.
+   - For ANY concept (e.g. "natal/christmas", "coffee", "technology", "gym/fitness", "animals", "construction", "business", "medical", "food", "lifestyle"):
+     * Systematically UNPACK the concept into completely distinct, rich commercial sub-domains.
+     * Feature DIFFERENT specific entities/species/roles/tools/scenarios in EVERY prompt.
+     * Example for "Coffee":
+       - Prompt 1: Artisan barista pouring delicate tulip latte art with stainless pitcher.
+       - Prompt 2: Minimalist isometric espresso machine portafilter extracting golden crema.
+       - Prompt 3: Vintage manual cast iron coffee bean grinder with wooden catch drawer.
+       - Prompt 4: Cozy flatlay of ceramic mug with steam beside open sketchbook and roasted beans.
+       - Prompt 5: Copper gooseneck kettle pouring hot water over ceramic V60 pour-over dripper.
+       - Prompt 6: Botanical branch of Coffea arabica plant with ripe red cherries and dark green leaves.
+       - Prompt 7: Cold brew tower extraction apparatus with glass coils and ice chamber.
+       - Prompt 8: Modern insulated travel tumbler with sleek silicone grip on minimalist desk.
+     * Look how VIBRANT, DIVERSE, INTELLECTUAL, and COMMERCIAL this is! Every prompt is 100% unique and ready for commercial microstock stock licensing!
 
-2. **DYNAMIC MULTI-ANGLE VISUAL DIVERSIFICATION**:
-   Across the ${numPrompts} prompts, intentionally vary postures, actions, and perspectives.
+2. **AUTHENTIC MICRO-DETAILS & TANGIBLE PROPS**:
+   - Avoid vague generic words like "a person with a tool" or "a machine".
+   - Use precise, vivid, tangible terminology (e.g. "a chunky chrome torque wrench tightening an engine bolt", "an ergonomic pruning shear trimming a bonsai branch", "a high-precision laser level projected on concrete").
 
-3. **ART-STYLE SPECIALIZED MORPHOLOGY**:
+3. **MULTI-ANGLE COMPOSITIONAL BALANCING**:
+   - Dynamically rotate perspectives across the prompts: dynamic low-angle heroic view, 3/4 isometric perspective, intimate eye-level craftsmanship, balanced overhead top-down flatlay, and sleek side-profile action.
+
+4. **ART-STYLE SPECIALIZED MORPHOLOGY**:
    - **Flat illustration**: Chunky stylized anatomical proportions, friendly expressive micro-moments, clean solid blank props (no fake text/badges), ultra-vibrant contrast palettes (azure blue, warm amber, bright orange), and sharp 2-tone flat shadow blocking.
    - **Flat object illustration**: Purely inanimate physical objects, vehicles, gear, tools, and props with chunky 2D geometry, vibrant contrast colors, sharp hard-edge flat shadows, strictly zero humans, zero characters, zero faces.
    - **Monoline geometric vector**: Pure continuous uniform single-weight black contour line art, abstract geometric planar deconstruction, zero colors, zero gradients, zero shadows.
@@ -572,11 +588,12 @@ Core Output Rules:
 5. ${jsonStringSafetyInstruction}`;
 };
 
-export const buildTextPrompt = (concept: string, settings: UseSettingsReturn, isQuick: boolean) => {
+export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & { thematicAngle?: string }, isQuick: boolean) => {
   let systemInstruction: string;
   let schema: object = promptListSchema;
   const entropySeed = Math.random().toString(36).substring(2, 8);
-  let contents = `Process the following concept: "${concept}" [Creative Horizon Seed: ${entropySeed} - Explore wild, non-cliché, highly imaginative, diverse multi-perspective angles]`;
+  const angleClause = settings.thematicAngle ? `\n- DIVERSITY PILLAR: ${settings.thematicAngle}` : '';
+  let contents = `Process the following concept: "${concept}" [Creative Horizon Seed: ${entropySeed} - Explore wild, non-cliché, highly imaginative, diverse multi-perspective angles${angleClause}]`;
   
   const isVector = settings.styleOption === 'vector' || settings.inputMode === 'vector' || !!settings.vectorArtStyle;
 
@@ -601,10 +618,10 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn, is
       settings.vectorAttributes,
       isWhiteBg
     );
-    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format. [Session Exploration Seed: ${entropySeed}]
+    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
 
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
-- Act as an ultra-smart, wildly creative assistant. Think broadly and laterally from unexpected angles, rich micro-moments, and diverse sub-entities.
+- Act as an ultra-smart, wildly creative commercial microstock director. Think broadly and laterally from unexpected angles, rich micro-moments, and diverse sub-entities.
 - Selected Art Style: "${chosenArtStyle}"
 - Every single prompt in the JSON array MUST strictly follow this exact structure:
 "[AI EXPANDED MAIN CONCEPT WITH SPECIFIC POSE, SUBJECT, AND GEOMETRIC ACTIONS], ${activeSuffix}"
