@@ -123,6 +123,7 @@ export const VECTOR_ART_STYLES = [
   'Geometric silhouette',
   'Negative space cutout',
   'Abstract pictogram logo',
+  'Seamless vector pattern',
 ] as const;
 
 export const DEFAULT_VECTOR_ART_STYLE = VECTOR_ART_STYLES[0];

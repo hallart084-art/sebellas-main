@@ -415,8 +415,17 @@ export const getAbstractPictogramLogoSuffix = (whiteBg: boolean = true) => {
 
 export const ABSTRACT_PICTOGRAM_LOGO_SUFFIX = getAbstractPictogramLogoSuffix(true);
 
+export const getSeamlessVectorPatternSuffix = (whiteBg: boolean = true) => {
+  return `seamless vector surface pattern design, full-bleed all-over repeating wallpaper print, strictly lineless vector art, no outlines, zero black contour strokes, no pencil lines, pure solid flat color shapes, vibrant fresh modern cheerful color palette with bright playful tones, edge-to-edge seamless pattern repeat, strictly flat 2d, no 3d objects, no 3d render, no realistic depth, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no drop shadows, no text, zero typography, no words, no watermark, textile and packaging commercial stock asset.`;
+};
+
+export const SEAMLESS_VECTOR_PATTERN_SUFFIX = getSeamlessVectorPatternSuffix(true);
+
 export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true): string => {
   const chosenStyle = (artStyle || '').toLowerCase();
+  if (chosenStyle.includes('pattern') || chosenStyle.includes('seamless')) {
+    return getSeamlessVectorPatternSuffix(whiteBg);
+  }
   if (chosenStyle.includes('pictogram') || chosenStyle.includes('logo') || chosenStyle.includes('abstract')) {
     return getAbstractPictogramLogoSuffix(whiteBg);
   }
@@ -448,17 +457,41 @@ const buildVectorTextPrompt = (
   const chosenPreset = preset || 'Single Image';
   const isWhiteBg = whiteBg ?? true;
 
-  const isAbstractPictogramLogo = chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo');
-  const isFlatObjectIllustration = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('object');
-  const isMonolineVector = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
-  const isGeometricSilhouette = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
-  const isNegativeSpaceCutout = !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
-  const isFlatIllustration = !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
+  const isSeamlessPattern = chosenStyle.toLowerCase().includes('pattern') || chosenStyle.toLowerCase().includes('seamless');
+  const isAbstractPictogramLogo = !isSeamlessPattern && (chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo'));
+  const isFlatObjectIllustration = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('object');
+  const isMonolineVector = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
+  const isGeometricSilhouette = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
+  const isNegativeSpaceCutout = !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
+  const isFlatIllustration = !isSeamlessPattern && !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
 
   let activeSuffix = '';
   let styleRules = '';
 
-  if (isAbstractPictogramLogo) {
+  if (isSeamlessPattern) {
+    activeSuffix = getSeamlessVectorPatternSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (SEAMLESS VECTOR PATTERN):
+1. **FULL-BLEED SEAMLESS ALL-OVER REPEAT**:
+   - Design an edge-to-edge seamless repeating surface pattern (wallpaper, textile print, wrapping paper packaging aesthetic).
+   - Randomly scatter or rhythmically tile diverse theme elements (icons, fruits, creatures, tools, botanicals, abstract shapes) evenly across the entire surface.
+2. **STRICTLY LINELESS 2D FLAT VECTOR (ZERO OUTLINES & ZERO 3D)**:
+   - Absolutely NO outlines, NO black contour lines, NO sketch strokes, NO 3D objects, and NO 3D renders.
+   - All characters, animals, and objects must be formed purely from solid flat color patches and shapes.
+3. **VIBRANT FRESH MODERN CHEERFUL COLOR PALETTE**:
+   - Use fresh, bright, joyful, and modern color harmonies (e.g. coral pink, sunny yellow, azure blue, lime green, bright orange, soft cream or pastel background).
+   - Zero gradients, no gradients, no fake lighting, zero glow, no drop shadows.
+4. **STRICTLY ZERO TEXT / ZERO WATERMARKS**:
+   - Absolutely NO letters, NO words, NO typography, NO watermark, NO signatures.
+5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "food / fruits" -> "A vibrant retro seamless pattern of randomly scattered food doodles: smiling strawberries, juicy watermelon slices, fried egg shapes, golden croissants, and tiny colorful star dots on solid clean off-white background, ${activeSuffix}"
+- "cute pets / cats" -> "A playful all-over seamless pattern of minimalist cute cat face silhouettes, scattered paw prints, yarn balls, fish bones, and tiny star doodles evenly distributed on solid pastel mint green background, ${activeSuffix}"
+- "water / pool" -> "A minimalist top-down swimming pool water ripple seamless pattern, composed of interlocking liquid blue blob shapes, azure curved water caustics, and clean white fluid ripple lines in flat 2D layers, ${activeSuffix}"
+- "retro floral" -> "A bold 1970s retro Scandinavian floral seamless pattern, featuring organic interlocking olive green Matisse leaf shapes, blooming daisy flowers, and vibrant orange sun blob centers on warm cream canvas, ${activeSuffix}"
+- "doctor / medical" -> "A vibrant all-over seamless pattern of scattered cute female and male doctor characters, medical stethoscope shapes, first-aid cross symbols, and band-aid icons, all drawn with chunky solid flat color blocks and zero outlines, ${activeSuffix}"`;
+  } else if (isAbstractPictogramLogo) {
     activeSuffix = getAbstractPictogramLogoSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (ABSTRACT PICTOGRAM LOGO):
 1. **RADICAL ABSTRACTION & SHAPE REDUCTION**:
