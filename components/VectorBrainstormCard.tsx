@@ -41,7 +41,22 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
     const currentStyle = (artStyle || '').toLowerCase();
 
     let styleInstruction = '';
-    if (currentStyle.includes('livery') || currentStyle.includes('wrap')) {
+    if (currentStyle.includes('jersey') || currentStyle.includes('jersy')) {
+      const JERSEY_DOMAINS = [
+        'modern geometric velocity prism shards futsal football jersey',
+        'futuristic mecha dragon scale esports tournament performance jersey',
+        'high-octane kinetic speed slash sleeveless basketball jersey',
+        'aerodynamic fluid topographic contour line road cycling jersey',
+        'sweeping curved Teamgeist wave panels forest green soccer kit',
+        'archival crescent shoulder Total 90 football jersey kit',
+        'aggressive modern Polynesian tribal chevron rugby jersey',
+        'ultra-light feathered falcon wing volleyball badminton jersey',
+        'heavy-duty flame velocity streak motocross race jersey',
+        'urban street football kinetic brush stroke splatter jersey',
+      ];
+      const picked = JERSEY_DOMAINS[Math.floor(Math.random() * JERSEY_DOMAINS.length)];
+      styleInstruction = `Generate 1 fresh, highly dynamic athletic sports jersey concept in English (2 to 5 words only). Focus on: "${picked}". Focus on real sports jersey kits (soccer, basketball, esports, cycling, volleyball, motocross). NEVER output brand logos, letters, or numbers.`;
+    } else if (currentStyle.includes('livery') || currentStyle.includes('wrap')) {
       const LIVERY_DOMAINS = [
         'fluid neon liquid drift smoke wave decals for sports coupe',
         'aggressive geometric speed shard racing stripes for modern supercar',

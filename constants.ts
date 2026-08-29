@@ -125,6 +125,7 @@ export const VECTOR_ART_STYLES = [
   'Abstract pictogram logo',
   'Seamless vector pattern',
   'Car wrap livery',
+  'Jersey pattern',
 ] as const;
 
 export const DEFAULT_VECTOR_ART_STYLE = VECTOR_ART_STYLES[0];

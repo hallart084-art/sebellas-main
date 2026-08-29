@@ -421,6 +421,16 @@ export const getSeamlessVectorPatternSuffix = (whiteBg: boolean = true) => {
 
 export const SEAMLESS_VECTOR_PATTERN_SUFFIX = getSeamlessVectorPatternSuffix(true);
 
+export const getJerseyPatternSuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "isolated on solid pure white background, solid white canvas, zero floor, no ground shadow, zero gradients, no gradients"
+    : "isolated on clean solid background, zero floor, no ground shadow, zero gradients, no gradients";
+
+  return `professional sports jersey sublimation vector design, dual split 50:50 vertical presentation layout: one vertical half displays a flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels, featuring an optional small compact textless geometric shield crest icon positioned on left chest or center chest, with optional clean uppercase word "SPONSOR" and optional squad number dynamically composed according to theme, the other vertical half is the EXACT IDENTICAL pure full-bleed edge-to-edge flat 2d vector jersey sublimation graphic pattern touching all canvas edges with strictly zero sponsor text, zero numbers, zero club logos, zero letters, zero border lines, zero outer frame, no margins, no bounding box, and no shirt blueprint outlines, 100% flat 2d vector art, clean-cut hard-edge high-contrast solid flat color planes, ultra-vibrant sharp palette, auto-trace friendly, strictly no gradients on jersey or background, zero gradients, zero airbrush shading, no realistic fabric wrinkles, zero 3d mannequin rendering, zero fake lighting, no glow, no bloom, no soft shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
+};
+
+export const JERSEY_PATTERN_SUFFIX = getJerseyPatternSuffix(true);
+
 export const getCarWrapLiverySuffix = (whiteBg: boolean = true) => {
   const bgClause = whiteBg
     ? "isolated on solid pure white background, solid white canvas, zero floor, no ground shadow, zero gradients, no gradients"
@@ -433,6 +443,9 @@ export const CAR_WRAP_LIVERY_SUFFIX = getCarWrapLiverySuffix(true);
 
 export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true): string => {
   const chosenStyle = (artStyle || '').toLowerCase();
+  if (chosenStyle.includes('jersey') || chosenStyle.includes('jersy')) {
+    return getJerseyPatternSuffix(whiteBg);
+  }
   if (chosenStyle.includes('livery') || chosenStyle.includes('wrap')) {
     return getCarWrapLiverySuffix(whiteBg);
   }
@@ -470,19 +483,52 @@ const buildVectorTextPrompt = (
   const chosenPreset = preset || 'Single Image';
   const isWhiteBg = whiteBg ?? true;
 
-  const isCarWrapLivery = chosenStyle.toLowerCase().includes('livery') || chosenStyle.toLowerCase().includes('wrap');
-  const isSeamlessPattern = !isCarWrapLivery && (chosenStyle.toLowerCase().includes('pattern') || chosenStyle.toLowerCase().includes('seamless'));
-  const isAbstractPictogramLogo = !isCarWrapLivery && !isSeamlessPattern && (chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo'));
-  const isFlatObjectIllustration = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('object');
-  const isMonolineVector = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
-  const isGeometricSilhouette = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
-  const isNegativeSpaceCutout = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
-  const isFlatIllustration = !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
+  const isJerseyPattern = chosenStyle.toLowerCase().includes('jersey') || chosenStyle.toLowerCase().includes('jersy');
+  const isCarWrapLivery = !isJerseyPattern && (chosenStyle.toLowerCase().includes('livery') || chosenStyle.toLowerCase().includes('wrap'));
+  const isSeamlessPattern = !isJerseyPattern && !isCarWrapLivery && (chosenStyle.toLowerCase().includes('pattern') || chosenStyle.toLowerCase().includes('seamless'));
+  const isAbstractPictogramLogo = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && (chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo'));
+  const isFlatObjectIllustration = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('object');
+  const isMonolineVector = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
+  const isGeometricSilhouette = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
+  const isNegativeSpaceCutout = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
+  const isFlatIllustration = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
 
   let activeSuffix = '';
   let styleRules = '';
 
-  if (isCarWrapLivery) {
+  if (isJerseyPattern) {
+    activeSuffix = getJerseyPatternSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (JERSEY PATTERN):
+1. **DUAL SPLIT 50:50 VERTICAL PRESENTATION (MOCKUP + PURE FULL-BLEED PATTERN)**:
+   - **ONE VERTICAL HALF (50%)**: Displays a clean flat 2D technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, raglan sleeves, and curved aerodynamic side-panel inserts.
+     * Features an optional small compact textless geometric shield crest icon on left chest or center chest.
+     * May include the clean uppercase word "SPONSOR" across center chest and an optional squad number (e.g. #10, #7, #23), or be a clean pre-match kit without text depending on theme.
+     * DYNAMIC MULTI-SPORT SILHOUETTES: If the prompt specifies a sport (soccer, basketball sleeveless tank, esports tournament raglan, cycling quarter-zip, volleyball/badminton, motocross long-sleeve, rugby), tailor the jersey cutting silhouette to that sport!
+   - **THE OTHER VERTICAL HALF (50%)**: Displays the EXACT IDENTICAL pure full-bleed edge-to-edge flat 2D vector jersey sublimation graphic pattern touching all canvas edges.
+     * STRICTLY ZERO sponsor text, ZERO numbers, ZERO club logos, ZERO letters, ZERO border lines, ZERO outer frames, and NO shirt blueprint outlines on the pattern half.
+
+2. **RICH DIVERSITY ACROSS 12 UNIVERSAL JERSEY PATTERN ARCHETYPES**:
+   - Liquid Fluid Aura & Vortex Waves, Kinetic Velocity Shards, Biomorphic Beast / Dragon Scales / Predator Wings, Topographic Elevation Contours, Speed Halftone Matrix & Diagonal Sashes, Cyber Glitch & Circuits, Flame Velocity & Thermal Waves, Modern Polynesian / Aztec Chevrons, Tactical Splinter Camo, Urban Grunge Brush Strokes, Botanical Tropical Leaves, Retro 90s Memphis Geometric.
+
+3. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
+   - Render all elements with hard-edge, solid flat color planes without photographic reflections, without soft gradients, without airbrush shading, without 3D mannequin rendering, and without fabric wrinkles.
+
+4. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
+   - Bold athletic color combinations (e.g. electric cyan + midnight navy + stark white, forest green + cream + gold, crimson red + obsidian black + stark white, neon lime + matte black, royal purple + golden yellow).
+
+5. **STRICTLY ZERO EXTRA TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
+   - Absolutely NO manufacturer brand logos (Nike, Adidas, Puma, etc. are strictly forbidden). The ONLY allowed text is the optional uppercase word "SPONSOR" and squad numbers on the mockup half.
+
+6. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
+- "soccer jersey teamgeist" -> "Modern athletic football jersey design with sweeping curved Teamgeist wave panels on a forest green body with retro turn-down polo collar, featuring fluid vertical subtle wave texture bands and cream contrast waist ribbons, with a small compact textless geometric shield crest centered directly below the collar and the clean uppercase word 'SPONSOR' across the midriff, ${activeSuffix}"
+- "futsal velocity prism" -> "Modern geometric velocity prism futsal jersey design with curved raglan sleeve cuts and sporty crossover V-neck, featuring interlocking cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast side panels, with a small compact textless geometric shield crest on left chest, a bold squad number 10, and clean uppercase word 'SPONSOR' across center chest, ${activeSuffix}"
+- "esports mecha claw" -> "Futuristic mecha cyber claw esports tournament performance jersey design on a modern athletic raglan cut with reinforced crossover collar and ergonomic shoulder panels, featuring sweeping neon-lime predator claw slashes, aerodynamic razor winglet facets, and stealth matte-black armor cuts, with a single small compact textless geometric shield crest on chest and zero sponsor text, ${activeSuffix}"
+- "basketball kinetic slash" -> "High-octane kinetic speed slash basketball jersey design on a modern sleeveless athletic tank top with contrast ribbed armholes and deep V-neck, featuring bold diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and dark obsidian flank panels, with a small compact textless geometric shield crest and a bold squad number 23 on chest, ${activeSuffix}"
+- "cycling topographic wave" -> "Aerodynamic fluid topographic contour line road cycling jersey design on a sleek quarter-zip performance shirt with streamlined raglan sleeves, featuring flowing teal contour elevation map ribbons, deep charcoal gray side contour strips, and vibrant mustard yellow accent darts, with a small compact textless geometric shield crest on chest, ${activeSuffix}"`;
+  } else if (isCarWrapLivery) {
     activeSuffix = getCarWrapLiverySuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (CAR WRAP LIVERY):
 1. **AUTHENTIC MOTORSPORT RACING DECALS (STRICTLY NO WALLPAPER / NO REPETITIVE TEXTURE TILES)**:
