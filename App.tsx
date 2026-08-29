@@ -708,10 +708,16 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
   }, [settings, processAndGenerate, apiKeys, t]);
 
   const generateForVectorMode = useCallback((isQuick: boolean) => {
-    const rawConcepts = settings.conceptsInput.split(/[\n,;]/).map(c => c.trim()).filter(Boolean);
+    const hasImage = !!(settings.vectorReferenceImage && settings.vectorReferenceImage.trim().length > 0);
+    let rawConcepts = settings.conceptsInput.split(/[\n,;]/).map(c => c.trim()).filter(Boolean);
+
     if (rawConcepts.length === 0) {
-      setError(t('errorNoValidConceptsToProcess'));
-      return { placeholders: [], jobs: [] };
+      if (hasImage) {
+        rawConcepts = [settings.vectorInstruction?.trim() || 'Visual DNA Motif'];
+      } else {
+        setError(t('errorNoValidConceptsToProcess'));
+        return { placeholders: [], jobs: [] };
+      }
     }
 
     const provider = getModelProvider(settings.selectedModel);
@@ -725,6 +731,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       prompts: [],
       hasError: false,
       inputMode: 'vector' as const,
+      thumbnailUrl: hasImage ? settings.vectorReferenceImage : undefined,
     }));
 
     const jobs: GenerationJob[] = [];
@@ -750,13 +757,27 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
         const assignedKey = globalKeyIdx % numKeys;
         const angle = THEMATIC_PILLARS[i % THEMATIC_PILLARS.length];
 
-        jobs.push(() =>
-          processAndGenerate(
-            placeholder,
-            () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, thematicAngle: angle }, isQuick),
-            assignedKey
-          )
-        );
+        if (hasImage && settings.vectorReferenceImage) {
+          const match = settings.vectorReferenceImage.match(/^data:([^;]+);base64,(.+)$/);
+          const mimeType = match ? match[1] : 'image/png';
+          const data = match ? match[2] : settings.vectorReferenceImage;
+
+          jobs.push(() =>
+            processAndGenerate(
+              placeholder,
+              () => PromptBuilder.buildImagePrompt({ data, mimeType }, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, conceptsInput: concept, vectorAttributes: settings.vectorInstruction }, isQuick),
+              assignedKey
+            )
+          );
+        } else {
+          jobs.push(() =>
+            processAndGenerate(
+              placeholder,
+              () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, thematicAngle: angle, vectorAttributes: settings.vectorInstruction }, isQuick),
+              assignedKey
+            )
+          );
+        }
         globalKeyIdx += 1;
       }
     });

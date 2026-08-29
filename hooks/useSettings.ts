@@ -17,6 +17,8 @@ type ModeSpecificSettings = {
   vectorPreset?: string;
   vectorPose?: string;
   vectorAttributes?: string;
+  vectorInstruction?: string;
+  vectorReferenceImage?: string;
   vectorWhiteBg?: boolean;
 };
 
@@ -48,6 +50,8 @@ const defaultVectorSettings: ModeSpecificSettings & { conceptsInput: string } = 
   vectorPreset: 'Single Image',
   vectorPose: '',
   vectorAttributes: '',
+  vectorInstruction: '',
+  vectorReferenceImage: '',
   vectorWhiteBg: true,
 };
 
@@ -296,8 +300,12 @@ export const useSettings = () => {
     setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorPose: value } }));
   }, []);
 
-  const setVectorAttributes = useCallback((value: string) => {
-    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorAttributes: value } }));
+  const setVectorInstruction = useCallback((value: string) => {
+    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorInstruction: value, vectorAttributes: value } }));
+  }, []);
+
+  const setVectorReferenceImage = useCallback((value: string) => {
+    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorReferenceImage: value } }));
   }, []);
 
   const setVectorWhiteBg = useCallback((value: boolean) => {
@@ -342,6 +350,10 @@ export const useSettings = () => {
     setVectorPose,
     vectorAttributes: allSettings.vector?.vectorAttributes || '',
     setVectorAttributes,
+    vectorInstruction: allSettings.vector?.vectorInstruction || allSettings.vector?.vectorAttributes || '',
+    setVectorInstruction,
+    vectorReferenceImage: allSettings.vector?.vectorReferenceImage || '',
+    setVectorReferenceImage,
     vectorWhiteBg: allSettings.vector?.vectorWhiteBg ?? true,
     setVectorWhiteBg,
   };

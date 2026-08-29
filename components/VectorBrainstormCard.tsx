@@ -28,11 +28,57 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
   onGenerate,
 }) => {
   const [isRolling, setIsRolling] = React.useState(false);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
   const artStyle = settings.vectorArtStyle || (VECTOR_ART_STYLES[0] || '');
   const preset = settings.vectorPreset || 'Single Image';
   const pose = settings.vectorPose || '';
   const attributes = settings.vectorAttributes || '';
   const whiteBg = settings.vectorWhiteBg ?? true;
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        settings.setVectorReferenceImage?.(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleDropImage = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const file = e.dataTransfer.files?.[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') {
+          settings.setVectorReferenceImage?.(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handlePasteImage = (e: React.ClipboardEvent) => {
+    const items = e.clipboardData?.items ? Array.from(e.clipboardData.items) : [];
+    const imageItem = items.find(item => item.type.startsWith('image/'));
+    if (imageItem) {
+      const file = imageItem.getAsFile();
+      if (file) {
+        e.preventDefault();
+        const reader = new FileReader();
+        reader.onload = () => {
+          if (typeof reader.result === 'string') {
+            settings.setVectorReferenceImage?.(reader.result);
+          }
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+  };
 
   const handleRandomIdea = async () => {
     if (disabled || isLoading || isRolling) return;
@@ -219,7 +265,11 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
   };
 
   return (
-    <div className="vector-brainstorm-card w-full rounded-2xl bg-[#141416] border border-white/[0.08] p-5 sm:p-6 shadow-2xl text-white flex flex-col gap-4">
+    <div
+      onPaste={handlePasteImage}
+      className="vector-brainstorm-card w-full rounded-2xl bg-[#141416] border border-white/[0.08] p-5 sm:p-6 shadow-2xl text-white flex flex-col gap-4 focus:outline-none"
+      tabIndex={0}
+    >
       {/* Header */}
       <div className="flex items-center justify-between text-xs font-bold tracking-wider text-gray-300 uppercase">
         <div className="flex items-center gap-2">
@@ -272,34 +322,90 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
         </div>
       </div>
 
-      {/* Pose & Attributes (2 Column) */}
+      {/* Gambar Referensi (Kiri) & Instruksi Tambahan (Kanan) (2 Column) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {/* Kolom Kiri: Tempel / Unggah Gambar Referensi */}
         <div>
-          <label htmlFor="vector-pose" className="text-xs font-medium text-gray-400 block mb-1.5">
-            Pose (Opsional)
-          </label>
+          <div className="flex items-center justify-between mb-1.5">
+            <label className="text-xs font-medium text-gray-400 flex items-center gap-1.5">
+              <span className="material-symbols-outlined text-sm text-indigo-400">image</span>
+              <span>Tempel Gambar (Opsional)</span>
+            </label>
+            {settings.vectorReferenceImage && (
+              <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
+                Terpasang
+              </span>
+            )}
+          </div>
+
           <input
-            id="vector-pose"
-            type="text"
-            value={pose}
-            onChange={(e) => settings.setVectorPose?.(e.target.value)}
-            placeholder="AI akan menentukan jika kosong"
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
             disabled={disabled || isLoading}
-            className="w-full bg-[#202024] border border-white/[0.08] hover:border-white/20 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-all"
           />
+
+          {settings.vectorReferenceImage ? (
+            <div className="relative group w-full h-[88px] bg-[#202024] border border-indigo-500/40 rounded-xl overflow-hidden flex items-center p-2 gap-3">
+              <img
+                src={settings.vectorReferenceImage}
+                alt="Referensi Visual"
+                className="h-full w-20 object-cover rounded-lg border border-white/10 shrink-0 bg-black/40"
+              />
+              <div className="flex-1 min-w-0 pr-6">
+                <p className="text-xs font-medium text-white truncate">Gambar Referensi Visual</p>
+                <p className="text-[11px] text-gray-400 mt-0.5">AI akan membaca DNA motif, warna & siluet sport gambar ini</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  settings.setVectorReferenceImage?.('');
+                  if (fileInputRef.current) fileInputRef.current.value = '';
+                }}
+                disabled={disabled || isLoading}
+                className="absolute top-2 right-2 p-1 rounded-lg bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 transition-all cursor-pointer"
+                title="Hapus Gambar"
+              >
+                <span className="material-symbols-outlined text-xs">close</span>
+              </button>
+            </div>
+          ) : (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+              onDrop={handleDropImage}
+              className="w-full h-[88px] bg-[#202024] border border-dashed border-white/15 hover:border-indigo-500/60 hover:bg-[#26262b] rounded-xl p-2.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
+              title="Klik untuk memilih file, atau tekan Ctrl + V untuk tempel gambar screenshot"
+            >
+              <span className="material-symbols-outlined text-gray-400 group-hover:text-indigo-400 text-xl transition-colors mb-1">
+                add_photo_alternate
+              </span>
+              <p className="text-xs text-gray-300 group-hover:text-white font-medium">
+                Tempel (<span className="text-indigo-400 font-semibold">Ctrl+V</span>) / Klik Unggah
+              </p>
+              <p className="text-[10px] text-gray-500 mt-0.5">
+                AI akan membedah motif DNA & warna gambar
+              </p>
+            </div>
+          )}
         </div>
+
+        {/* Kolom Kanan: Instruksi Teks Tambahan */}
         <div>
-          <label htmlFor="vector-attributes" className="text-xs font-medium text-gray-400 block mb-1.5">
-            Attributes (Opsional)
+          <label htmlFor="vector-instruction" className="text-xs font-medium text-gray-400 block mb-1.5 flex items-center gap-1.5">
+            <span className="material-symbols-outlined text-sm text-indigo-400">edit_note</span>
+            <span>Instruksi Tambahan dari Gambar (Opsional)</span>
           </label>
-          <input
-            id="vector-attributes"
-            type="text"
-            value={attributes}
-            onChange={(e) => settings.setVectorAttributes?.(e.target.value)}
-            placeholder="AI akan menentukan jika kosong"
+          <textarea
+            id="vector-instruction"
+            value={settings.vectorInstruction || ''}
+            onChange={(e) => settings.setVectorInstruction?.(e.target.value)}
+            placeholder="e.g. fokus ke ombak birunya, ubah jadi jersey basket, palet warna merah putih..."
+            rows={3}
             disabled={disabled || isLoading}
-            className="w-full bg-[#202024] border border-white/[0.08] hover:border-white/20 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 text-sm text-white placeholder-gray-500 focus:outline-none transition-all"
+            className="w-full h-[88px] bg-[#202024] border border-white/[0.08] hover:border-white/20 focus:border-indigo-500 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none transition-all resize-none"
           />
         </div>
       </div>
