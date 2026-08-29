@@ -529,7 +529,7 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
       <button
         type="button"
         onClick={handleSubmit}
-        disabled={disabled || isLoading || !settings.conceptsInput.trim()}
+        disabled={disabled || isLoading || (!((settings.conceptsInput || '').trim()) && !settings.vectorReferenceImage)}
         className="w-full py-3.5 px-4 rounded-xl bg-[#8e8e93] hover:bg-[#a1a1a6] active:bg-[#7c7c80] text-black font-semibold text-sm flex items-center justify-center gap-2 shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer mt-1"
       >
         {isLoading ? (
