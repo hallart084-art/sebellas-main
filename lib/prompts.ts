@@ -427,32 +427,32 @@ export const getJerseyPatternSuffix = (whiteBg: boolean = true, concept: string 
   const lowerConcept = (concept || '').toLowerCase();
 
   let sportTitle = "professional sports jersey sublimation vector design";
-  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels, featuring the EXACT SAME matching sublimation graphic pattern applied across the jersey body, cleanly isolated on a solid pure white background";
+  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
 
   if (lowerConcept.includes('basket')) {
     sportTitle = "professional basketball jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup with contrast ribbed armholes and V-neck, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup with contrast ribbed armholes and V-neck, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('soccer') || lowerConcept.includes('football') || lowerConcept.includes('futsal') || lowerConcept.includes('sepak')) {
     sportTitle = "professional soccer football jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup with polo or crossover collar and curved flank panels, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup with polo or crossover collar and curved flank panels, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('esport') || lowerConcept.includes('gaming') || lowerConcept.includes('tournament')) {
     sportTitle = "professional esports gaming tournament jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup with blade collar, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup with blade collar, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('cycling') || lowerConcept.includes('sepeda') || lowerConcept.includes('bike')) {
     sportTitle = "professional road cycling jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic quarter-zip aerodynamic road cycling jersey shirt mockup with streamlined raglan sleeves, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view athletic quarter-zip aerodynamic road cycling jersey shirt mockup with streamlined raglan sleeves, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('motocross') || lowerConcept.includes('mx') || lowerConcept.includes('dirt bike')) {
     sportTitle = "professional motocross racing jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup with ribbed cuffs, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup with ribbed cuffs, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('volley') || lowerConcept.includes('voli') || lowerConcept.includes('badminton') || lowerConcept.includes('tennis')) {
     sportTitle = "professional volleyball badminton athletic jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup with contrast ribbed neckband, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup with contrast ribbed neckband, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('rugby')) {
     sportTitle = "professional rugby sports jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic raglan rugby jersey shirt mockup with durable polo placket, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic raglan rugby jersey shirt mockup with durable polo placket, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('running') || lowerConcept.includes('marathon') || lowerConcept.includes('lari')) {
     sportTitle = "professional athletic running marathon jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
+    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described, cleanly isolated on a solid pure white background";
   }
 
   return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, the jersey mockup must be 100% FLAT with ZERO GRADIENTS ZERO SHADING ZERO SHADOWS ZERO FABRIC WRINKLES on the garment body, with only an optional small minimalist solid single-color geometric shield crest icon on chest and optional clean flat solid single-color uppercase word "SPONSOR" and optional solid single-color squad number as the ONLY decorative elements on the mockup, the right vertical half is a 100% PURE FULL-BLEED SEAMLESS REPEATING FLAT 2D VECTOR SUBLIMATION GRAPHIC PATTERN TILE touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
@@ -975,18 +975,19 @@ ${categoryContext}
 
 ## HOW TO READ THE IMAGE:
 1. **MOTIF**: What exact geometric pattern do you see? Zigzag chevrons? Diagonal slashes? Diamond argyle? Wavy curves? Abstract shards? Hatched line textures? Organic cloud shapes? Describe PRECISELY.
-2. **COLORS**: What are the 3-5 dominant colors? Name them specifically (e.g. "deep crimson red", "jet black", "pure white").
-3. **FLOW**: What's the visual direction? Diagonal left-to-right? Horizontal bands? Radial burst? Vertical panels?
+2. **COLORS**: What are the 3-5 dominant colors? Name them specifically (e.g. "deep crimson red", "jet black", "pure white"). What is the BASE color?
+3. **FLOW & COVERAGE**: What's the visual direction? Is it a FULL-BODY edge-to-edge pattern, or a MINIMALIST chest stripe? Does it only cover the shoulders? Pay close attention to NEGATIVE SPACE. If the reference is 80% solid white with just one small zigzag across the chest, your description MUST specify "minimalist chest zigzag on a solid white base".
 4. **TEXTURE STYLE**: Solid flat blocks? Hatched line fills? Tone-on-tone overlays? Sharp geometric cuts?
 
 ## HOW TO CREATE VARIATIONS:
 Each prompt must be a DEVELOPMENT of the reference — recognizably similar but creatively expanded:
-- **MOTIF**: Keep the SAME fundamental pattern type. You CAN vary: angle (30°→60°), scale (micro→macro), density, panel layout, mirror/rotate. DO NOT invent a completely different motif.
+- **MOTIF & COVERAGE**: Keep the SAME fundamental pattern type and the SAME level of coverage (minimalist vs full-body). You CAN vary: angle (30°→60°), scale (micro→macro), density, panel layout, mirror/rotate. DO NOT invent a completely different motif. If the reference is minimalist, ALL variations must be minimalist.
 - **COLORS**: Start from the reference palette but you CAN develop. Keep at least 1-2 anchor colors, then explore complementary accents, warm/cool shifts, or fresh color pops. NOT locked to exact same colors.
 - **COMPOSITION**: Vary panel proportions, element placement, visual weight distribution.
 
 ## WHAT EACH PROMPT SHOULD LOOK LIKE:
-Good example: "Bold diagonal velocity shards with deep crimson red and jet black angular panels, asymmetric speed slash cuts flowing left-to-right with thin white accent pinstripes"
+Good minimalist example: "Minimalist geometric chevron chest band in deep crimson and black on a solid pure white base"
+Good full-body example: "Aggressive diagonal velocity shards covering the entire area with deep crimson red and jet black angular panels"
 Bad example: "professional sports jersey sublimation vector design, dual split 50:50..." ← NO! Never write layout/suffix.
 
 ## RULES:
@@ -1000,7 +1001,7 @@ ${jsonStringSafetyInstruction}`;
 
   const contents = `Study this reference image — it is your ONLY creative source.
 
-Read the EXACT pattern geometry, color palette, visual flow, and texture style from this image.
+Read the EXACT pattern geometry, color palette, visual flow, level of coverage (minimalist vs full-body), and texture style from this image.
 
 Generate EXACTLY ${numPrompts} concept descriptions that are faithful developments of what you see:
 - Same core motif (with angle/scale/density variations)
