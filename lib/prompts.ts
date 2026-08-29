@@ -980,14 +980,14 @@ ${categoryContext}
 4. **FLOW**: What's the visual direction? Horizontal bands? Diagonal sweeps? Radial burst?
 
 ## HOW TO CREATE VARIATIONS:
-Each prompt must be a DEVELOPMENT of the reference — recognizably similar in vibe but CREATIVELY EXPANDED in shape:
-- **COVERAGE (STRICT)**: If the reference is minimalist, ALL variations MUST be minimalist. DO NOT generate full-body concepts from a minimalist image. You must retain the same ratio of negative space.
-- **MOTIF (CREATIVE FREEDOM)**: Use the reference shape as a starting point, but you MUST invent WILDLY DIFFERENT and diverse geometric shapes for each prompt! If the reference has chevrons, generate variations with organic waves, digital pixel camo, shattered glass shards, tribal vectors, optical illusions, halftone dots, or flowing liquid lines. DO NOT just repeat the same motif. We want high diversity in shapes!
+Each prompt must be a DEVELOPMENT of the reference — recognizably similar in its core DNA but CREATIVELY EXPANDED:
+- **COVERAGE (STRICT)**: If the reference is minimalist, ALL variations MUST be minimalist (retain the same ratio of vast negative space). If it features a central block, keep the central block layout. DO NOT generate full-body concepts from a minimalist image.
+- **MOTIF (EVOLVE, DON'T RANDOMIZE)**: Identify the TRUE shape in the reference. If the image has elegant curved contour lines, evolve them into "sweeping aerodynamic arcs", "organic fluid pipelines", or "dynamic velocity curves". If the image has a bold central geometric block, evolve it into an "angular chest shield", "hexagonal core armor", or "structured trapezoid panel". DO NOT hallucinate random unrelated shapes (like camo or tribal) if they aren't in the reference. Expand on the reference's specific shape family creatively.
 - **COLORS**: Start from the reference palette but you CAN develop. Keep at least 1-2 anchor colors, explore complementary accents.
 
 ## EXAMPLES OF CORRECT OUTPUT (Concept Only):
-[MINIMALIST REFERENCE] -> "Minimalist stepped geometric chevron chest band in jet black, crimson red, and golden yellow on a solid pure white base, accompanied by curved solid black lower flank panels and vast clean white negative space"
-[MINIMALIST REFERENCE] -> "Minimalist organic flowing liquid wave chest band in jet black and crimson red on a solid pure white base, featuring vast clean negative space"
+[REFERENCE HAS CURVED PINSTRIPES] -> "Minimalist sweeping aerodynamic curved contour pipelines in deep crimson red framing a jet black raglan shoulder panel, set against vast clean white negative space"
+[REFERENCE HAS CENTRAL BLOCK] -> "Bold central hexagonal chest shield block in solid jet black, framed by layered architectural borders in crimson and cream, utilizing clean symmetrical negative space"
 [FULL-BODY REFERENCE] -> "Aggressive full-body diagonal velocity shards in deep crimson red and jet black angular panels intersecting across the entire canvas"
 [BAD EXAMPLE] -> "professional sports jersey sublimation vector design, dual split 50:50..." (NEVER output suffixes)
 
@@ -1005,8 +1005,8 @@ ${jsonStringSafetyInstruction}`;
 Read the EXACT level of coverage (minimalist vs full-body), negative space, pattern geometry, color palette, and visual flow from this image.
 
 Generate EXACTLY ${numPrompts} concept descriptions that are faithful developments of what you see:
-- If the image is minimalist, YOUR PROMPTS MUST BE MINIMALIST (explicitly mention negative space and specific placement like "chest band").
-- EXPLORE DIVERSE MOTIFS: Invent wildly different geometric shapes for every prompt (waves, shards, camo, tribal, geometric, etc.) so they don't all look identical.
+- If the image is minimalist or uses a central block, YOUR PROMPTS MUST RETAIN THAT LAYOUT (explicitly mention negative space and placement).
+- EVOLVE THE SHAPE: Do not just copy the exact shape, but evolve its specific "shape family". (e.g. evolve curves into dynamic arcs; evolve blocks into structured shields). Do not invent random unrelated shapes.
 - Colors developed from the reference (keep anchors, explore new accents).
 
 Output ONLY the concept description for each prompt. Do NOT include any suffix, layout, or format instructions.
