@@ -741,8 +741,8 @@ FEW-SHOT EXAMPLES:
 - Strictly no photorealism, camera metadata, or 3D noise.`;
   }
 
-  const isJersey = chosenArtStyle.toLowerCase().includes('jersey') || chosenArtStyle.toLowerCase().includes('jersy');
-  const isCarWrap = chosenArtStyle.toLowerCase().includes('livery') || chosenArtStyle.toLowerCase().includes('wrap');
+  const isJersey = chosenStyle.toLowerCase().includes('jersey') || chosenStyle.toLowerCase().includes('jersy');
+  const isCarWrap = chosenStyle.toLowerCase().includes('livery') || chosenStyle.toLowerCase().includes('wrap');
 
   const cleanMotif = concept
     .replace(/(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)/gi, '')
