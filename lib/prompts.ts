@@ -455,7 +455,7 @@ export const getJerseyPatternSuffix = (whiteBg: boolean = true, concept: string 
     mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
   }
 
-  return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, the jersey mockup must be 100% FLAT with ZERO GRADIENTS ZERO SHADING ZERO SHADOWS ZERO FABRIC WRINKLES on the garment body, with only an optional small minimalist solid single-color geometric shield crest icon on chest and optional clean flat solid single-color uppercase word "SPONSOR" as the ONLY decorative elements on the mockup, ABSOLUTELY NO SQUAD NUMBERS ON THE MOCKUP, the right vertical half is a 100% PURE FULL-BLEED SEAMLESS REPEATING FLAT 2D VECTOR SUBLIMATION GRAPHIC PATTERN TILE touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
+  return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, the jersey mockup must be 100% FLAT with ZERO GRADIENTS ZERO SHADING ZERO SHADOWS ZERO FABRIC WRINKLES on the garment body, with only an optional small minimalist solid single-color geometric shield crest icon on chest and optional clean flat solid single-color uppercase word 'SPONSOR' as the ONLY decorative elements on the mockup, ABSOLUTELY NO SQUAD NUMBERS ON THE MOCKUP, the right vertical half is a 100% PURE FULL-BLEED SEAMLESS REPEATING FLAT 2D VECTOR SUBLIMATION GRAPHIC PATTERN TILE touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
 };
 
 export const JERSEY_PATTERN_SUFFIX = getJerseyPatternSuffix(true);
@@ -548,27 +548,26 @@ const buildVectorTextPrompt = (
    - **Classic & Minimalist**: Elegant vertical pinstripes, simple horizontal chest bands, structured symmetrical center shields.
    - **Constructivist & Geometric**: Asymmetrical color-block wedges, sharp angular momentum cuts, diagonal racing sashes.
 
-5. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY (STRICTLY ZERO GRADIENTS, ZERO GLOW & ZERO METALLICS)**:
+4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY (STRICTLY ZERO GRADIENTS, ZERO GLOW & ZERO METALLICS)**:
    - Render all elements with razor-sharp hard-edge solid flat color planes without photographic reflections, without soft gradients, without color ramps, without ombré blending, without airbrush shading, without glow/bloom effects, without 3D mannequin rendering, and without fabric wrinkles.
    - **STRICT WORD BAN**: DO NOT USE words like 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', or 'amber'. Use pure solid flat colors: 'solid canary yellow', 'solid crisp white', 'solid jet black', 'solid scarlet red', 'solid royal blue'.
 
-6. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
+5. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
    - Bold athletic color combinations (e.g. electric cyan + midnight navy + stark white, forest green + cream + sun yellow, crimson red + obsidian black + stark white, acid lime + matte black, royal purple + canary yellow).
 
-7. **STRICTLY ZERO EXTRA TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
-   - Absolutely NO manufacturer brand logos. The ONLY allowed text is the optional uppercase word "SPONSOR" on the mockup half.
+6. **STRICTLY ZERO EXTRA TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
+   - Absolutely NO manufacturer brand logos. The ONLY allowed text is the optional uppercase word "SPONSOR".
 
-8. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+7. **DO NOT OUTPUT THE SUFFIX**:
+   - The system will automatically append the layout/mockup suffix. YOU MUST ONLY OUTPUT THE CORE GRAPHIC CONCEPT. Do not write the layout instructions!
 
-FEW-SHOT EXAMPLES:
-- "minimalist japan style tribal curve" -> "Minimalist fluid tribal flame curves in bold crimson red wrapping around the sleeves and lower flanks, set against a vast clean samurai blue negative space base, ${activeSuffix}"
-- "elegant classic retro" -> "Minimalist elegant vertical pinstripes in deep navy framing a solid stark white central chest block, featuring vast clean negative space, ${activeSuffix}"
-- "futsal velocity aggressive" -> "Aggressive full-body interlocking vibrant cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast flank cuts covering the entire canvas, ${activeSuffix}"
-- "cycling topographic wave" -> "Flowing teal contour elevation map ribbons sweeping as a wide chest band across a solid aqua negative space base, ${activeSuffix}"`;
+FEW-SHOT EXAMPLES (CONCEPT ONLY):
+- "minimalist japan style tribal curve" -> "Minimalist fluid tribal flame curves in bold crimson red wrapping around the sleeves and lower flanks, set against a vast clean samurai blue negative space base"
+- "elegant classic retro" -> "Minimalist elegant vertical pinstripes in deep navy framing a solid stark white central chest block, featuring vast clean negative space"
+- "futsal velocity aggressive" -> "Aggressive full-body interlocking vibrant cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast flank cuts covering the entire canvas"
+- "cycling topographic wave" -> "Flowing teal contour elevation map ribbons sweeping as a wide chest band across a solid aqua negative space base"`;
   } else if (isCarWrapLivery) {
-    activeSuffix = getCarWrapLiverySuffix(isWhiteBg);
-    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (CAR WRAP LIVERY):
+    styleRules = `MANDATORY PROMPT STRUCTURE & RULES (CAR WRAP LIVERY):
 1. **AUTHENTIC MOTORSPORT RACING DECALS (STRICTLY NO WALLPAPER / NO REPETITIVE TEXTURE TILES)**:
    - The vehicle MUST have a clean, solid base body color (e.g. solid stark white body, solid pitch black body, or solid dark graphite grey).
    - Livery graphics are **DIRECTIONAL ASYMMETRICAL RACING DECAL STRIPES & SPEED ACCENTS** covering 30% to 60% of the side flank (sweeping aggressively from front fender/bumper across the doors to the rear quarter panels).
@@ -576,13 +575,7 @@ FEW-SHOT EXAMPLES:
    - **MANDATORY**: Follow the user's concept. If they want tribal, use sweeping tribal curves. If they want geometric, use angular speed cuts. Keep the shapes appropriate and diverse.
 
 2. **STRICT HIGH-CONTRAST 3-TONE MOTORSPORT COLOR FORMULA (ZERO METALLICS & ZERO DULL/MUDDY COLORS)**:
-   - Every prompt MUST enforce high-contrast, razor-sharp 3-tone color harmony that pops with extreme clarity on pure solid background:
-     * Combo 1: Electric Hyper-Cyan + Midnight Navy + Stark Crisp White.
-     * Combo 2: Fiery Solar Orange + Dark Charcoal + Sun Yellow Speed Wedges.
-     * Combo 3: Acid Lime + Stealth Obsidian Black + Stark White Razor Darts.
-     * Combo 4: Scuderia Crimson Red + Obsidian Black + Stark White + Sun Yellow.
-     * Combo 5: Deep Royal Purple + Bright Sun Yellow + Stark White Winglets.
-     * Combo 6: Vivid Aqua Turquoise + Coral Pink + Deep Slate Charcoal.
+   - Every prompt MUST enforce high-contrast, razor-sharp 3-tone color harmony that pops with extreme clarity on pure solid background.
    - **STRICT WORD BAN**: DO NOT USE 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', or 'amber'.
    - Strictly FORBIDDEN: Dull muddy midtones, low-contrast grey-on-grey blends, washed-out tones, or dark graphics that disappear into a dark vehicle body.
 
@@ -592,25 +585,17 @@ FEW-SHOT EXAMPLES:
    - **Archetype 3 (Classic Racing Stripes)**: Clean horizontal dual racing stripes, elegant pinstripe borders, and minimalist vintage rally decals.
    - **Archetype 4 (Modern Kinetic Angular)**: Diagonal aerodynamic speed slashes, geometric thrust blocks, and fragmented polygonal energy facets.
 
-4. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
-   - **TOP HALF (50%)**: Displays a clean, flat 2D vector side-profile illustration of a generic unbranded vehicle with clean solid base body and the high-contrast racing livery decals applied across its body panels. Dynamically vary vehicle types across prompts (supercar, rally hot hatch, 4x4 pickup truck, commercial cargo box van/truck, performance drift sedan, widebody GT coupe) with strictly ZERO manufacturer brand logos.
-   - **BOTTOM HALF (50%)**: Displays the EXACT IDENTICAL full-bleed edge-to-edge flat 2D vector livery wrap graphic touching all canvas edges. STRICTLY NO outer border lines, NO framing margins, NO bounding boxes, NO car blueprints, and NO car silhouette outlines in the bottom half.
-
-5. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
+4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
    - Both the vehicle preview and the wrap graphic must be rendered with hard-edge, solid flat color planes without photographic reflections, without soft gradients, without 3D shading, and without glowing bloom.
 
-6. **STRICTLY ZERO TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
-   - Absolutely NO car brand emblems, NO sponsor text, NO letters, NO typography, NO watermark.
+5. **DO NOT OUTPUT THE SUFFIX**:
+   - The system will automatically append the layout/mockup suffix. YOU MUST ONLY OUTPUT THE CORE GRAPHIC CONCEPT. Do not write the layout instructions!
 
-7. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
-
-FEW-SHOT EXAMPLES:
-- "fluid wave drift" -> "Dynamic fluid liquid drift wave racing graphic on an unbranded widebody sports coupe with solid polar white base body, featuring high-contrast sweeping electric cyan fluid ribbons, midnight navy speed contours, and crisp stark white motion splash trails arching fluidly across the side panels, ${activeSuffix}"
-- "velocity shards" -> "High-velocity explosive shard racing graphic on an unbranded modern supercar with solid obsidian black base body, featuring high-contrast directional forward-thrusting fiery solar orange lightning blades, fragmented white crystal splinter shards, and dark charcoal velocity thrust streaks, ${activeSuffix}"
-- "mecha dragon claw" -> "Ferocious dragon wing tribal racing graphic on an unbranded drift sedan with solid stark white base body, featuring high-contrast acid lime predator claw slashes, aerodynamic razor wing contours, and stealth matte-black scale cuts slicing dynamically along the side profile, ${activeSuffix}"
-- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe graphic on a modern commercial cargo box van with solid stark white base body, featuring high-contrast diagonal cobalt blue chevron bands, sharp sun yellow forward arrows, and deep charcoal grey base blocks across the cargo body, ${activeSuffix}"
-- "rally kinetic slash" -> "Dynamic kinetic rally slash graphic on an off-road 4x4 rally hatchback with solid stark white base body, featuring high-contrast diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and dark gunmetal aerofoil streak panels with extreme asymmetric directional flow, ${activeSuffix}"`;
+FEW-SHOT EXAMPLES (CONCEPT ONLY):
+- "liquid lava flow supercar" -> "Flowing undulating solar orange magma contour ribbons and dynamic dark charcoal fluid sweep contours hugging the rear widebody fenders of a stark white GT supercar"
+- "aggressive cyber slash drift car" -> "Explosive diagonal electric cyan speed slashes and fractured obsidian black crystal lightning blades thrusting forward across the side doors of a sleek performance drift sedan"
+- "mecha claw rally hatch" -> "Sweeping biomechanical claw cuts and razor sharp aerodynamic winglet facets in acid lime and stark white across the rear quarter panel of a stealth black rally hot hatch"
+- "retro synthwave truck" -> "Precision high-density halftone dot matrix gradients and angular magenta racing sashes sweeping across the cargo box side of a commercial truck"`;
   } else if (isSeamlessPattern) {
     activeSuffix = getSeamlessVectorPatternSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (SEAMLESS VECTOR PATTERN):
