@@ -144,15 +144,16 @@ export const useSettings = () => {
       const item = window.localStorage.getItem('allSettings');
       if (!item) return defaultAllSettings;
       const parsed = JSON.parse(item);
-      const loadedVector = { ...defaultVectorSettings, ...parsed.vector };
+      const loadedVector = { ...defaultVectorSettings, ...(parsed?.vector || {}) };
       if (!VECTOR_ART_STYLES.includes(loadedVector.vectorArtStyle as any)) {
         loadedVector.vectorArtStyle = DEFAULT_VECTOR_ART_STYLE;
       }
+      loadedVector.vectorReferenceImage = '';
       return {
-        text: { ...defaultTextSettings, ...parsed.text },
-        image: { ...defaultImageSettings, ...parsed.image },
+        text: { ...defaultTextSettings, ...(parsed?.text || {}) },
+        image: { ...defaultImageSettings, ...(parsed?.image || {}) },
         vector: loadedVector,
-        video: { ...defaultVideoSettings, ...parsed.video },
+        video: { ...defaultVideoSettings, ...(parsed?.video || {}) },
       };
     } catch (error) {
       console.error(error);
@@ -167,10 +168,10 @@ export const useSettings = () => {
       if (!item) return deriveSelectionTouchedState(allSettings);
       const parsed = JSON.parse(item);
       return {
-        text: { ...defaultSelectionTouchedState.text, ...parsed.text },
-        image: { ...defaultSelectionTouchedState.image, ...parsed.image },
-        vector: { ...defaultSelectionTouchedState.vector, ...parsed.vector },
-        video: { ...defaultSelectionTouchedState.video, ...parsed.video },
+        text: { ...defaultSelectionTouchedState.text, ...(parsed?.text || {}) },
+        image: { ...defaultSelectionTouchedState.image, ...(parsed?.image || {}) },
+        vector: { ...defaultSelectionTouchedState.vector, ...(parsed?.vector || {}) },
+        video: { ...defaultSelectionTouchedState.video, ...(parsed?.video || {}) },
       };
     } catch (error) {
       console.error(error);
@@ -209,13 +210,14 @@ export const useSettings = () => {
           },
           vector: {
             ...allSettings.vector,
-            conceptsInput: ''
+            conceptsInput: '',
+            vectorReferenceImage: ''
           }
         };
         window.localStorage.setItem('allSettings', JSON.stringify(settingsToSave));
       }
     } catch (error) {
-      console.error(error);
+      console.error('Failed to save settings to localStorage (quota or error):', error);
     }
   }, [allSettings]);
 
