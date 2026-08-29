@@ -422,42 +422,40 @@ export const getSeamlessVectorPatternSuffix = (whiteBg: boolean = true) => {
 export const SEAMLESS_VECTOR_PATTERN_SUFFIX = getSeamlessVectorPatternSuffix(true);
 
 export const getJerseyPatternSuffix = (whiteBg: boolean = true, concept: string = '') => {
-  const bgClause = whiteBg
-    ? "isolated on solid pure white background, solid white canvas, zero floor, no ground shadow, zero gradients, no gradients"
-    : "isolated on clean solid background, zero floor, no ground shadow, zero gradients, no gradients";
+  const bgClause = "isolated on solid pure white background, solid white canvas, zero floor, no ground shadow, zero gradients, no gradients";
 
   const lowerConcept = (concept || '').toLowerCase();
 
   let sportTitle = "professional sports jersey sublimation vector design";
-  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels, featuring the EXACT SAME matching sublimation graphic pattern applied across the jersey body";
+  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels, featuring the EXACT SAME matching sublimation graphic pattern applied across the jersey body, cleanly isolated on a solid pure white background";
 
   if (lowerConcept.includes('basket')) {
     sportTitle = "professional basketball jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup with contrast ribbed armholes and V-neck, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup with contrast ribbed armholes and V-neck, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('soccer') || lowerConcept.includes('football') || lowerConcept.includes('futsal') || lowerConcept.includes('sepak')) {
     sportTitle = "professional soccer football jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup with polo or crossover collar and curved flank panels, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup with polo or crossover collar and curved flank panels, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('esport') || lowerConcept.includes('gaming') || lowerConcept.includes('tournament')) {
     sportTitle = "professional esports gaming tournament jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup with blade collar, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup with blade collar, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('cycling') || lowerConcept.includes('sepeda') || lowerConcept.includes('bike')) {
     sportTitle = "professional road cycling jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic quarter-zip aerodynamic road cycling jersey shirt mockup with streamlined raglan sleeves, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view athletic quarter-zip aerodynamic road cycling jersey shirt mockup with streamlined raglan sleeves, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('motocross') || lowerConcept.includes('mx') || lowerConcept.includes('dirt bike')) {
     sportTitle = "professional motocross racing jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup with ribbed cuffs, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup with ribbed cuffs, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('volley') || lowerConcept.includes('voli') || lowerConcept.includes('badminton') || lowerConcept.includes('tennis')) {
     sportTitle = "professional volleyball badminton athletic jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup with contrast ribbed neckband, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup with contrast ribbed neckband, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('rugby')) {
     sportTitle = "professional rugby sports jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic raglan rugby jersey shirt mockup with durable polo placket, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic raglan rugby jersey shirt mockup with durable polo placket, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   } else if (lowerConcept.includes('running') || lowerConcept.includes('marathon') || lowerConcept.includes('lari')) {
     sportTitle = "professional athletic running marathon jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body";
+    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   }
 
-  return `${sportTitle}, dual split 50:50 vertical presentation layout: one vertical half displays ${mockupCut}, with an optional small minimalist textless geometric shield crest icon on chest and optional clean uppercase word "SPONSOR" and optional squad number rendered in a single flat solid monochrome contrast color as subtle accents, the other vertical half is the EXACT IDENTICAL matching pure full-bleed edge-to-edge flat 2d vector jersey sublimation graphic pattern touching all canvas edges with strictly zero sponsor text, zero numbers, zero club logos, zero letters, zero border lines, zero outer frame, no margins, no bounding box, and no shirt blueprint outlines, 100% flat 2d vector art, clean-cut hard-edge high-contrast solid flat color planes, ultra-vibrant sharp palette, auto-trace friendly, strictly no gradients on jersey or background, zero gradients, zero airbrush shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d mannequin rendering, zero fake lighting, no soft shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
+  return `${sportTitle}, dual split 50:50 vertical presentation layout: one vertical half displays ${mockupCut} on solid pure white background canvas, with an optional small minimalist solid white textless geometric shield crest icon on chest and optional clean flat solid white uppercase word "SPONSOR" and optional solid white squad number as subtle contrast accents, the other vertical half is the EXACT IDENTICAL matching pure full-bleed edge-to-edge flat 2d vector jersey sublimation graphic pattern touching all canvas edges with strictly zero sponsor text, zero numbers, zero club logos, zero letters, zero border lines, zero outer frame, no margins, no bounding box, and no shirt blueprint outlines, 100% flat 2d vector art, clean-cut hard-edge high-contrast solid flat color planes, ultra-vibrant sharp palette, auto-trace friendly, strictly no gradients on jersey or background, zero gradients, zero airbrush shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d mannequin rendering, zero fake lighting, no soft shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
 };
 
 export const JERSEY_PATTERN_SUFFIX = getJerseyPatternSuffix(true);
@@ -535,8 +533,8 @@ const buildVectorTextPrompt = (
    - The exact sport cutting silhouette (e.g. basketball sleeveless tank, soccer polo/crossover, esports tournament raglan, cycling quarter-zip, motocross long-sleeve) is ALREADY locked into the mandatory style suffix.
    - The AI Expanded Concept MUST focus purely on the graphic pattern motifs, wave ribbons, velocity shards, geometric cuts, and high-contrast color harmony!
 
-2. **DUAL SPLIT 50:50 VERTICAL PRESENTATION (MATCHING MOCKUP + PURE FULL-BLEED PATTERN)**:
-   - **ONE VERTICAL HALF (50%)**: Displays a clean, flat 2D technical vector front-view athletic sports jersey shirt mockup featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across its chest, body, and side panels.
+2. **DUAL SPLIT 50:50 VERTICAL PRESENTATION (MATCHING MOCKUP ON SOLID WHITE + PURE FULL-BLEED PATTERN)**:
+   - **ONE VERTICAL HALF (50%)**: Displays a clean, flat 2D technical vector front-view athletic sports jersey shirt mockup featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across its chest, body, and side panels, **CLEANLY ISOLATED ON A SOLID PURE WHITE BACKGROUND (SOLID WHITE CANVAS, ZERO FLOOR, ZERO SHADOWS)**.
      * Subtle Accents: Features an optional small minimalist solid monochrome textless geometric shield crest icon on chest, with optional clean flat uppercase word "SPONSOR" and optional squad number rendered in a single flat solid monochrome contrast color (e.g. pure solid white) without complex outlines.
    - **THE OTHER VERTICAL HALF (50%)**: Displays the EXACT IDENTICAL matching pure full-bleed edge-to-edge flat 2D vector jersey sublimation graphic pattern tile touching all canvas edges.
      * STRICTLY ZERO sponsor text, ZERO numbers, ZERO club logos, ZERO letters, ZERO border lines, ZERO outer frames, and NO shirt blueprint outlines on the pattern half.
@@ -563,7 +561,7 @@ const buildVectorTextPrompt = (
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "Basketball wave panels" -> "Dynamic aerodynamic fluid motion waves with sweeping electric cyan shockwaves, sharp dark obsidian flank inserts, and blazing crisp stark white velocity contrast stripes on solid vivid cobalt blue canvas, ${activeSuffix}"
+- "Basketball wave panels" -> "Dynamic aerodynamic fluid motion waves with sweeping electric cyan shockwaves, sharp dark obsidian flank inserts, and blazing crisp stark white velocity contrast stripes on solid vivid cobalt blue base, ${activeSuffix}"
 - "soccer teamgeist" -> "Sweeping curved Teamgeist wave panels with fluid vertical forest green texture bands and warm cream contrast waist ribbons on solid deep pine green base, with a small solid white textless geometric shield crest centered below collar and single-color uppercase word 'SPONSOR' across midriff, ${activeSuffix}"
 - "futsal velocity prism" -> "Interlocking vibrant cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast flank cuts on solid sapphire blue base, with a small solid white textless geometric shield crest on left chest and solid white uppercase word 'SPONSOR' across center chest, ${activeSuffix}"
 - "esports mecha claw" -> "Sweeping acid lime predator claw slashes, aerodynamic razor winglet facets, and stealth matte-black armor cuts on solid dark charcoal base, with a single solid white textless geometric shield crest on chest and zero sponsor text, ${activeSuffix}"
