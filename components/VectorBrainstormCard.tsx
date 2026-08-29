@@ -154,22 +154,53 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
       const rawContent = await generateModelContent({
         model: settings.selectedModel,
         apiKey: activeKey,
-        contents: `${styleInstruction} STRICT RULE: NEVER output meta words like 'AI', 'vector', 'illustration', or 'prompt'. Output ONLY the raw subject phrase without quotes, prefixes, or explanation.`,
+        contents: `${styleInstruction} STRICT RULES: Output ONLY plain text in English. DO NOT output JSON. DO NOT use curly braces, brackets, quotes, markdown code blocks, or JSON keys. NEVER output meta words like 'AI', 'vector', 'illustration', or 'prompt'. Output ONLY the raw subject phrase (2 to 5 words).`,
         config: {
           temperature: 1.0,
           maxOutputTokens: 60,
         },
       });
 
-      const cleaned = (rawContent || '')
+      let extracted = (rawContent || '').trim();
+
+      // 1. If wrapped in markdown code blocks, strip them
+      extracted = extracted.replace(/^```(?:json)?\s*([\s\S]*?)\s*```$/i, '$1').trim();
+
+      // 2. Try JSON parse if it looks like JSON
+      if ((extracted.startsWith('{') && extracted.endsWith('}')) || (extracted.startsWith('[') && extracted.endsWith(']'))) {
+        try {
+          const parsed = JSON.parse(extracted);
+          if (typeof parsed === 'string') {
+            extracted = parsed;
+          } else if (Array.isArray(parsed) && parsed.length > 0) {
+            extracted = typeof parsed[0] === 'string' ? parsed[0] : String(Object.values(parsed[0])[0] || '');
+          } else if (typeof parsed === 'object' && parsed !== null) {
+            const values = Object.values(parsed);
+            if (values.length > 0) {
+              extracted = String(values[0] || '');
+            }
+          }
+        } catch {
+          // If JSON parse fails, regex extract value inside quotes after colon
+          const match = extracted.match(/:\s*["']([^"']+)["']/);
+          if (match && match[1]) {
+            extracted = match[1];
+          }
+        }
+      }
+
+      // 3. Clean any remaining artifacts, JSON keys, curly braces, and quotes
+      const cleaned = extracted
+        .replace(/^[{\[\s]*["']?[a-zA-Z0-9_\-]+["']?\s*:\s*["']?/, '')
+        .replace(/["']?[}\]\s]*$/, '')
         .replace(/^["'`\s.\-]+|["'`\s.\-]+$/g, '')
         .replace(/^(theme|concept|idea|here is|here's|prompt):\s*/i, '')
         .replace(/\b(ai[- ]powered|ai[- ]generated|ai assistant|\bai\b|artificial intelligence|vector|illustration|microstock)\b/gi, '')
         .replace(/\s{2,}/g, ' ')
-        .replace(/\n.*/s, '')
+        .replace(/[\r\n].*/s, '')
         .trim();
 
-      if (cleaned && cleaned.length >= 3 && cleaned.length <= 80) {
+      if (cleaned && cleaned.length >= 2 && cleaned.length <= 80) {
         settings.setConceptsInput(cleaned);
       }
     } catch (err: any) {
