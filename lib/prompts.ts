@@ -942,62 +942,126 @@ const buildImageFootageAnalysisPrompt = (negativePrompt: string, numPrompts: num
  return { systemInstruction, contents };
 };
 
-const buildImageVectorAnalysisPrompt = (negativePrompt: string, numPrompts: number) => {
-  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are an expert AI visual analyst specializing in 2D vector graphic prompts.
-Task: Analyze the image and generate EXACTLY ${numPrompts} unique vector illustration prompts based on the subject and composition.
+const buildImageVectorAnalysisPrompt = (
+  negativePrompt: string,
+  numPrompts: number,
+  artStyle?: string,
+  whiteBg: boolean = true
+) => {
+  const chosenStyle = artStyle || 'Flat illustration';
+  const isJerseyPattern = chosenStyle.toLowerCase().includes('jersey') || chosenStyle.toLowerCase().includes('jersy');
+  const isCarWrapLivery = !isJerseyPattern && (chosenStyle.toLowerCase().includes('livery') || chosenStyle.toLowerCase().includes('wrap'));
+  const isSeamlessPattern = !isJerseyPattern && !isCarWrapLivery && (chosenStyle.toLowerCase().includes('pattern') || chosenStyle.toLowerCase().includes('seamless'));
+  const isAbstractPictogramLogo = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && (chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo'));
 
-Instructions:
-1. **Analyze Subject**: Identify the core subjects, characters, objects, and silhouettes in the image.
-2. **Translate to Vector Style**: Re-imagine the subject in clean 2D vector graphic art style: flat design, crisp vector outlines, smooth curves, stylized shapes, solid and gradient color fills, modern SVG sticker/asset aesthetic, clean background.
-3. **No Photographic Elements**: Do not use camera lenses, focal lengths, ISO, shutter speed, realistic skin pores, or photorealistic terms.
-4. **Consistency**: Maintain ancestry consistency for any visible human subjects across variations.
-5. **JSON Output**: You MUST respond with a single, valid JSON array containing exactly ${numPrompts} strings. Do NOT include any other text, markdown, or code fences outside of the JSON array.
-6. ${humanAncestryInstruction}
-7. ${plainPromptFormattingInstruction}
-8. ${jsonStringSafetyInstruction}`;
+  let activeSuffix = '';
+  let specificRules = '';
 
-  const contents = `Analyze the image and generate EXACTLY ${numPrompts} vector illustration prompts based on the system instructions, returning a JSON array.\n\nRemember: Maintain strict ancestry consistency. Determine the precise ancestry for each human once, and apply that same description to all generated prompts in the array.`;
+  if (isJerseyPattern) {
+    activeSuffix = getJerseyPatternSuffix(whiteBg);
+    specificRules = `
+JERSEY PATTERN VISUAL DNA EXTRACTION & SPORT LOCKING RULES:
+1. **VISUAL SPORT SILHOUETTE DETECTION**:
+   - Analyze the image to detect if it features a specific sport garment (e.g. basketball tank top, soccer jersey, cycling top, esports tournament shirt, motocross suit, volleyball shirt, rugby kit).
+   - If a specific sport is visually identified in the image, you MUST tailor the garment silhouette to that sport in the suffix, while keeping the front description purely focused on the artwork motif!
+2. **PURE GRAPHIC MOTIF EXPANSION**:
+   - Extract the core motif DNA: fluid motion waves, aerodynamic velocity shards, diagonal speed sashes, raptor claw cuts, or topographic contour ribbons, along with the high-contrast solid color palette.
+   - **STRICT BAN**: DO NOT write words like 'basketball jersey', 'soccer jersey', 'jersey', 'shirt', 'kit', or 'tank top' in the front description. Describe ONLY the pure graphic artwork and solid flat colors.
+3. **DUAL SPLIT 50:50 PRESENTATION**:
+   - Left half: Matching technical vector jersey mockup cleanly isolated on solid pure white background.
+   - Right half: Pure full-bleed vector sublimation pattern tile with strictly ZERO text, ZERO numbers, ZERO logos, and ZERO crest badges.
+4. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
+  } else if (isCarWrapLivery) {
+    activeSuffix = getCarWrapLiverySuffix(whiteBg);
+    specificRules = `
+CAR WRAP LIVERY VISUAL DNA EXTRACTION RULES:
+1. **RACING DECAL DNA EXTRACTION**:
+   - Extract the dynamic aerodynamic velocity flow, asymmetrical racing slashes, speed swooshes, and 3-tone high-contrast motorsport color formula.
+   - Strictly NO repeating wallpaper patterns, NO honeycomb meshes, NO spiral vortexes.
+2. **DUAL SPLIT 50:50 PRESENTATION**:
+   - Top half: Clean 2D side-profile of generic unbranded vehicle with racing livery.
+   - Bottom half: Full-bleed edge-to-edge decal wrap graphic banner.
+3. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
+  } else if (isSeamlessPattern) {
+    activeSuffix = getSeamlessVectorPatternSuffix(whiteBg);
+    specificRules = `
+SEAMLESS PATTERN DNA EXTRACTION:
+- Extract key graphic motifs and palette, transforming them into a 100% flat 2D seamless all-over repeating surface print.
+- Mandatory Suffix: "${activeSuffix}".`;
+  } else if (isAbstractPictogramLogo) {
+    activeSuffix = getAbstractPictogramLogoSuffix(whiteBg);
+    specificRules = `
+PICTOGRAM LOGO DNA EXTRACTION:
+- Distill visual subject into a radical minimalist flat 2D iconic pictogram symbol.
+- Mandatory Suffix: "${activeSuffix}".`;
+  } else {
+    activeSuffix = getActiveVectorSuffix(chosenStyle, whiteBg);
+    specificRules = `
+VECTOR ART DNA EXTRACTION:
+- Translate the image into clean, modern, commercial 2D flat vector graphic assets.
+- Mandatory Suffix: "${activeSuffix}".`;
+  }
+
+  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a World-Class Master Prompt Engineer and Visual AI Art Director specializing in 2D commercial vector graphics and visual DNA reverse-engineering.
+
+Task: Deeply analyze the provided reference image, extract its core visual DNA (geometric motifs, flow dynamics, and solid color harmonies), and generate EXACTLY ${numPrompts} wildly creative, high-value, non-repetitive vector prompts in English, returned as a JSON array.
+
+CRITICAL GUIDELINES:
+1. **VISUAL DNA REVERSE-ENGINEERING**:
+   - Accurately read the underlying visual structure, curvature, speed angles, rhythm, and palette from the image.
+   - Expand into diverse creative variations inspired by this visual DNA.
+2. **100% FLAT 2D VECTOR & ZERO GRADIENTS**:
+   - Pure hard-edge solid color planes. Strictly ZERO gradients, NO airbrush shading, NO glow, NO bloom, NO 3D rendering, NO photorealism.
+   - Strictly BANNED words: 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', 'amber'. Use pure solid flat colors.
+${specificRules}
+3. **JSON OUTPUT ONLY**:
+   - You MUST respond with a single, valid JSON array containing exactly ${numPrompts} strings. Do NOT include markdown code fences, prose, or commentary.
+${humanAncestryInstruction}
+${plainPromptFormattingInstruction}
+${jsonStringSafetyInstruction}`;
+
+  const contents = `Perform deep visual DNA analysis on the provided image and generate EXACTLY ${numPrompts} unique, non-repetitive vector prompts based on the system instructions, returning a JSON array.`;
   return { systemInstruction, contents };
 };
 
 export const buildImagePrompt = (image: { data: string; mimeType: string }, settings: UseSettingsReturn, isQuick: boolean) => {
- const imagePart = { inlineData: { mimeType: image.mimeType, data: image.data } };
+  const imagePart = { inlineData: { mimeType: image.mimeType, data: image.data } };
 
- let systemInstruction: string, textContent: string;
- let schema: object = promptListSchema;
+  let systemInstruction: string, textContent: string;
+  let schema: object = promptListSchema;
 
- switch (settings.styleOption) {
- case 'isolated':
- ({ systemInstruction, contents: textContent } = buildImageIsolatedAnalysisPrompt(settings.negativePrompt, settings.numPrompts));
- break;
- case 'vector':
- ({ systemInstruction, contents: textContent } = buildImageVectorAnalysisPrompt(settings.negativePrompt, settings.numPrompts));
- break;
- case 'custom':
- const template = settings.customTemplate.trim();
- ({ systemInstruction, contents: textContent } = buildImageCustomAnalysisPrompt(template, settings.negativePrompt, settings.numPrompts));
- break;
- case 'footage':
- ({ systemInstruction, contents: textContent } = buildImageFootageAnalysisPrompt(settings.negativePrompt, settings.numPrompts));
- schema = footageListSchema;
- break;
- case 'photographic':
- case 'sameAsReference':
- default:
- ({ systemInstruction, contents: textContent } = buildImageAnalysisPrompt(settings.styleOption, settings.promptQualityOption, settings.negativePrompt, settings.numPrompts));
- break;
- }
+  switch (settings.styleOption) {
+    case 'isolated':
+      ({ systemInstruction, contents: textContent } = buildImageIsolatedAnalysisPrompt(settings.negativePrompt, settings.numPrompts));
+      break;
+    case 'vector':
+      ({ systemInstruction, contents: textContent } = buildImageVectorAnalysisPrompt(settings.negativePrompt, settings.numPrompts, settings.vectorArtStyle, settings.vectorWhiteBg));
+      break;
+    case 'custom':
+      const template = settings.customTemplate.trim();
+      ({ systemInstruction, contents: textContent } = buildImageCustomAnalysisPrompt(template, settings.negativePrompt, settings.numPrompts));
+      break;
+    case 'footage':
+      ({ systemInstruction, contents: textContent } = buildImageFootageAnalysisPrompt(settings.negativePrompt, settings.numPrompts));
+      schema = footageListSchema;
+      break;
+    case 'photographic':
+    case 'sameAsReference':
+    default:
+      ({ systemInstruction, contents: textContent } = buildImageAnalysisPrompt(settings.styleOption, settings.promptQualityOption, settings.negativePrompt, settings.numPrompts));
+      break;
+  }
 
- const textPart = { text: textContent };
- const contents = { parts: [imagePart, textPart] };
- const config: any = {
- systemInstruction,
- responseMimeType: 'application/json',
- responseSchema: schema,
- };
- applyQuickGenerateConfig(config, settings.selectedModel, isQuick);
- 
- return { contents, config };
+  const textPart = { text: textContent };
+  const contents = { parts: [imagePart, textPart] };
+  const config: any = {
+    systemInstruction,
+    responseMimeType: 'application/json',
+    responseSchema: schema,
+  };
+  applyQuickGenerateConfig(config, settings.selectedModel, isQuick);
+
+  return { contents, config };
 };
 
 // --- VIDEO-BASED PROMPT BUILDERS ---

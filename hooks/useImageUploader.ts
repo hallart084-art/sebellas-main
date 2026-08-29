@@ -25,12 +25,13 @@ export const useImageUploader = (isImageMode: boolean, t: (key: any, params?: an
   return target instanceof Element && !!target.closest('[data-upload-dropzone="true"]');
  };
 
- const handleImageFiles = useCallback(async (files: FileList | null) => {
-  if (!files || !isImageMode) return;
+ const handleImageFiles = useCallback(async (files: FileList | File[] | null) => {
+  if (!files) return;
   setError(null);
-  const imageFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
+  const fileArray = Array.isArray(files) ? files : Array.from(files);
+  const imageFiles = fileArray.filter(file => file.type.startsWith('image/'));
 
-  if (imageFiles.length === 0 && files.length > 0) {
+  if (imageFiles.length === 0 && fileArray.length > 0) {
    setError(t('errorNonImageFileDropped'));
    return;
   }
@@ -38,24 +39,18 @@ export const useImageUploader = (isImageMode: boolean, t: (key: any, params?: an
   // Konversi semua file ke data URL secara paralel.
   const newImages: UploadedImage[] = await Promise.all(
    imageFiles.map(async (file) => ({
-    id: `${file.name}-${Date.now()}-${Math.random()}`,
-    name: file.name,
-    type: file.type,
+    id: `${file.name || 'pasted-image'}-${Date.now()}-${Math.random()}`,
+    name: file.name || `Pasted Image ${new Date().toLocaleTimeString()}`,
+    type: file.type || 'image/png',
     objectUrl: await fileToDataUrl(file),
     file: file
    }))
   );
 
   setUploadedImages(prev => [...prev, ...newImages]);
- }, [isImageMode, t]);
+ }, [t]);
 
  useEffect(() => {
-  if (!isImageMode) {
-   setIsDraggingOverWindow(false);
-   dragCounter.current = 0;
-   return;
-  }
-
   const handleDragEnter = (e: DragEvent) => {
    e.preventDefault();
    e.stopPropagation();
@@ -82,9 +77,22 @@ export const useImageUploader = (isImageMode: boolean, t: (key: any, params?: an
    const inside = isEventInsideDropzone(e.target);
    setIsDraggingOverWindow(false);
    dragCounter.current = 0;
-   if (inside && isImageMode && e.dataTransfer?.files?.length) handleImageFiles(e.dataTransfer.files);
+   if (inside && e.dataTransfer?.files?.length) handleImageFiles(e.dataTransfer.files);
   };
   const handleWindowPaste = (event: ClipboardEvent) => { 
+   // Tangkap gambar dari clipboard (screenshot Win+Shift+S atau Copy Image)
+   const clipboardItems = event.clipboardData?.items ? Array.from(event.clipboardData.items) : [];
+   const imageItem = clipboardItems.find(item => item.type.startsWith('image/'));
+   
+   if (imageItem) {
+     const file = imageItem.getAsFile();
+     if (file) {
+       event.preventDefault();
+       handleImageFiles([file]);
+       return;
+     }
+   }
+
    const target = event.target as Element | null;
    if (target && target.id !== 'concepts') {
     const tagName = target.tagName?.toLowerCase();
@@ -92,7 +100,14 @@ export const useImageUploader = (isImageMode: boolean, t: (key: any, params?: an
      return;
     }
    }
-   if (isImageMode && event.clipboardData) handleImageFiles(event.clipboardData.files); 
+
+   if (event.clipboardData?.files?.length) {
+     const imgFiles = Array.from(event.clipboardData.files).filter(f => f.type.startsWith('image/'));
+     if (imgFiles.length > 0) {
+       event.preventDefault();
+       handleImageFiles(imgFiles);
+     }
+   }
   };
 
   window.addEventListener('dragenter', handleDragEnter);
@@ -108,7 +123,7 @@ export const useImageUploader = (isImageMode: boolean, t: (key: any, params?: an
    window.removeEventListener('drop', handleDrop);
    window.removeEventListener('paste', handleWindowPaste);
   };
- }, [isImageMode, handleImageFiles]);
+ }, [handleImageFiles]);
 
  const handleDeleteImage = (id: string) => {
   // Data URL tidak perlu di-revoke — langsung hapus dari state.
