@@ -486,27 +486,38 @@ const buildVectorTextPrompt = (
     activeSuffix = getCarWrapLiverySuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (CAR WRAP LIVERY):
 1. **DYNAMIC ASYMMETRIC WRAPPING DYNAMICS (STRICTLY NO STATIC WALLPAPER / NO REPETITIVE GRIDS)**:
-   - Livery graphics MUST be directional, asymmetrical, high-velocity, and contoured specifically for vehicle body wrapping (sweeping aggressively from front fender/bumper across the doors to the rear quarter panels).
+   - Livery graphics MUST be directional, asymmetrical, high-velocity, and contoured organically along vehicle body panels (flowing aggressively from front bumper/fender, swooping dynamically across doors, and bursting with velocity at the rear quarter panel).
    - Absolutely FORBIDDEN: Static repetitive wallpaper patterns, uniform geometric grids, polka dots, checkerboard tiles, or passive symmetrical wallpaper prints.
    - Mandate: High-speed velocity thrust vectors, explosive angled speed slash shards, aerodynamic wind-tunnel contour ribbons, fluid drift smoke streams, and aggressive motion splinters.
-2. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
+
+2. **MANDATORY DIVERSITY ACROSS 4 FLUID WRAPPING ARCHETYPES (ROTATE IN EVERY BATCH)**:
+   - **Archetype 1 (Fluid Liquid & Drift Smoke Flow)**: Undulating curvilinear ribbons, swirling vortex drift smoke contours, and organic fluid velocity streaks.
+   - **Archetype 2 (Explosive Velocity Shards & Fractured Energy)**: Directional forward-thrusting angular lightning blades, fragmented crystal splinters, and explosive speed streaks.
+   - **Archetype 3 (Mecha Beast & Biomorphic Claw Slashes)**: Stylized cybernetic predator claw cuts, aerodynamic razor winglet sweeps, and biomechanical dragon scale contours.
+   - **Archetype 4 (Modern Kinetic Rally Dash & Halftone Speed Fade)**: Aggressive diagonal aerodynamic speed slashes, high-density halftone dot matrix bursts, and asymmetric air-channel fins.
+
+3. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
    - **TOP HALF (50%)**: Displays a clean, flat 2D vector side-profile illustration of a generic unbranded vehicle with the livery graphic seamlessly applied across its body panels. Dynamically vary vehicle types across prompts (supercar, rally hot hatch, 4x4 pickup truck, commercial cargo box van/truck, performance drift sedan, widebody GT coupe) with strictly ZERO manufacturer brand logos.
    - **BOTTOM HALF (50%)**: Displays the EXACT IDENTICAL full-bleed edge-to-edge flat 2D vector livery wrap graphic touching all canvas edges. STRICTLY NO outer border lines, NO framing margins, NO bounding boxes, NO car blueprints, and NO car silhouette outlines in the bottom half.
-3. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
+
+4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
    - Both the vehicle preview and the wrap graphic must be rendered with hard-edge, solid flat color planes without photographic reflections, without soft gradients, without 3D shading, and without glowing bloom.
-4. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
+
+5. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
    - Use bold, high-contrast racing color combinations (e.g. electric cyan + midnight black, fiery orange + charcoal grey, crimson red + stark white, neon lime + slate gray, purple violet + golden yellow).
-5. **STRICTLY ZERO TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
+
+6. **STRICTLY ZERO TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
    - Absolutely NO car brand emblems, NO sponsor text, NO letters, NO typography, NO watermark.
-6. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+
+7. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "geometric speed shards" -> "Aggressive geometric speed shard car wrap livery on a sleek modern supercar, featuring interlocking sharp angled electric cyan blades, white arrow accents, and dark charcoal grey speed stripes with ultra-high contrast, ${activeSuffix}"
-- "rally racing sweep" -> "Dynamic aerodynamic rally racing car wrap livery on a widebody hot hatchback, featuring bold swooping crimson red speed curves, razor white winglet cuts, and solid charcoal grey geometric facet blocks, ${activeSuffix}"
+- "fluid wave drift" -> "Dynamic fluid liquid drift wave car wrap livery on an unbranded widebody sports coupe, featuring asymmetrical sweeping cyan-turquoise fluid ribbons, swirling dark navy drift smoke contours, and organic motion splash trails arching fluidly across the body panels, ${activeSuffix}"
+- "velocity shards" -> "High-velocity explosive shard racing livery on a low-slung modern supercar, featuring directional forward-thrusting fiery orange lightning blades, fragmented white crystal splinter shards, and sweeping dark charcoal velocity thrust streaks erupting from front to rear, ${activeSuffix}"
+- "mecha dragon claw" -> "Ferocious mecha dragon wing tribal livery on an aggressive drift sedan, featuring sweeping neon-lime cyber claw slashes, aerodynamic razor wing contours, and stealth matte-black biomechanical scale cuts slicing dynamically along the side profile, ${activeSuffix}"
 - "commercial cargo box van" -> "Dynamic aerodynamic speed stripe livery on a modern commercial cargo box van, featuring bold diagonal electric blue chevron bands, sharp canary yellow forward arrows, and solid charcoal grey base blocks across the cargo body, ${activeSuffix}"
-- "4x4 trophy truck" -> "Rugged desert race livery on a heavy-duty 4x4 trophy pickup truck, featuring sharp geometric camouflage polygon shards and aggressive speed claw streaks in neon lime green, stealth matte black, and gunmetal gray, ${activeSuffix}"
-- "drift wave camo" -> "Modern fluid liquid drift camouflage car wrap livery on a performance sports sedan, featuring dynamic flowing cyan wave ribbons, deep navy blue speed contours, and sharp slate-gray motion trail splatters, ${activeSuffix}"`;
+- "rally kinetic slash" -> "Dynamic kinetic rally slash car wrap livery on an off-road 4x4 rally hatchback, featuring bold diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and dark gunmetal aerofoil streak panels with extreme asymmetric directional flow, ${activeSuffix}"`;
   } else if (isSeamlessPattern) {
     activeSuffix = getSeamlessVectorPatternSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (SEAMLESS VECTOR PATTERN):
