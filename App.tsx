@@ -577,8 +577,8 @@ const App: React.FC = () => {
       const isVectorStyle = settings.inputMode === 'vector' || settings.styleOption === 'vector';
       const hasRefImages = (settings.vectorReferenceImages || []).length > 0;
       
-      if (isVectorStyle && !hasRefImages) {
-        // Text-only vector mode: enforce suffix as before
+      if (isVectorStyle) {
+        // ALWAYS enforce suffix paten for vector mode (text-only AND image reference)
         const isWhiteBg = settings.vectorWhiteBg ?? true;
         const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle || 'Flat illustration', isWhiteBg, placeholder.originalConcept);
 
@@ -594,7 +594,7 @@ const App: React.FC = () => {
 
             // 2. Remove ANY partial or full suffix that the AI might have started writing
             text = text.replace(/,?\s*professional\s+(sports|basketball|soccer|football|esports|cycling|motocross|volleyball|badminton|rugby|running|car wrap|athletic).*$/i, '').trim();
-            text = text.replace(/,?\s*(dual split 50:50|one vertical half displays|the other vertical half is|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art).*$/i, '').trim();
+            text = text.replace(/,?\s*(dual split 50:50|one vertical half displays|the other vertical half is|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art|pure 100% flat 2d vector|razor-sharp hard-edge).*$/i, '').trim();
             text = text.replace(/[,.]\s*$/, '').trim();
 
             // 3. Strip redundant sport/jersey intro words if the AI included them at the start
@@ -614,19 +614,6 @@ const App: React.FC = () => {
 
             // 5. Append targetSuffix cleanly ONCE
             return `${text}, ${targetSuffix}`;
-          })
-          .filter(p => p.length > 0);
-      } else if (isVectorStyle && hasRefImages) {
-        // Image reference mode: AI already has format suffix baked in — just clean up
-        parsedPrompts = parsedPrompts
-          .map(item => {
-            if (!item || typeof item !== 'string') return '';
-            let text = item.trim();
-            text = text.replace(/^[\[{\s"'`]+|[\]}\s"'`]+$/g, '').trim();
-            text = text.replace(/^\d+[\s.)\-:]+/, '').trim();
-            text = text.replace(/^[-*•]\s+/, '').trim();
-            text = text.replace(/[,.]\s*$/, '').trim();
-            return text;
           })
           .filter(p => p.length > 0);
       }

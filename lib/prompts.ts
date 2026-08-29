@@ -455,7 +455,7 @@ export const getJerseyPatternSuffix = (whiteBg: boolean = true, concept: string 
     mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar, featuring the EXACT SAME matching sublimation graphic pattern seamlessly applied across the entire jersey body, cleanly isolated on a solid pure white background";
   }
 
-  return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, with an optional small minimalist solid white textless geometric shield crest icon on chest and optional clean flat solid white uppercase word "SPONSOR" and optional solid white squad number as subtle contrast accents, the right vertical half is a 100% PURE FULL-BLEED SEAMLESS REPEATING FLAT 2D VECTOR SUBLIMATION GRAPHIC PATTERN TILE touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
+  return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, the jersey mockup must be 100% FLAT with ZERO GRADIENTS ZERO SHADING ZERO SHADOWS ZERO FABRIC WRINKLES on the garment body, with only an optional small minimalist solid single-color geometric shield crest icon on chest and optional clean flat solid single-color uppercase word "SPONSOR" and optional solid single-color squad number as the ONLY decorative elements on the mockup, the right vertical half is a 100% PURE FULL-BLEED SEAMLESS REPEATING FLAT 2D VECTOR SUBLIMATION GRAPHIC PATTERN TILE touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
 };
 
 export const JERSEY_PATTERN_SUFFIX = getJerseyPatternSuffix(true);
@@ -950,62 +950,64 @@ const buildImageVectorAnalysisPrompt = (
 ) => {
   const chosenStyle = artStyle || 'Flat illustration';
   const isJerseyPattern = chosenStyle.toLowerCase().includes('jersey') || chosenStyle.toLowerCase().includes('jersy');
-  const isCarWrapLivery = !isJerseyPattern && (chosenStyle.toLowerCase().includes('livery') || chosenStyle.toLowerCase().includes('wrap'));
 
-  const bgClause = "isolated on solid pure white background";
-
-  // Minimal format-only suffix — NO motif/color dictation
-  let formatSuffix = '';
-  let categoryHint = '';
-
+  let categoryContext = '';
   if (isJerseyPattern) {
-    categoryHint = 'jersey sublimation pattern';
-    // Only layout format — motif and colors come from image
-    formatSuffix = `professional sports jersey sublimation vector design, dual split 50:50 vertical presentation layout: the left vertical half displays a clean flat 2d technical vector front-view athletic jersey mockup with the EXACT SAME sublimation pattern from the reference image applied across the jersey body ${bgClause}, the right vertical half is a 100% pure full-bleed seamless repeating flat 2d vector sublimation graphic pattern tile with ZERO text ZERO numbers ZERO logos ZERO crest badges, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, auto-trace friendly, strictly zero gradients, no airbrush shading, no glow, no bloom, zero 3d rendering, ${bgClause}, commercial sportswear vector stock asset.`;
-  } else if (isCarWrapLivery) {
-    categoryHint = 'car wrap livery';
-    formatSuffix = `professional car wrap livery vector design, dual split 50:50 presentation layout: top half displays a clean flat 2d vector side-profile of an unbranded vehicle with the racing livery pattern from the reference image, bottom half is the full-bleed edge-to-edge flat 2d vector livery decal graphic banner, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, auto-trace friendly, strictly zero gradients, no airbrush, no glow, no bloom, zero 3d rendering, ${bgClause}, commercial automotive vector stock asset.`;
+    categoryContext = `
+CATEGORY: Jersey Sublimation Pattern
+- You are generating motif/pattern descriptions for sports jersey sublimation designs.
+- Focus on describing the GRAPHIC PATTERN only — geometric shapes, flow direction, color blocks, panel arrangements.
+- DO NOT write words like 'jersey', 'shirt', 'kit', 'tank top', 'mockup', 'sublimation', 'dual split', 'presentation layout' — the system appends the layout suffix automatically.
+- DO NOT describe the garment shape, collar, sleeves, or mockup. ONLY describe the pure graphic artwork/pattern.`;
   } else {
-    categoryHint = 'vector art';
-    formatSuffix = `pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, auto-trace friendly, strictly zero gradients, no airbrush, no glow, no bloom, zero 3d rendering, ${bgClause}, commercial vector stock asset.`;
+    categoryContext = `
+CATEGORY: ${chosenStyle}
+- Focus on describing the visual subject, composition, and color scheme from the reference image.
+- DO NOT append any format suffix like 'flat 2d vector', 'isolated on white', etc. — the system adds that automatically.`;
   }
 
-  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a Visual Reference Replicator. Your ONLY source of creative direction is the reference image provided. Ignore any preset formulas or template rules — the IMAGE is your sole blueprint.
+  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a Visual Reference Analyst. Your job is to study the reference image and generate CONCEPT DESCRIPTIONS that capture the same visual DNA.
 
-Task: Study the reference image deeply, then generate EXACTLY ${numPrompts} prompts in English as a JSON array. Each prompt must produce a result that is a FAITHFUL DEVELOPMENT of the reference image.
+IMPORTANT: You generate ONLY the creative motif/concept description. The system will automatically append the standard format suffix. Do NOT include any suffix, layout description, or format instructions in your output.
+
+Task: Generate EXACTLY ${numPrompts} concept descriptions as a JSON array of strings.
+${categoryContext}
 
 ## HOW TO READ THE IMAGE:
-1. **IDENTIFY the exact geometric motif**: What shapes do you see? Zigzag chevrons? Diagonal slashes? Diamond argyle? Wavy curves? Triangular shards? Horizontal stripes? Describe the EXACT pattern type.
-2. **IDENTIFY the color palette**: What are the 3-5 dominant colors? Name them specifically.
-3. **IDENTIFY the composition**: How are elements arranged? What direction do they flow? What's the visual rhythm?
-4. **DETECT sport type** (if ${categoryHint} includes jersey): Look at the garment silhouette — is it soccer, basketball, cycling, esports, motocross, volleyball, rugby? Detect from image, NOT from text.
+1. **MOTIF**: What exact geometric pattern do you see? Zigzag chevrons? Diagonal slashes? Diamond argyle? Wavy curves? Abstract shards? Hatched line textures? Organic cloud shapes? Describe PRECISELY.
+2. **COLORS**: What are the 3-5 dominant colors? Name them specifically (e.g. "deep crimson red", "jet black", "pure white").
+3. **FLOW**: What's the visual direction? Diagonal left-to-right? Horizontal bands? Radial burst? Vertical panels?
+4. **TEXTURE STYLE**: Solid flat blocks? Hatched line fills? Tone-on-tone overlays? Sharp geometric cuts?
 
 ## HOW TO CREATE VARIATIONS:
 Each prompt must be a DEVELOPMENT of the reference — recognizably similar but creatively expanded:
-- **MOTIF**: Keep the SAME fundamental pattern type (e.g. if zigzags, stay with zigzags). But you CAN vary: angle (30°→60°), scale (micro→macro), density (tight→loose), panel layout (centered→asymmetric), mirror/rotate.
-- **COLORS**: Start from the reference palette but you CAN DEVELOP new color combinations. Keep at least 1-2 anchor colors from the reference, then introduce complementary or analogous new accents. You are NOT locked to the exact same colors — explore warm/cool shifts, higher contrast combos, or fresh accent pops.
-- **COMPOSITION**: Keep the same visual weight direction but vary panel proportions, element placement, and negative space distribution.
-- **DO NOT** invent a completely unrelated motif. If the image shows chevrons, don't write circles. If it shows diagonal slashes, don't write polka dots.
+- **MOTIF**: Keep the SAME fundamental pattern type. You CAN vary: angle (30°→60°), scale (micro→macro), density, panel layout, mirror/rotate. DO NOT invent a completely different motif.
+- **COLORS**: Start from the reference palette but you CAN develop. Keep at least 1-2 anchor colors, then explore complementary accents, warm/cool shifts, or fresh color pops. NOT locked to exact same colors.
+- **COMPOSITION**: Vary panel proportions, element placement, visual weight distribution.
 
-## FORMAT RULES:
-- Every prompt MUST end with this format suffix: "${formatSuffix}"
-- BANNED words: 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', 'amber'.
-- 100% flat 2D vector only. ZERO gradients.
+## WHAT EACH PROMPT SHOULD LOOK LIKE:
+Good example: "Bold diagonal velocity shards with deep crimson red and jet black angular panels, asymmetric speed slash cuts flowing left-to-right with thin white accent pinstripes"
+Bad example: "professional sports jersey sublimation vector design, dual split 50:50..." ← NO! Never write layout/suffix.
 
-## OUTPUT:
-Respond with a single valid JSON array of exactly ${numPrompts} strings. No markdown fences, no commentary.
+## RULES:
+- Output ONLY the creative concept/motif description. NO suffix. NO layout description.
+- BANNED words: 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', 'amber', 'gradient', 'ombre'.
+- Each prompt describes flat solid color artwork only.
+- JSON array of exactly ${numPrompts} strings. No markdown, no commentary.
 ${humanAncestryInstruction}
 ${plainPromptFormattingInstruction}
 ${jsonStringSafetyInstruction}`;
 
-  const contents = `Study this reference image carefully. It is your ONLY creative source — not any template or formula.
+  const contents = `Study this reference image — it is your ONLY creative source.
 
-Read the EXACT motif pattern, color palette, flow direction, and composition from this image.
+Read the EXACT pattern geometry, color palette, visual flow, and texture style from this image.
 
-Then generate EXACTLY ${numPrompts} prompts that are faithful developments of what you see:
-- Same core motif geometry (with subtle angle/scale/density variations)
-- Colors developed from the reference palette (keep 1-2 anchors, explore new accents)
-- Each prompt should look like a "sibling design" of the reference — clearly related but not identical
+Generate EXACTLY ${numPrompts} concept descriptions that are faithful developments of what you see:
+- Same core motif (with angle/scale/density variations)
+- Colors developed from the reference (keep anchors, explore new accents)  
+- Each should look like a "sibling design" of the reference
+
+Output ONLY the concept description for each prompt. Do NOT include any suffix, layout, or format instructions — the system adds those automatically.
 
 Return as JSON array.`;
 
