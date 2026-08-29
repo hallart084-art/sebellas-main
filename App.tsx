@@ -575,8 +575,10 @@ const App: React.FC = () => {
       // Guaranteed Vector Suffix Enforcement:
       // Pastikan 100% setiap prompt selalu memiliki deskripsi tema yang valid + sufiks paten style yang lengkap tanpa duplikasi kata jersey/sufiks.
       const isVectorStyle = settings.inputMode === 'vector' || settings.styleOption === 'vector';
+      const hasRefImages = (settings.vectorReferenceImages || []).length > 0;
       
-      if (isVectorStyle) {
+      if (isVectorStyle && !hasRefImages) {
+        // Text-only vector mode: enforce suffix as before
         const isWhiteBg = settings.vectorWhiteBg ?? true;
         const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle || 'Flat illustration', isWhiteBg, placeholder.originalConcept);
 
@@ -612,6 +614,19 @@ const App: React.FC = () => {
 
             // 5. Append targetSuffix cleanly ONCE
             return `${text}, ${targetSuffix}`;
+          })
+          .filter(p => p.length > 0);
+      } else if (isVectorStyle && hasRefImages) {
+        // Image reference mode: AI already has format suffix baked in — just clean up
+        parsedPrompts = parsedPrompts
+          .map(item => {
+            if (!item || typeof item !== 'string') return '';
+            let text = item.trim();
+            text = text.replace(/^[\[{\s"'`]+|[\]}\s"'`]+$/g, '').trim();
+            text = text.replace(/^\d+[\s.)\-:]+/, '').trim();
+            text = text.replace(/^[-*•]\s+/, '').trim();
+            text = text.replace(/[,.]\s*$/, '').trim();
+            return text;
           })
           .filter(p => p.length > 0);
       }

@@ -951,91 +951,64 @@ const buildImageVectorAnalysisPrompt = (
   const chosenStyle = artStyle || 'Flat illustration';
   const isJerseyPattern = chosenStyle.toLowerCase().includes('jersey') || chosenStyle.toLowerCase().includes('jersy');
   const isCarWrapLivery = !isJerseyPattern && (chosenStyle.toLowerCase().includes('livery') || chosenStyle.toLowerCase().includes('wrap'));
-  const isSeamlessPattern = !isJerseyPattern && !isCarWrapLivery && (chosenStyle.toLowerCase().includes('pattern') || chosenStyle.toLowerCase().includes('seamless'));
-  const isAbstractPictogramLogo = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && (chosenStyle.toLowerCase().includes('pictogram') || chosenStyle.toLowerCase().includes('logo'));
 
-  let activeSuffix = '';
-  let specificRules = '';
+  const bgClause = "isolated on solid pure white background";
+
+  // Minimal format-only suffix — NO motif/color dictation
+  let formatSuffix = '';
+  let categoryHint = '';
 
   if (isJerseyPattern) {
-    activeSuffix = getJerseyPatternSuffix(whiteBg);
-    specificRules = `
-JERSEY PATTERN — FAITHFUL REPRODUCTION RULES:
-1. **SPORT SILHOUETTE DETECTION**:
-   - Detect the sport from the image (soccer, basketball, cycling, esports, motocross, volleyball, rugby, etc.).
-   - Lock the garment silhouette to that exact sport in the suffix.
-2. **EXACT MOTIF CLONING**:
-   - Describe the EXACT same geometric pattern you see: if it has zigzag chevrons, write zigzag chevrons. If it has diagonal slashes, write diagonal slashes. If it has diamond argyle, write diamond argyle.
-   - Use the EXACT same color palette: list the specific colors you see (e.g. "deep red #CC0000, jet black #111111, pure white #FFFFFF").
-   - Preserve the same pattern scale, repetition rhythm, angle direction, and visual weight distribution.
-3. **VARIATIONS = SAME DNA, SMALL TWEAKS**:
-   - Each prompt must keep the SAME core motif geometry and SAME color family.
-   - Variations should be subtle: slightly different angle (e.g. 45° → 60°), slightly rearranged panel placement, mirrored layout, or minor accent color shift within the same warm/cool family.
-   - DO NOT invent completely new patterns. DO NOT change the fundamental motif type (e.g. don't turn zigzags into circles).
-4. **DUAL SPLIT 50:50**:
-   - Left half: Technical vector jersey mockup on solid pure white background.
-   - Right half: Pure full-bleed sublimation pattern tile with ZERO text, ZERO numbers, ZERO logos, ZERO crest badges.
-5. **PURE GRAPHIC DESCRIPTION**: The front description must describe ONLY the flat artwork pattern and colors. NEVER write 'jersey', 'shirt', 'kit' in the front description.
-6. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
+    categoryHint = 'jersey sublimation pattern';
+    // Only layout format — motif and colors come from image
+    formatSuffix = `professional sports jersey sublimation vector design, dual split 50:50 vertical presentation layout: the left vertical half displays a clean flat 2d technical vector front-view athletic jersey mockup with the EXACT SAME sublimation pattern from the reference image applied across the jersey body ${bgClause}, the right vertical half is a 100% pure full-bleed seamless repeating flat 2d vector sublimation graphic pattern tile with ZERO text ZERO numbers ZERO logos ZERO crest badges, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, auto-trace friendly, strictly zero gradients, no airbrush shading, no glow, no bloom, zero 3d rendering, ${bgClause}, commercial sportswear vector stock asset.`;
   } else if (isCarWrapLivery) {
-    activeSuffix = getCarWrapLiverySuffix(whiteBg);
-    specificRules = `
-CAR WRAP LIVERY — FAITHFUL REPRODUCTION RULES:
-1. Describe the EXACT same racing flow dynamics, slash angles, and 3-tone color palette from the image.
-2. Variations = same flow DNA, minor tweaks in panel proportions or accent placement.
-3. Top half: Clean 2D side-profile of generic unbranded vehicle with the livery.
-4. Bottom half: Full-bleed edge-to-edge decal wrap graphic banner.
-5. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
-  } else if (isSeamlessPattern) {
-    activeSuffix = getSeamlessVectorPatternSuffix(whiteBg);
-    specificRules = `
-SEAMLESS PATTERN — FAITHFUL REPRODUCTION:
-- Reproduce the EXACT same motif geometry, tile arrangement, and color palette from the image.
-- Variations = same motif family, slightly altered scale/rotation/color accent.
-- Mandatory Suffix: "${activeSuffix}".`;
-  } else if (isAbstractPictogramLogo) {
-    activeSuffix = getAbstractPictogramLogoSuffix(whiteBg);
-    specificRules = `
-PICTOGRAM LOGO — FAITHFUL REPRODUCTION:
-- Reproduce the same iconic shape, proportions, and silhouette from the image.
-- Variations = same shape family, slightly altered proportion/orientation.
-- Mandatory Suffix: "${activeSuffix}".`;
+    categoryHint = 'car wrap livery';
+    formatSuffix = `professional car wrap livery vector design, dual split 50:50 presentation layout: top half displays a clean flat 2d vector side-profile of an unbranded vehicle with the racing livery pattern from the reference image, bottom half is the full-bleed edge-to-edge flat 2d vector livery decal graphic banner, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, auto-trace friendly, strictly zero gradients, no airbrush, no glow, no bloom, zero 3d rendering, ${bgClause}, commercial automotive vector stock asset.`;
   } else {
-    activeSuffix = getActiveVectorSuffix(chosenStyle, whiteBg);
-    specificRules = `
-VECTOR ART — FAITHFUL REPRODUCTION:
-- Reproduce the same subject, composition, art direction, and color scheme from the image.
-- Variations = same subject and style, minor pose/angle/detail changes.
-- Mandatory Suffix: "${activeSuffix}".`;
+    categoryHint = 'vector art';
+    formatSuffix = `pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, auto-trace friendly, strictly zero gradients, no airbrush, no glow, no bloom, zero 3d rendering, ${bgClause}, commercial vector stock asset.`;
   }
 
-  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a Precision Visual Prompt Replicator. Your job is to describe EXACTLY what you see in the reference image, then produce faithful variations that look almost identical.
+  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a Visual Reference Replicator. Your ONLY source of creative direction is the reference image provided. Ignore any preset formulas or template rules — the IMAGE is your sole blueprint.
 
-Task: Analyze the reference image with extreme precision, then generate EXACTLY ${numPrompts} prompts in English as a JSON array. Every prompt must produce a result that looks VERY SIMILAR to the original image — same motif geometry, same color palette, same visual rhythm.
+Task: Study the reference image deeply, then generate EXACTLY ${numPrompts} prompts in English as a JSON array. Each prompt must produce a result that is a FAITHFUL DEVELOPMENT of the reference image.
 
-ABSOLUTE RULES:
-1. **DESCRIBE WHAT YOU SEE — NOT WHAT YOU IMAGINE**:
-   - Read the exact shapes: are they zigzag chevrons? diagonal speed slashes? diamond argyle? horizontal stripes? triangular shards? curved waves? Write EXACTLY what you see.
-   - Read the exact colors: list the 2-5 dominant colors by name and approximate hex. Use these SAME colors in every prompt.
-   - Read the exact composition: where are elements placed? what's the visual flow direction? what's the scale?
+## HOW TO READ THE IMAGE:
+1. **IDENTIFY the exact geometric motif**: What shapes do you see? Zigzag chevrons? Diagonal slashes? Diamond argyle? Wavy curves? Triangular shards? Horizontal stripes? Describe the EXACT pattern type.
+2. **IDENTIFY the color palette**: What are the 3-5 dominant colors? Name them specifically.
+3. **IDENTIFY the composition**: How are elements arranged? What direction do they flow? What's the visual rhythm?
+4. **DETECT sport type** (if ${categoryHint} includes jersey): Look at the garment silhouette — is it soccer, basketball, cycling, esports, motocross, volleyball, rugby? Detect from image, NOT from text.
 
-2. **FAITHFUL VARIATIONS — NOT CREATIVE DEPARTURES**:
-   - Each prompt keeps the SAME core pattern/motif.
-   - Each prompt keeps the SAME color palette (±1 accent color shift allowed).
-   - Variation means: different angle (30° vs 45° vs 60°), mirrored layout, shifted panel distribution, slightly thicker/thinner stripes, minor rhythmic density change.
-   - NEVER invent a completely different motif. If the image shows zigzags, ALL prompts must describe zigzags.
+## HOW TO CREATE VARIATIONS:
+Each prompt must be a DEVELOPMENT of the reference — recognizably similar but creatively expanded:
+- **MOTIF**: Keep the SAME fundamental pattern type (e.g. if zigzags, stay with zigzags). But you CAN vary: angle (30°→60°), scale (micro→macro), density (tight→loose), panel layout (centered→asymmetric), mirror/rotate.
+- **COLORS**: Start from the reference palette but you CAN DEVELOP new color combinations. Keep at least 1-2 anchor colors from the reference, then introduce complementary or analogous new accents. You are NOT locked to the exact same colors — explore warm/cool shifts, higher contrast combos, or fresh accent pops.
+- **COMPOSITION**: Keep the same visual weight direction but vary panel proportions, element placement, and negative space distribution.
+- **DO NOT** invent a completely unrelated motif. If the image shows chevrons, don't write circles. If it shows diagonal slashes, don't write polka dots.
 
-3. **100% FLAT 2D VECTOR & ZERO GRADIENTS**:
-   - Pure hard-edge solid color planes. ZERO gradients, NO airbrush, NO glow, NO bloom, NO 3D, NO photorealism.
-   - BANNED words: 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', 'amber'.
-${specificRules}
-4. **JSON OUTPUT ONLY**:
-   - Respond with a single valid JSON array of exactly ${numPrompts} strings. No markdown fences, no commentary.
+## FORMAT RULES:
+- Every prompt MUST end with this format suffix: "${formatSuffix}"
+- BANNED words: 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', 'amber'.
+- 100% flat 2D vector only. ZERO gradients.
+
+## OUTPUT:
+Respond with a single valid JSON array of exactly ${numPrompts} strings. No markdown fences, no commentary.
 ${humanAncestryInstruction}
 ${plainPromptFormattingInstruction}
 ${jsonStringSafetyInstruction}`;
 
-  const contents = `Study this image with extreme precision. Identify the EXACT geometric patterns, EXACT color palette, EXACT visual flow, and EXACT composition. Then generate EXACTLY ${numPrompts} prompts that would each reproduce a result visually almost identical to this image, with only subtle variations. Return as JSON array.`;
+  const contents = `Study this reference image carefully. It is your ONLY creative source — not any template or formula.
+
+Read the EXACT motif pattern, color palette, flow direction, and composition from this image.
+
+Then generate EXACTLY ${numPrompts} prompts that are faithful developments of what you see:
+- Same core motif geometry (with subtle angle/scale/density variations)
+- Colors developed from the reference palette (keep 1-2 anchors, explore new accents)
+- Each prompt should look like a "sibling design" of the reference — clearly related but not identical
+
+Return as JSON array.`;
+
   return { systemInstruction, contents };
 };
 
