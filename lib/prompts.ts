@@ -949,7 +949,9 @@ const buildImageVectorAnalysisPrompt = (
   whiteBg: boolean = true
 ) => {
   const chosenStyle = artStyle || 'Flat illustration';
-  const isJerseyPattern = chosenStyle.toLowerCase().includes('jersey') || chosenStyle.toLowerCase().includes('jersy');
+  const lowerStyle = chosenStyle.toLowerCase();
+  const isJerseyPattern = lowerStyle.includes('jersey') || lowerStyle.includes('jersy');
+  const isCarWrap = lowerStyle.includes('car') || lowerStyle.includes('wrap') || lowerStyle.includes('livery');
 
   let categoryContext = '';
   if (isJerseyPattern) {
@@ -959,6 +961,13 @@ CATEGORY: Jersey Sublimation Pattern
 - Focus on describing the GRAPHIC PATTERN only — geometric shapes, flow direction, color blocks, panel arrangements.
 - DO NOT write words like 'jersey', 'shirt', 'kit', 'tank top', 'mockup', 'sublimation', 'dual split', 'presentation layout' — the system appends the layout suffix automatically.
 - DO NOT describe the garment shape, collar, sleeves, or mockup. ONLY describe the pure graphic artwork/pattern.`;
+  } else if (isCarWrap) {
+    categoryContext = `
+CATEGORY: Car Wrap Racing Livery
+- You are generating graphic descriptions for vehicle wrap liveries.
+- Focus on describing the GRAPHIC DECALS only — racing stripes, swooshes, tribal tears, geometric blocks, sponsor panels.
+- DO NOT write words like 'car', 'vehicle', 'sedan', 'wheels', 'windows', 'mockup', 'wrap', 'livery' — the system appends the layout suffix automatically.
+- DO NOT describe the car body shape. ONLY describe the pure graphic artwork/decals.`;
   } else {
     categoryContext = `
 CATEGORY: ${chosenStyle}
