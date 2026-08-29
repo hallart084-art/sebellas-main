@@ -980,14 +980,14 @@ ${categoryContext}
 4. **FLOW**: What's the visual direction? Horizontal bands? Diagonal sweeps? Radial burst?
 
 ## HOW TO CREATE VARIATIONS:
-Each prompt must be a DEVELOPMENT of the reference — recognizably similar but creatively expanded:
+Each prompt must be a DEVELOPMENT of the reference — recognizably similar in vibe but CREATIVELY EXPANDED in shape:
 - **COVERAGE (STRICT)**: If the reference is minimalist, ALL variations MUST be minimalist. DO NOT generate full-body concepts from a minimalist image. You must retain the same ratio of negative space.
-- **MOTIF**: Keep the SAME fundamental pattern type. You CAN vary: angle (30°→60°), scale (micro→macro), density, panel layout, mirror/rotate. DO NOT invent a completely different motif.
+- **MOTIF (CREATIVE FREEDOM)**: Use the reference shape as a starting point, but you MUST invent WILDLY DIFFERENT and diverse geometric shapes for each prompt! If the reference has chevrons, generate variations with organic waves, digital pixel camo, shattered glass shards, tribal vectors, optical illusions, halftone dots, or flowing liquid lines. DO NOT just repeat the same motif. We want high diversity in shapes!
 - **COLORS**: Start from the reference palette but you CAN develop. Keep at least 1-2 anchor colors, explore complementary accents.
 
 ## EXAMPLES OF CORRECT OUTPUT (Concept Only):
 [MINIMALIST REFERENCE] -> "Minimalist stepped geometric chevron chest band in jet black, crimson red, and golden yellow on a solid pure white base, accompanied by curved solid black lower flank panels and vast clean white negative space"
-[MINIMALIST REFERENCE] -> "Minimalist asymmetrical staggered chest band flowing diagonally in jet black and crimson red on a solid pure white base, featuring vast clean negative space"
+[MINIMALIST REFERENCE] -> "Minimalist organic flowing liquid wave chest band in jet black and crimson red on a solid pure white base, featuring vast clean negative space"
 [FULL-BODY REFERENCE] -> "Aggressive full-body diagonal velocity shards in deep crimson red and jet black angular panels intersecting across the entire canvas"
 [BAD EXAMPLE] -> "professional sports jersey sublimation vector design, dual split 50:50..." (NEVER output suffixes)
 
@@ -1006,7 +1006,7 @@ Read the EXACT level of coverage (minimalist vs full-body), negative space, patt
 
 Generate EXACTLY ${numPrompts} concept descriptions that are faithful developments of what you see:
 - If the image is minimalist, YOUR PROMPTS MUST BE MINIMALIST (explicitly mention negative space and specific placement like "chest band").
-- Same core motif geometry (with subtle angle/scale/density variations).
+- EXPLORE DIVERSE MOTIFS: Invent wildly different geometric shapes for every prompt (waves, shards, camo, tribal, geometric, etc.) so they don't all look identical.
 - Colors developed from the reference (keep anchors, explore new accents).
 
 Output ONLY the concept description for each prompt. Do NOT include any suffix, layout, or format instructions.
