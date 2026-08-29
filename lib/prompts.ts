@@ -541,14 +541,20 @@ const buildVectorTextPrompt = (
    - **THE OTHER VERTICAL HALF (50%)**: Displays the EXACT IDENTICAL matching pure full-bleed edge-to-edge flat 2D vector jersey sublimation graphic pattern tile touching all canvas edges.
      * STRICTLY ZERO sponsor text, ZERO numbers, ZERO club logos, ZERO letters, ZERO border lines, ZERO outer frames, and NO shirt blueprint outlines on the pattern half.
 
-3. **RICH DIVERSITY ACROSS 12 UNIVERSAL JERSEY PATTERN ARCHETYPES**:
-   - Liquid Fluid Aura & Vortex Waves, Kinetic Velocity Shards, Biomorphic Beast / Dragon Scales / Predator Wings, Topographic Elevation Contours, Speed Halftone Matrix & Diagonal Sashes, Cyber Glitch & Circuits, Flame Velocity & Thermal Waves, Modern Polynesian / Aztec Chevrons, Tactical Splinter Camo, Urban Grunge Brush Strokes, Botanical Tropical Leaves, Retro 90s Memphis Geometric.
+3. **MASTER APPAREL DESIGN ARCHETYPES (SOPHISTICATED & MATURE CONCEPTS)**:
+   - **Hydrodynamic Fluid Isobar & Flow**: Undulating laminar flow ribbons, hydrodynamic isobar currents, and curved aerodynamic wave bands.
+   - **Origami Prisms & Velocity Shards**: Interlocking directional polygon triangles, asymmetrical crystal energy facets, and speed polygon tessellations.
+   - **Diagonal Kinetic Sashes & Vector Dot Matrix**: Bold 45-degree racing sashes, precision vector halftone dot density shifts (drawn purely as discrete solid flat dots, zero airbrush), and speed chevron arrows.
+   - **Biomorphic Raptor Wings & Predator Facets**: Abstracted aerodynamic falcon wing slats, sharp raptor claw momentum curves, and clean-cut flat vector armor seams.
+   - **Topographic Elevation Isolines**: Rhythmic elevation map ribbons and nautical current curves in clean multi-tone solid flat layers.
+   - **Bauhaus & Constructivist Modernism**: Asymmetrical color-block wedges, sharp angular momentum cuts, and retro modern geometric diagonals.
 
-4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY (ZERO GRADIENTS & ZERO GLOW)**:
+4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY (ZERO GRADIENTS, ZERO GLOW & ZERO METALLICS)**:
    - Render all elements with hard-edge, solid flat color planes without photographic reflections, without soft gradients, without airbrush shading, without glow/bloom effects, without 3D mannequin rendering, and without fabric wrinkles.
+   - **STRICT WORD BAN**: DO NOT USE words like 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', or 'amber'. Use pure solid flat colors: 'solid canary yellow', 'solid crisp white', 'solid jet black', 'solid scarlet red', 'solid royal blue', 'solid emerald green', 'solid solar orange', 'solid deep navy', 'solid rich teal', 'solid charcoal gray'.
 
 5. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
-   - Bold athletic color combinations (e.g. electric cyan + midnight navy + stark white, forest green + cream + gold, crimson red + obsidian black + stark white, neon lime + matte black, royal purple + golden yellow).
+   - Bold athletic color combinations (e.g. electric cyan + midnight navy + stark white, forest green + cream + sun yellow, crimson red + obsidian black + stark white, acid lime + matte black, royal purple + canary yellow).
 
 6. **STRICTLY ZERO EXTRA TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
    - Absolutely NO manufacturer brand logos. The ONLY allowed text is the optional uppercase word "SPONSOR" and squad numbers in single solid monochrome color on the mockup half.
@@ -560,31 +566,32 @@ FEW-SHOT EXAMPLES:
 - "Basketball wave panels" -> "Dynamic aerodynamic fluid motion waves with sweeping electric cyan shockwaves, sharp dark obsidian flank inserts, and blazing crisp stark white velocity contrast stripes on solid vivid cobalt blue canvas, ${activeSuffix}"
 - "soccer teamgeist" -> "Sweeping curved Teamgeist wave panels with fluid vertical forest green texture bands and warm cream contrast waist ribbons on solid deep pine green base, with a small solid white textless geometric shield crest centered below collar and single-color uppercase word 'SPONSOR' across midriff, ${activeSuffix}"
 - "futsal velocity prism" -> "Interlocking vibrant cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast flank cuts on solid sapphire blue base, with a small solid white textless geometric shield crest on left chest and solid white uppercase word 'SPONSOR' across center chest, ${activeSuffix}"
-- "esports mecha claw" -> "Sweeping fluorescent neon-lime predator claw slashes, aerodynamic razor winglet facets, and stealth matte-black armor cuts on solid dark titanium base, with a single solid white textless geometric shield crest on chest and zero sponsor text, ${activeSuffix}"
-- "cycling topographic wave" -> "Flowing teal contour elevation map ribbons, deep charcoal gray side contour strips, and vibrant mustard yellow accent darts on solid aqua base, with a small solid white textless geometric shield crest on chest, ${activeSuffix}"`;
+- "esports mecha claw" -> "Sweeping acid lime predator claw slashes, aerodynamic razor winglet facets, and stealth matte-black armor cuts on solid dark charcoal base, with a single solid white textless geometric shield crest on chest and zero sponsor text, ${activeSuffix}"
+- "cycling topographic wave" -> "Flowing teal contour elevation map ribbons, deep charcoal gray side contour strips, and vibrant sun yellow accent darts on solid aqua base, with a small solid white textless geometric shield crest on chest, ${activeSuffix}"`;
   } else if (isCarWrapLivery) {
     activeSuffix = getCarWrapLiverySuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (CAR WRAP LIVERY):
 1. **AUTHENTIC MOTORSPORT RACING DECALS (STRICTLY NO WALLPAPER / NO REPETITIVE TEXTURE TILES)**:
-   - The vehicle MUST have a clean, solid base body color (e.g. solid stark white body, solid pitch black body, or solid graphite grey).
+   - The vehicle MUST have a clean, solid base body color (e.g. solid stark white body, solid pitch black body, or solid dark graphite grey).
    - Livery graphics are **DIRECTIONAL ASYMMETRICAL RACING DECAL STRIPES & SPEED ACCENTS** covering 30% to 60% of the side flank (sweeping aggressively from front fender/bumper across the doors to the rear quarter panels).
    - **STRICTLY FORBIDDEN**: All-over repetitive texture prints, dense honeycomb mesh wallpapers, repeating hexagonal grids, hypnotic spiral vortexes, uniform wallpaper prints plastered over the vehicle body, polka dots, checkerboard tiles.
    - **MANDATORY**: High-speed velocity thrust vectors, explosive angled speed slash shards, aerodynamic wind-tunnel contour ribbons, fluid drift smoke streams, and aggressive racing decals.
 
-2. **STRICT HIGH-CONTRAST 3-TONE MOTORSPORT COLOR FORMULA (ZERO DULL/MUDDY COLORS)**:
+2. **STRICT HIGH-CONTRAST 3-TONE MOTORSPORT COLOR FORMULA (ZERO METALLICS & ZERO DULL/MUDDY COLORS)**:
    - Every prompt MUST enforce high-contrast, razor-sharp 3-tone color harmony that pops with extreme clarity on pure solid background:
      * Combo 1: Electric Hyper-Cyan + Midnight Navy + Stark Crisp White.
-     * Combo 2: Fiery Solar Orange + Dark Charcoal + Golden Yellow Speed Wedges.
-     * Combo 3: Fluorescent Acid Lime + Stealth Obsidian Black + Stark White Razor Darts.
-     * Combo 4: Scuderia Crimson Red + Obsidian Black + Stark White + Golden Amber.
-     * Combo 5: Deep Royal Purple + Radiant Sun Gold + Stark White Winglets.
-     * Combo 6: Vivid Aqua Turquoise + Neon Coral Pink + Deep Slate Charcoal.
+     * Combo 2: Fiery Solar Orange + Dark Charcoal + Sun Yellow Speed Wedges.
+     * Combo 3: Acid Lime + Stealth Obsidian Black + Stark White Razor Darts.
+     * Combo 4: Scuderia Crimson Red + Obsidian Black + Stark White + Sun Yellow.
+     * Combo 5: Deep Royal Purple + Bright Sun Yellow + Stark White Winglets.
+     * Combo 6: Vivid Aqua Turquoise + Coral Pink + Deep Slate Charcoal.
+   - **STRICT WORD BAN**: DO NOT USE 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', or 'amber'.
    - Strictly FORBIDDEN: Dull muddy midtones, low-contrast grey-on-grey blends, washed-out tones, or dark graphics that disappear into a dark vehicle body.
 
 3. **MANDATORY DIVERSITY ACROSS 4 FLUID WRAPPING ARCHETYPES (ROTATE IN EVERY BATCH)**:
    - **Archetype 1 (Fluid Liquid & Drift Smoke Flow)**: Undulating curvilinear ribbons, swirling vortex drift smoke contours, and organic fluid velocity streaks.
    - **Archetype 2 (Explosive Velocity Shards & Fractured Energy)**: Directional forward-thrusting angular lightning blades, fragmented crystal splinters, and explosive speed streaks.
-   - **Archetype 3 (Mecha Beast & Biomorphic Claw Slashes)**: Stylized cybernetic predator claw cuts, aerodynamic razor winglet sweeps, and biomechanical dragon scale contours.
+   - **Archetype 3 (Mecha Beast & Biomorphic Claw Slashes)**: Stylized predator claw cuts, aerodynamic razor winglet sweeps, and biomechanical scale contours.
    - **Archetype 4 (Modern Kinetic Rally Dash & Halftone Speed Fade)**: Aggressive diagonal aerodynamic speed slashes, high-density halftone dot matrix bursts, and asymmetric air-channel fins.
 
 4. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
@@ -603,8 +610,8 @@ FEW-SHOT EXAMPLES:
 FEW-SHOT EXAMPLES:
 - "fluid wave drift" -> "Dynamic fluid liquid drift wave racing graphic on an unbranded widebody sports coupe with solid polar white base body, featuring high-contrast sweeping electric cyan fluid ribbons, midnight navy speed contours, and crisp stark white motion splash trails arching fluidly across the side panels, ${activeSuffix}"
 - "velocity shards" -> "High-velocity explosive shard racing graphic on an unbranded modern supercar with solid obsidian black base body, featuring high-contrast directional forward-thrusting fiery solar orange lightning blades, fragmented white crystal splinter shards, and dark charcoal velocity thrust streaks, ${activeSuffix}"
-- "mecha dragon claw" -> "Ferocious mecha dragon wing tribal graphic on an unbranded drift sedan with solid stark white base body, featuring high-contrast fluorescent neon-lime cyber claw slashes, aerodynamic razor wing contours, and stealth matte-black scale cuts slicing dynamically along the side profile, ${activeSuffix}"
-- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe graphic on a modern commercial cargo box van with solid stark white base body, featuring high-contrast diagonal cobalt blue chevron bands, sharp canary yellow forward arrows, and deep charcoal grey base blocks across the cargo body, ${activeSuffix}"
+- "mecha dragon claw" -> "Ferocious dragon wing tribal racing graphic on an unbranded drift sedan with solid stark white base body, featuring high-contrast acid lime predator claw slashes, aerodynamic razor wing contours, and stealth matte-black scale cuts slicing dynamically along the side profile, ${activeSuffix}"
+- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe graphic on a modern commercial cargo box van with solid stark white base body, featuring high-contrast diagonal cobalt blue chevron bands, sharp sun yellow forward arrows, and deep charcoal grey base blocks across the cargo body, ${activeSuffix}"
 - "rally kinetic slash" -> "Dynamic kinetic rally slash graphic on an off-road 4x4 rally hatchback with solid stark white base body, featuring high-contrast diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and dark gunmetal aerofoil streak panels with extreme asymmetric directional flow, ${activeSuffix}"`;
   } else if (isSeamlessPattern) {
     activeSuffix = getSeamlessVectorPatternSuffix(isWhiteBg);

@@ -44,27 +44,27 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
     if (currentStyle.includes('jersey') || currentStyle.includes('jersy')) {
       const JERSEY_DOMAINS = [
         'modern geometric velocity prism shards futsal football jersey',
-        'futuristic mecha dragon scale esports tournament performance jersey',
+        'aerodynamic falcon wing predator slash esports tournament jersey',
         'high-octane kinetic speed slash sleeveless basketball jersey',
-        'aerodynamic fluid topographic contour line road cycling jersey',
+        'hydrodynamic fluid isobar topographic contour road cycling jersey',
         'sweeping curved Teamgeist wave panels forest green soccer kit',
         'archival crescent shoulder Total 90 football jersey kit',
-        'aggressive modern Polynesian tribal chevron rugby jersey',
-        'ultra-light feathered falcon wing volleyball badminton jersey',
-        'heavy-duty flame velocity streak motocross race jersey',
-        'urban street football kinetic brush stroke splatter jersey',
+        'aggressive modern Polynesian chevron motif rugby jersey',
+        'ultra-light aerodynamic speed chevron volleyball badminton jersey',
+        'flame velocity diagonal sash streak motocross race jersey',
+        'urban constructivist kinetic angular color-block street football jersey',
       ];
       const picked = JERSEY_DOMAINS[Math.floor(Math.random() * JERSEY_DOMAINS.length)];
       styleInstruction = `Generate 1 fresh, highly dynamic athletic sports jersey concept in English (2 to 5 words only). Focus on: "${picked}". Focus on real sports jersey kits (soccer, basketball, esports, cycling, volleyball, motocross). NEVER output brand logos, letters, or numbers.`;
     } else if (currentStyle.includes('livery') || currentStyle.includes('wrap')) {
       const LIVERY_DOMAINS = [
-        'fluid neon liquid drift smoke wave decals for sports coupe',
+        'fluid liquid drift smoke wave decals for sports coupe',
         'aggressive geometric speed shard racing stripes for modern supercar',
-        'ferocious mecha dragon claw tribal racing decals for drift sedan',
+        'ferocious aerodynamic predator claw racing decals for drift sedan',
         'dynamic aerodynamic rally speed slashes for hot hatchback',
-        'urban cyber grunge dot matrix racing stripes for commercial cargo box van',
+        'kinetic vector dot matrix racing stripes for commercial cargo box van',
         'desert rally racing speed streaks for 4x4 trophy truck',
-        'futuristic lightning chevron velocity blades for widebody GT racer',
+        'lightning chevron velocity blades for widebody GT racer',
         'high-speed flame velocity swoosh decals for performance track car',
       ];
       const picked = LIVERY_DOMAINS[Math.floor(Math.random() * LIVERY_DOMAINS.length)];
