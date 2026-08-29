@@ -984,17 +984,18 @@ ${categoryContext}
 
 ## HOW TO READ THE IMAGE:
 1. **COVERAGE & NEGATIVE SPACE (CRITICAL)**: Is this a FULL-BODY aggressive pattern covering everything, or a MINIMALIST design (e.g. 80% solid white with just one graphic on the chest)? If the image is mostly a solid color, your prompt MUST explicitly state "vast clean negative space" and pinpoint where the graphic lives (e.g., "chest band", "lower flank panels", "shoulder accent").
-2. **MOTIF**: What exact geometric pattern do you see? Zigzag chevrons? Diagonal slashes? Diamond argyle? Stepped blocks? Describe PRECISELY.
+2. **MOTIF (DON'T FORCE GEOMETRY)**: What exact shape or pattern do you see? Is it curved, flowing, organic, tribal, flaming, geometric, or classic? Describe its TRUE nature (e.g., "fluid tribal flame curves on sleeves", "elegant curved pinstripes", "classic horizontal stripes", "sharp diagonal shards"). DO NOT use words like "shards", "angular", or "geometric" if the original image has smooth, curved, or tribal lines!
 3. **COLORS**: What is the BASE color? What are the 2-3 accent colors? Name them specifically (e.g. "jet black", "crimson red").
-4. **FLOW**: What's the visual direction? Horizontal bands? Diagonal sweeps? Radial burst?
+4. **FLOW**: What's the visual direction? Horizontal bands? Diagonal sweeps? Radial burst? Organic flow?
 
 ## HOW TO CREATE VARIATIONS:
 Each prompt must be a DEVELOPMENT of the reference — recognizably similar in its core DNA but CREATIVELY EXPANDED:
 - **COVERAGE (STRICT)**: If the reference is minimalist, ALL variations MUST be minimalist (retain the same ratio of vast negative space). If it features a central block, keep the central block layout. DO NOT generate full-body concepts from a minimalist image.
-- **MOTIF (EVOLVE, DON'T RANDOMIZE)**: Identify the TRUE shape in the reference. If the image has elegant curved contour lines, evolve them into "sweeping aerodynamic arcs", "organic fluid pipelines", or "dynamic velocity curves". If the image has a bold central geometric block, evolve it into an "angular chest shield", "hexagonal core armor", or "structured trapezoid panel". DO NOT hallucinate random unrelated shapes (like camo or tribal) if they aren't in the reference. Expand on the reference's specific shape family creatively.
+- **MOTIF (EVOLVE, DON'T RANDOMIZE)**: Identify the TRUE shape family in the reference. If the image has tribal curves/flames, evolve them into "sweeping tribal arcs" or "dynamic fluid flame contours". If the image has elegant curved contour lines, evolve them into "sweeping aerodynamic arcs" or "organic fluid pipelines". DO NOT hallucinate "angular shards" or "geometric blocks" onto curved/organic designs. Expand on the reference's specific shape family creatively.
 - **COLORS**: Start from the reference palette but you CAN develop. Keep at least 1-2 anchor colors, explore complementary accents.
 
 ## EXAMPLES OF CORRECT OUTPUT (Concept Only):
+[REFERENCE HAS TRIBAL CURVES] -> "Minimalist fluid tribal flame curves in bold crimson red wrapping around the sleeves and lower flanks, set against a vast clean samurai blue negative space base"
 [REFERENCE HAS CURVED PINSTRIPES] -> "Minimalist sweeping aerodynamic curved contour pipelines in deep crimson red framing a jet black raglan shoulder panel, set against vast clean white negative space"
 [REFERENCE HAS CENTRAL BLOCK] -> "Bold central hexagonal chest shield block in solid jet black, framed by layered architectural borders in crimson and cream, utilizing clean symmetrical negative space"
 [FULL-BODY REFERENCE] -> "Aggressive full-body diagonal velocity shards in deep crimson red and jet black angular panels intersecting across the entire canvas"
@@ -1011,11 +1012,11 @@ ${jsonStringSafetyInstruction}`;
 
   const contents = `Study this reference image — it is your ONLY creative source.
 
-Read the EXACT level of coverage (minimalist vs full-body), negative space, pattern geometry, color palette, and visual flow from this image.
+Read the EXACT level of coverage (minimalist vs full-body), negative space, pattern shape family (curved, tribal, geometric, etc), color palette, and visual flow from this image.
 
 Generate EXACTLY ${numPrompts} concept descriptions that are faithful developments of what you see:
 - If the image is minimalist or uses a central block, YOUR PROMPTS MUST RETAIN THAT LAYOUT (explicitly mention negative space and placement).
-- EVOLVE THE SHAPE: Do not just copy the exact shape, but evolve its specific "shape family". (e.g. evolve curves into dynamic arcs; evolve blocks into structured shields). Do not invent random unrelated shapes.
+- EVOLVE THE SHAPE: Respect the TRUE shape (e.g. if it has tribal curves, make variations of tribal curves; if it has organic waves, make variations of organic waves). DO NOT force "shards" or "angular blocks" onto curved or organic designs.
 - Colors developed from the reference (keep anchors, explore new accents).
 
 Output ONLY the concept description for each prompt. Do NOT include any suffix, layout, or format instructions.
