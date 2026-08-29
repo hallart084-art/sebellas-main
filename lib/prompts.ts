@@ -743,10 +743,33 @@ FEW-SHOT EXAMPLES:
     ? `\n- STRICT BAN: DO NOT write full wallpaper textures or repeating tiles. Focus 100% on aerodynamic racing decal graphics: "${cleanMotif}".`
     : '';
 
-  return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
+  const isAbstractGraphicStyle = isJersey || isCarWrap || isSeamlessPattern;
 
-Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
+  let expansionRules = '';
+  if (isAbstractGraphicStyle) {
+    expansionRules = `
+═══════════════════════════════════════════════════════════════════════════════════════
+👑 GRAPHIC DESIGN & MOTIF EXPANSION RULES (MANDATORY FOR THIS STYLE)
+═══════════════════════════════════════════════════════════════════════════════════════
 
+When processing ANY user concept/keyword for this graphic pattern style:
+1. 🎯 **STRICTLY NO TANGIBLE MICRO-SCENES OR OBJECT ARRAYS**:
+   - DO NOT generate scenes, landscapes, isometric villages, people, or arrays of physical props (like cameras or coffee cups).
+   - This is for a GRAPHIC PATTERN (Jersey, Livery, or Seamless Surface). You must generate abstract motifs, geometric cuts, fluid waves, vector graphics, or highly stylized 2D graphic elements!
+
+2. ⚙️ **INTELLIGENT MOTIF EXPANSION**:
+   - If the user types "fire", expand to "Sweeping biomorphic tribal flame curves, dynamic solar orange heat contours, and aggressive fluid magma cuts".
+   - If the user types "cyber", expand to "Explosive diagonal electric cyan speed slashes, high-density halftone dot matrix bursts, and fragmented obsidian black crystal lightning blades".
+   - If the user types "retro", expand to "Classic minimalist horizontal pinstripes, elegant vintage racing sashes, and clean pastel block panels".
+
+3. 🚫 **STRICT ZERO-REPETITION**:
+   - In ANY batch of prompts, NO TWO PROMPTS MAY SHARE THE SAME MOTIF STRUCTURE.
+   - Dynamically rotate through fluid curves, aggressive geometric shards, classic minimalism, and intricate organic patterns.
+
+4. 💎 **AUTHENTIC GRAPHIC DESIGN TERMINOLOGY**:
+   - Use precise, vivid vector terminology (e.g. "fluid undulating contour ribbons", "razor-sharp aerodynamic winglet facets", "precision halftone dot gradients", "asymmetrical color-block wedges").`;
+  } else {
+    expansionRules = `
 ═══════════════════════════════════════════════════════════════════════════════════════
 👑 HIERARCHICAL HIGH-SEO MICROSTOCK EXPANSION RULES (MANDATORY ORDER OF PRIORITIZATION)
 ═══════════════════════════════════════════════════════════════════════════════════════
@@ -782,7 +805,13 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
    - Use precise, vivid, tangible terminology (e.g. "a chunky chrome torque wrench tightening an engine bolt", "an ergonomic pruning shear trimming a bonsai branch", "a high-precision laser level projected on concrete").
 
 6. 📐 **MULTI-ANGLE COMPOSITIONAL BALANCING**:
-   - Dynamically rotate perspectives across the prompts: dynamic low-angle heroic view, 3/4 isometric perspective, intimate eye-level craftsmanship, balanced overhead top-down flatlay, and sleek side-profile action.
+   - Dynamically rotate perspectives across the prompts: dynamic low-angle heroic view, 3/4 isometric perspective, intimate eye-level craftsmanship, balanced overhead top-down flatlay, and sleek side-profile action.`;
+  }
+
+  return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
+
+Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
+${expansionRules}
 
 7. 🎨 **ART-STYLE SPECIALIZED MORPHOLOGY**:
    - **Flat illustration**: Chunky stylized anatomical proportions, friendly expressive micro-moments, clean solid blank props (no fake text/badges), ultra-vibrant contrast palettes (azure blue, warm amber, bright orange), and sharp 2-tone flat shadow blocking.
