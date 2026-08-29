@@ -43,17 +43,17 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
     let styleInstruction = '';
     if (currentStyle.includes('livery') || currentStyle.includes('wrap')) {
       const LIVERY_DOMAINS = [
-        'fluid neon liquid drift smoke wave graphics for sports coupe',
-        'aggressive geometric speed shard vinyl wrap for modern supercar',
-        'ferocious mecha dragon claw tribal racing livery for drift sedan',
+        'fluid neon liquid drift smoke wave decals for sports coupe',
+        'aggressive geometric speed shard racing stripes for modern supercar',
+        'ferocious mecha dragon claw tribal racing decals for drift sedan',
         'dynamic aerodynamic rally speed slashes for hot hatchback',
-        'urban cyber grunge dot matrix splatter for commercial cargo box van',
-        'rugged desert race camouflage polygon shards for 4x4 trophy truck',
+        'urban cyber grunge dot matrix racing stripes for commercial cargo box van',
+        'desert rally racing speed streaks for 4x4 trophy truck',
         'futuristic lightning chevron velocity blades for widebody GT racer',
-        'flaming velocity wave streaks for performance track car',
+        'high-speed flame velocity swoosh decals for performance track car',
       ];
       const picked = LIVERY_DOMAINS[Math.floor(Math.random() * LIVERY_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, highly dynamic automotive car wrap livery / racing decal concept in English (2 to 5 words only). Focus on: "${picked}". Focus on high-velocity, asymmetric wrapping motifs (speed shards, liquid drift, mecha claws, rally slashes). NEVER output car brand names, letters, or numbers.`;
+      styleInstruction = `Generate 1 fresh, highly dynamic automotive motorsport racing livery / car wrap decal concept in English (2 to 5 words only). Focus on: "${picked}". Focus on real racing stripes, speed swooshes, asymmetric velocity slashes, and drift decals. STRICTLY FORBIDDEN: NEVER output repeating wallpaper patterns, honeycomb meshes, spiral vortexes, car brand names, letters, or numbers.`;
     } else if (currentStyle.includes('pictogram') || currentStyle.includes('logo') || currentStyle.includes('abstract')) {
       const LOGO_DOMAINS = [
         'stylized wildlife animal emblem with rhythmic comb tines (stag, gazelle, falcon, lion, whale)',
