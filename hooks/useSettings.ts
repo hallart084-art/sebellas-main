@@ -302,6 +302,10 @@ export const useSettings = () => {
     setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorPose: value } }));
   }, []);
 
+  const setVectorAttributes = useCallback((value: string) => {
+    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorAttributes: value, vectorInstruction: value } }));
+  }, []);
+
   const setVectorInstruction = useCallback((value: string) => {
     setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorInstruction: value, vectorAttributes: value } }));
   }, []);
