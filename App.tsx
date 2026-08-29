@@ -575,7 +575,7 @@ const App: React.FC = () => {
       // Guaranteed Vector Suffix Enforcement:
       // Pastikan 100% setiap prompt selalu memiliki deskripsi tema yang valid + sufiks paten style yang lengkap.
       const isWhiteBg = settings.vectorWhiteBg ?? true;
-      const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle || 'Flat illustration', isWhiteBg);
+      const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle || 'Flat illustration', isWhiteBg, placeholder.originalConcept);
 
       parsedPrompts = parsedPrompts
         .map(item => {
