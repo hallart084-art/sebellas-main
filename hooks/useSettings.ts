@@ -303,7 +303,7 @@ export const useSettings = () => {
   }, []);
 
   const setVectorAttributes = useCallback((value: string) => {
-    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorAttributes: value, vectorInstruction: value } }));
+    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorAttributes: value } }));
   }, []);
 
   const setVectorInstruction = useCallback((value: string) => {
