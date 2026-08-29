@@ -38,19 +38,82 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
     if (disabled || isLoading || isRolling) return;
     setIsRolling(true);
 
-    const INDUSTRY_DOMAINS = [
-      'renewable green energy and environmental engineering',
-      'specialized medical healthcare and modern wellness',
-      'artisan craft workshop and handmade manufacturing',
-      'logistics supply chain and smart delivery commute',
-      'cutting-edge STEM laboratory science and robotics',
-      'culinary gastronomy and artisan specialty baking',
-      'outdoor athletics sports and active lifestyle',
-      'wildlife nature encounters and adorable domestic pets',
-      'creative visual design architecture and photography',
-      'fintech smart business analysis and investment growth',
-    ];
-    const pickedDomain = INDUSTRY_DOMAINS[Math.floor(Math.random() * INDUSTRY_DOMAINS.length)];
+    const currentStyle = (artStyle || '').toLowerCase();
+
+    let styleInstruction = '';
+    if (currentStyle.includes('livery') || currentStyle.includes('wrap')) {
+      const LIVERY_DOMAINS = [
+        'fluid neon liquid drift smoke wave graphics for sports coupe',
+        'aggressive geometric speed shard vinyl wrap for modern supercar',
+        'ferocious mecha dragon claw tribal racing livery for drift sedan',
+        'dynamic aerodynamic rally speed slashes for hot hatchback',
+        'urban cyber grunge dot matrix splatter for commercial cargo box van',
+        'rugged desert race camouflage polygon shards for 4x4 trophy truck',
+        'futuristic lightning chevron velocity blades for widebody GT racer',
+        'flaming velocity wave streaks for performance track car',
+      ];
+      const picked = LIVERY_DOMAINS[Math.floor(Math.random() * LIVERY_DOMAINS.length)];
+      styleInstruction = `Generate 1 fresh, highly dynamic automotive car wrap livery / racing decal concept in English (2 to 5 words only). Focus on: "${picked}". Focus on high-velocity, asymmetric wrapping motifs (speed shards, liquid drift, mecha claws, rally slashes). NEVER output car brand names, letters, or numbers.`;
+    } else if (currentStyle.includes('pictogram') || currentStyle.includes('logo') || currentStyle.includes('abstract')) {
+      const LOGO_DOMAINS = [
+        'stylized wildlife animal emblem with rhythmic comb tines (stag, gazelle, falcon, lion, whale)',
+        'minimalist culinary gastronomy symbol (espresso steam glyph, burger emblem, sushi mark)',
+        'modern kinetic sports speed icon (aerodynamic runner mark, cyclist blade glyph)',
+        'botanical leaf flourishing arabesque seal (monstera, lotus crown, olive branch)',
+        'modern academic architectural temple crest (knowledge beacon, graduation cap star)',
+        'artisan craftsman portrait emblem (bearded barista, chef profile, astronaut helmet)',
+      ];
+      const picked = LOGO_DOMAINS[Math.floor(Math.random() * LOGO_DOMAINS.length)];
+      styleInstruction = `Generate 1 fresh, ultra-minimalist, iconic brand logo mark or abstract pictogram concept in English (2 to 4 words only). Focus on: "${picked}". Think Swiss graphic design, Zalo Estévez style, radical shape reduction.`;
+    } else if (currentStyle.includes('pattern') || currentStyle.includes('seamless')) {
+      const PATTERN_DOMAINS = [
+        'vibrant retro 1970s Scandinavian organic Matisse floral pattern',
+        'swimming pool top-down liquid blue water caustics ripple pattern',
+        'playful cheerful scattered breakfast food doodles with bright happy colors',
+        'cute baby woodland animal face silhouettes with forest leaves',
+        'modern geometric op-art herringbone wave line maze pattern',
+        'back-to-school educational stationery doodles with science icons',
+        'friendly pediatric healthcare doodles with stethoscopes and smiling hearts',
+      ];
+      const picked = PATTERN_DOMAINS[Math.floor(Math.random() * PATTERN_DOMAINS.length)];
+      styleInstruction = `Generate 1 fresh, vibrant, cheerful 2D seamless surface pattern / wallpaper theme in English (2 to 5 words only). Focus on: "${picked}". Think playful, colorful, all-over surface print.`;
+    } else if (currentStyle.includes('object')) {
+      const OBJECT_DOMAINS = [
+        'precision artisan woodworking and mechanical workshop power tools',
+        'professional barista espresso coffee brewing station and grinder',
+        'futuristic electric mobility vehicles, delivery vans, and scooters',
+        'vintage analog twin-lens photography camera and optical lenses',
+        'cutting-edge STEM biotechnology laboratory microscope and glassware',
+        'modern indoor botanical gardening tools, ceramic pots, and shears',
+      ];
+      const picked = OBJECT_DOMAINS[Math.floor(Math.random() * OBJECT_DOMAINS.length)];
+      styleInstruction = `Generate 1 fresh, high-value commercial inanimate physical object / vehicle / tool set concept in English (2 to 5 words only). Focus on: "${picked}". STRICT RULE: INANIMATE OBJECTS ONLY (Zero humans, zero characters, zero faces).`;
+    } else if (currentStyle.includes('geometric silhouette') || currentStyle.includes('negative space')) {
+      const SILHOUETTE_DOMAINS = [
+        'powerful wild predator animal head (arctic wolf, charging bull, roaring lion, soaring eagle)',
+        'noble athletic warrior or mythical creature (winged griffin, roaring dragon, pegasus)',
+        'dynamic athletic gymnast or runner in dramatic mid-air leap',
+        'iconic wildlife forest stag deer with magnificent branching antlers',
+        'ancient mythical titan or bearded Olympian god bust',
+      ];
+      const picked = SILHOUETTE_DOMAINS[Math.floor(Math.random() * SILHOUETTE_DOMAINS.length)];
+      styleInstruction = `Generate 1 fresh, powerful, high-contrast silhouette or negative space subject in English (2 to 4 words only). Focus on: "${picked}". Subject must have dramatic anatomical contour and high visual impact.`;
+    } else {
+      const GENERAL_DOMAINS = [
+        'renewable green energy and environmental engineering',
+        'specialized medical healthcare and modern wellness',
+        'artisan craft workshop and handmade manufacturing',
+        'logistics supply chain and smart delivery commute',
+        'cutting-edge STEM laboratory science and robotics',
+        'culinary gastronomy and artisan specialty baking',
+        'outdoor athletics sports and active lifestyle',
+        'wildlife nature encounters and adorable domestic pets',
+        'creative visual design architecture and photography',
+        'fintech smart business analysis and investment growth',
+      ];
+      const picked = GENERAL_DOMAINS[Math.floor(Math.random() * GENERAL_DOMAINS.length)];
+      styleInstruction = `Generate 1 fresh, highly specific, high-value commercial 2D microstock vector theme in English (2 to 5 words only). Focus on the domain of: "${picked}".`;
+    }
 
     try {
       const storedKeys = readStoredProviderApiKeys();
@@ -76,7 +139,7 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
       const rawContent = await generateModelContent({
         model: settings.selectedModel,
         apiKey: activeKey,
-        contents: `Generate 1 fresh, highly specific, high-value commercial 2D microstock vector theme in English (2 to 5 words only). Focus on the domain of: "${pickedDomain}". STRICT RULE: NEVER output meta words like 'AI', 'vector', 'illustration', or 'prompt'. Output ONLY the raw subject phrase without quotes or explanation.`,
+        contents: `${styleInstruction} STRICT RULE: NEVER output meta words like 'AI', 'vector', 'illustration', or 'prompt'. Output ONLY the raw subject phrase without quotes, prefixes, or explanation.`,
         config: {
           temperature: 1.0,
           maxOutputTokens: 60,
