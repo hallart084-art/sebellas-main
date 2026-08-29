@@ -789,15 +789,15 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
       settings.vectorAttributes,
       isWhiteBg
     );
-    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority (Tier 1 core direct items first ➔ Tier 2 related equipment/tools/ingredients second). [Session Exploration Seed: ${entropySeed}${angleClause}]
+    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
 
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
-- Act as an ultra-smart, wildly creative commercial microstock director. Prioritize the most popular, high-SEO direct specific items of the concept first before expanding to related accessories.
+- Act as an ultra-smart, wildly creative commercial microstock director.
 - Selected Art Style: "${chosenArtStyle}"
-- Every single prompt in the JSON array MUST strictly follow this exact structure:
-"[AI EXPANDED MAIN CONCEPT WITH SPECIFIC POSE, SUBJECT, AND GEOMETRIC ACTIONS], ${activeSuffix}"
+- For every prompt, write a rich, highly specific 2D vector scene/design description based on "${concept}", followed by the mandatory style suffix:
+"[DETAILED SPECIFIC 2D SCENE DESCRIPTION OF ${concept}], ${activeSuffix}"
 
-Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
+Return ONLY a valid JSON array of ${settings.numPrompts} complete prompt strings.`;
   } else {
     switch (settings.styleOption) {
       case 'isolated':
@@ -818,18 +818,16 @@ Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
     }
   }
  
- const config: any = {
-   systemInstruction,
-   responseMimeType: 'application/json',
-   responseSchema: schema,
-   temperature: 0.95,
-   topP: 0.95,
-   // Optimasi kecepatan: maxOutputTokens disesuaikan dengan jumlah prompt
-   // 1 prompt ≈ 100-300 token + JSON wrapper, minimum 1024 agar aman untuk semua provider
-   maxOutputTokens: Math.min(8192, Math.max(1024, settings.numPrompts * 300)),
- };
- applyQuickGenerateConfig(config, settings.selectedModel, isQuick);
- return { systemInstruction, contents, config };
+  const config: any = {
+    systemInstruction,
+    responseMimeType: 'application/json',
+    responseSchema: schema,
+    temperature: 0.95,
+    topP: 0.95,
+    maxOutputTokens: Math.min(8192, Math.max(2048, settings.numPrompts * 400)),
+  };
+  applyQuickGenerateConfig(config, settings.selectedModel, isQuick);
+  return { systemInstruction, contents, config };
 };
 
 // --- IMAGE-BASED PROMPT BUILDERS ---

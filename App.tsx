@@ -529,44 +529,89 @@ const App: React.FC = () => {
       if (lastGenerationError) throw lastGenerationError;
       if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
 
-      // Parse JSON array / responses
+      // Parse JSON array / responses with robust markdown & JSON sanitization
       let parsedPrompts: string[] = [];
+      let sanitizedText = responseText.trim();
+      // Strip markdown code fences (```json ... ``` or ``` ...)
+      sanitizedText = sanitizedText.replace(/^```(?:json)?\s*([\s\S]*?)\s*```$/i, '$1').trim();
+
       try {
-        const parsed = JSON.parse(responseText);
+        const parsed = JSON.parse(sanitizedText);
         if (Array.isArray(parsed)) {
-          parsedPrompts = parsed.map(p => typeof p === 'string' ? p : JSON.stringify(p));
+          parsedPrompts = parsed.map(p => typeof p === 'string' ? p : (typeof p === 'object' && p !== null ? (Object.values(p)[0] as string || JSON.stringify(p)) : String(p)));
         } else if (parsed && typeof parsed === 'object') {
           const firstArr = Object.values(parsed).find(v => Array.isArray(v));
           if (firstArr) {
-            parsedPrompts = (firstArr as any[]).map(p => typeof p === 'string' ? p : JSON.stringify(p));
+            parsedPrompts = (firstArr as any[]).map(p => typeof p === 'string' ? p : (typeof p === 'object' && p !== null ? (Object.values(p)[0] as string || JSON.stringify(p)) : String(p)));
           } else {
-            parsedPrompts = [responseText];
+            const values = Object.values(parsed).filter(v => typeof v === 'string') as string[];
+            parsedPrompts = values.length > 0 ? values : [sanitizedText];
           }
         } else {
-          parsedPrompts = [responseText];
+          parsedPrompts = [sanitizedText];
         }
       } catch {
-        parsedPrompts = responseText.split('\n').map(l => l.trim()).filter(Boolean);
+        // Regex extract all quoted strings inside JSON if JSON.parse failed
+        const extractedStrings: string[] = [];
+        const regex = /"((?:[^"\\]|\\.)+)"/g;
+        let match;
+        while ((match = regex.exec(sanitizedText)) !== null) {
+          const val = match[1].replace(/\\"/g, '"').replace(/\\n/g, ' ').trim();
+          // Filter out JSON keys like "prompts", "theme", "concept"
+          if (val && !/^(prompts|theme|concept|ideas|response|output)$/i.test(val) && val.length > 15) {
+            extractedStrings.push(val);
+          }
+        }
+
+        if (extractedStrings.length > 0) {
+          parsedPrompts = extractedStrings;
+        } else {
+          parsedPrompts = sanitizedText.split('\n')
+            .map(l => l.trim())
+            .filter(l => l.length > 0 && !/^[[\]{},"']+$/.test(l));
+        }
       }
 
       // Guaranteed Vector Suffix Enforcement:
-      // Pastikan 100% setiap prompt selalu memiliki sufiks paten style yang lengkap dan bersih di ujungnya.
+      // Pastikan 100% setiap prompt selalu memiliki deskripsi tema yang valid + sufiks paten style yang lengkap.
       const isWhiteBg = settings.vectorWhiteBg ?? true;
       const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle || 'Flat illustration', isWhiteBg);
 
-      parsedPrompts = parsedPrompts.map(item => {
-        if (!item || typeof item !== 'string') return item;
-        let text = item.trim();
-        text = text.replace(/[,.]\s*$/, '').trim();
+      parsedPrompts = parsedPrompts
+        .map(item => {
+          if (!item || typeof item !== 'string') return '';
+          let text = item.trim();
 
-        if (!text.endsWith(targetSuffix)) {
-          // Hapus potongan sufiks yang terpotong/setengah ditulis oleh AI jika ada
-          text = text.replace(/,?\s*(flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art).*$/i, '').trim();
+          // 1. Clean JSON brackets, leading numbers/bullets, trailing punctuation
+          text = text.replace(/^[\[{\s"'`]+|[\]}\s"'`]+$/g, '').trim();
+          text = text.replace(/^\d+[\s.)\-:]+/, '').trim();
+          text = text.replace(/^[-*•]\s+/, '').trim();
+
+          // 2. If item is empty or only syntax/commas, provide fallback from concept
+          if (text.length < 5 || /^[,.;:\[\]{}()]+$/.test(text)) {
+            const rawConcept = placeholder.originalConcept || 'Dynamic athletic sports';
+            text = `Dynamic creative ${rawConcept} design with high-contrast geometric vector styling`;
+          }
+
+          // 3. Remove duplicate or partial suffix fragments if already appended
+          if (text.endsWith(targetSuffix)) {
+            return text;
+          }
+
+          // Strip partial suffixes or old style endings
+          text = text.replace(new RegExp(`,?\\s*${targetSuffix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'), '').trim();
+          text = text.replace(/,?\s*(professional sports jersey sublimation|professional car wrap livery|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art).*$/i, '').trim();
           text = text.replace(/[,.]\s*$/, '').trim();
+
+          // 4. Ensure we have a valid concept before attaching suffix
+          if (!text || text.length < 3) {
+            const rawConcept = placeholder.originalConcept || 'Dynamic athletic sports';
+            text = `Dynamic creative ${rawConcept} design with high-contrast geometric vector styling`;
+          }
+
           return `${text}, ${targetSuffix}`;
-        }
-        return text;
-      });
+        })
+        .filter(p => p.length > 0);
 
       return {
         ...placeholder,
