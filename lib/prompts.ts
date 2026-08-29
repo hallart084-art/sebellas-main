@@ -434,9 +434,9 @@ export const JERSEY_PATTERN_SUFFIX = getJerseyPatternSuffix(true);
 export const getCarWrapLiverySuffix = (whiteBg: boolean = true) => {
   const bgClause = whiteBg
     ? "isolated on solid pure white background, solid white canvas, zero floor, no ground shadow, zero gradients, no gradients"
-    : "isolated on clean solid background, zero floor, no ground shadow, zero gradients, no gradients";
+    : "isolated on clean solid high-contrast background, zero floor, no ground shadow, zero gradients, no gradients";
 
-  return `professional car wrap livery vector design, authentic motorsport racing decal stripes, asymmetric aerodynamic velocity graphics, dual split 50:50 presentation layout: top half displays a clean flat 2d vector side-profile illustration of an unbranded generic vehicle with clean solid base body and bold racing livery decals sweeping across the side panels, bottom half is the EXACT IDENTICAL full-bleed edge-to-edge flat 2d vector livery decal graphic banner touching all canvas edges with strictly zero border lines, zero outer frame, no margins, no bounding box, no car blueprints, and no car silhouette outlines, 100% flat 2d vector art, clean-cut hard-edge high-contrast solid flat color planes, ultra-vibrant sharp palette, auto-trace friendly, strictly no all-over repeating wallpaper patterns, no dense honeycomb mesh textures, no repeating spiral vortexes, no uniform grids, no repetitive geometric tiles, strictly no gradients, zero gradients, no photographic reflections, zero fake lighting, no glow, no bloom, no soft shadows, no car brand logos, no text, zero typography, no words, no letters, no sponsor badges, no watermark, ${bgClause}, commercial automotive vector stock asset.`;
+  return `professional car wrap livery vector design, authentic motorsport racing decal stripes, ultra-high contrast vibrant color blocking, asymmetric aerodynamic velocity graphics, dual split 50:50 presentation layout: top half displays a clean flat 2d vector side-profile illustration of an unbranded generic vehicle with clean solid base body and bold high-contrast racing livery decals sweeping across the side panels, bottom half is the EXACT IDENTICAL full-bleed edge-to-edge flat 2d vector livery decal graphic banner touching all canvas edges with strictly zero border lines, zero outer frame, no margins, no bounding box, no car blueprints, and no car silhouette outlines, 100% flat 2d vector art, clean-cut hard-edge ultra-high-contrast solid flat color planes, ultra-vibrant punchy palette, auto-trace friendly, strictly no dull muddy colors, no low-contrast tones, strictly no all-over repeating wallpaper patterns, no dense honeycomb mesh textures, no repeating spiral vortexes, no uniform grids, no repetitive geometric tiles, strictly no gradients, zero gradients, no photographic reflections, zero fake lighting, no glow, no bloom, no soft shadows, no car brand logos, no text, zero typography, no words, no letters, no sponsor badges, no watermark, ${bgClause}, commercial automotive vector stock asset.`;
 };
 
 export const CAR_WRAP_LIVERY_SUFFIX = getCarWrapLiverySuffix(true);
@@ -532,26 +532,33 @@ FEW-SHOT EXAMPLES:
     activeSuffix = getCarWrapLiverySuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (CAR WRAP LIVERY):
 1. **AUTHENTIC MOTORSPORT RACING DECALS (STRICTLY NO WALLPAPER / NO REPETITIVE TEXTURE TILES)**:
-   - The vehicle MUST have a clean, solid base body color (e.g. solid white body, solid matte black body, or solid silver grey).
+   - The vehicle MUST have a clean, solid base body color (e.g. solid stark white body, solid pitch black body, or solid graphite grey).
    - Livery graphics are **DIRECTIONAL ASYMMETRICAL RACING DECAL STRIPES & SPEED ACCENTS** covering 30% to 60% of the side flank (sweeping aggressively from front fender/bumper across the doors to the rear quarter panels).
    - **STRICTLY FORBIDDEN**: All-over repetitive texture prints, dense honeycomb mesh wallpapers, repeating hexagonal grids, hypnotic spiral vortexes, uniform wallpaper prints plastered over the vehicle body, polka dots, checkerboard tiles.
    - **MANDATORY**: High-speed velocity thrust vectors, explosive angled speed slash shards, aerodynamic wind-tunnel contour ribbons, fluid drift smoke streams, and aggressive racing decals.
 
-2. **MANDATORY DIVERSITY ACROSS 4 FLUID WRAPPING ARCHETYPES (ROTATE IN EVERY BATCH)**:
+2. **STRICT HIGH-CONTRAST 3-TONE MOTORSPORT COLOR FORMULA (ZERO DULL/MUDDY COLORS)**:
+   - Every prompt MUST enforce high-contrast, razor-sharp 3-tone color harmony that pops with extreme clarity on pure solid background:
+     * Combo 1: Electric Hyper-Cyan + Midnight Navy + Stark Crisp White.
+     * Combo 2: Fiery Solar Orange + Dark Charcoal + Golden Yellow Speed Wedges.
+     * Combo 3: Fluorescent Acid Lime + Stealth Obsidian Black + Stark White Razor Darts.
+     * Combo 4: Scuderia Crimson Red + Obsidian Black + Stark White + Golden Amber.
+     * Combo 5: Deep Royal Purple + Radiant Sun Gold + Stark White Winglets.
+     * Combo 6: Vivid Aqua Turquoise + Neon Coral Pink + Deep Slate Charcoal.
+   - Strictly FORBIDDEN: Dull muddy midtones, low-contrast grey-on-grey blends, washed-out tones, or dark graphics that disappear into a dark vehicle body.
+
+3. **MANDATORY DIVERSITY ACROSS 4 FLUID WRAPPING ARCHETYPES (ROTATE IN EVERY BATCH)**:
    - **Archetype 1 (Fluid Liquid & Drift Smoke Flow)**: Undulating curvilinear ribbons, swirling vortex drift smoke contours, and organic fluid velocity streaks.
    - **Archetype 2 (Explosive Velocity Shards & Fractured Energy)**: Directional forward-thrusting angular lightning blades, fragmented crystal splinters, and explosive speed streaks.
    - **Archetype 3 (Mecha Beast & Biomorphic Claw Slashes)**: Stylized cybernetic predator claw cuts, aerodynamic razor winglet sweeps, and biomechanical dragon scale contours.
    - **Archetype 4 (Modern Kinetic Rally Dash & Halftone Speed Fade)**: Aggressive diagonal aerodynamic speed slashes, high-density halftone dot matrix bursts, and asymmetric air-channel fins.
 
-3. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
-   - **TOP HALF (50%)**: Displays a clean, flat 2D vector side-profile illustration of a generic unbranded vehicle with clean solid base body and the racing livery decals applied across its body panels. Dynamically vary vehicle types across prompts (supercar, rally hot hatch, 4x4 pickup truck, commercial cargo box van/truck, performance drift sedan, widebody GT coupe) with strictly ZERO manufacturer brand logos.
+4. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
+   - **TOP HALF (50%)**: Displays a clean, flat 2D vector side-profile illustration of a generic unbranded vehicle with clean solid base body and the high-contrast racing livery decals applied across its body panels. Dynamically vary vehicle types across prompts (supercar, rally hot hatch, 4x4 pickup truck, commercial cargo box van/truck, performance drift sedan, widebody GT coupe) with strictly ZERO manufacturer brand logos.
    - **BOTTOM HALF (50%)**: Displays the EXACT IDENTICAL full-bleed edge-to-edge flat 2D vector livery wrap graphic touching all canvas edges. STRICTLY NO outer border lines, NO framing margins, NO bounding boxes, NO car blueprints, and NO car silhouette outlines in the bottom half.
 
-4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
+5. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY**:
    - Both the vehicle preview and the wrap graphic must be rendered with hard-edge, solid flat color planes without photographic reflections, without soft gradients, without 3D shading, and without glowing bloom.
-
-5. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
-   - Use bold, high-contrast racing color combinations (e.g. electric cyan + midnight black, fiery orange + charcoal grey, crimson red + stark white, neon lime + slate gray, purple violet + golden yellow).
 
 6. **STRICTLY ZERO TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
    - Absolutely NO car brand emblems, NO sponsor text, NO letters, NO typography, NO watermark.
@@ -560,11 +567,11 @@ FEW-SHOT EXAMPLES:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "fluid wave drift" -> "Dynamic fluid liquid drift wave car wrap livery on an unbranded widebody sports coupe with clean solid white base body, featuring asymmetrical sweeping cyan-turquoise fluid ribbons, swirling dark navy drift smoke contours, and organic motion splash trails arching fluidly across the side panels, ${activeSuffix}"
-- "velocity shards" -> "High-velocity explosive shard racing livery on an unbranded modern supercar with solid graphite black base body, featuring directional forward-thrusting fiery orange lightning blades, fragmented white crystal splinter shards, and sweeping dark charcoal velocity thrust streaks erupting from front to rear, ${activeSuffix}"
-- "mecha dragon claw" -> "Ferocious mecha dragon wing tribal livery on an unbranded drift sedan with solid silver grey base body, featuring sweeping neon-lime cyber claw slashes, aerodynamic razor wing contours, and stealth matte-black scale cuts slicing dynamically along the side profile, ${activeSuffix}"
-- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe livery on a modern commercial cargo box van with solid white base body, featuring bold diagonal electric blue chevron bands, sharp canary yellow forward arrows, and solid charcoal grey base blocks across the cargo body, ${activeSuffix}"
-- "rally kinetic slash" -> "Dynamic kinetic rally slash car wrap livery on an off-road 4x4 rally hatchback with solid dark charcoal base body, featuring bold diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and gunmetal aerofoil streak panels with extreme asymmetric directional flow, ${activeSuffix}"`;
+- "fluid wave drift" -> "Dynamic fluid liquid drift wave car wrap livery on an unbranded widebody sports coupe with solid polar white base body, featuring high-contrast sweeping electric cyan fluid ribbons, midnight navy speed contours, and crisp stark white motion splash trails arching fluidly across the side panels, ${activeSuffix}"
+- "velocity shards" -> "High-velocity explosive shard racing livery on an unbranded modern supercar with solid obsidian black base body, featuring high-contrast directional forward-thrusting fiery solar orange lightning blades, fragmented white crystal splinter shards, and dark charcoal velocity thrust streaks, ${activeSuffix}"
+- "mecha dragon claw" -> "Ferocious mecha dragon wing tribal livery on an unbranded drift sedan with solid stark white base body, featuring high-contrast fluorescent neon-lime cyber claw slashes, aerodynamic razor wing contours, and stealth matte-black scale cuts slicing dynamically along the side profile, ${activeSuffix}"
+- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe livery on a modern commercial cargo box van with solid stark white base body, featuring high-contrast diagonal cobalt blue chevron bands, sharp canary yellow forward arrows, and deep charcoal grey base blocks across the cargo body, ${activeSuffix}"
+- "rally kinetic slash" -> "Dynamic kinetic rally slash car wrap livery on an off-road 4x4 rally hatchback with solid stark white base body, featuring high-contrast diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and dark gunmetal aerofoil streak panels with extreme asymmetric directional flow, ${activeSuffix}"`;
   } else if (isSeamlessPattern) {
     activeSuffix = getSeamlessVectorPatternSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (SEAMLESS VECTOR PATTERN):
