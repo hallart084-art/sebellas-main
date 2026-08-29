@@ -708,34 +708,19 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
   }, [settings, processAndGenerate, apiKeys, t]);
 
   const generateForVectorMode = useCallback((isQuick: boolean) => {
-    const hasImage = !!(settings.vectorReferenceImage && settings.vectorReferenceImage.trim().length > 0);
+    const refImages = settings.vectorReferenceImages || [];
+    const hasImages = refImages.length > 0;
     let rawConcepts = settings.conceptsInput.split(/[\n,;]/).map(c => c.trim()).filter(Boolean);
 
-    if (rawConcepts.length === 0) {
-      if (hasImage) {
-        rawConcepts = [settings.vectorInstruction?.trim() || 'Visual DNA Motif'];
-      } else {
-        setError(t('errorNoValidConceptsToProcess'));
-        return { placeholders: [], jobs: [] };
-      }
+    if (rawConcepts.length === 0 && !hasImages) {
+      setError(t('errorNoValidConceptsToProcess'));
+      return { placeholders: [], jobs: [] };
     }
 
     const provider = getModelProvider(settings.selectedModel);
     const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
     const numKeys = Math.max(1, providerKeys.length || settings.workerCount || 1);
     const totalRequested = Math.max(1, settings.numPrompts || 1);
-
-    const placeholders = rawConcepts.map(concept => ({
-      id: generateUuid(),
-      originalConcept: concept,
-      prompts: [],
-      hasError: false,
-      inputMode: 'vector' as const,
-      thumbnailUrl: hasImage ? settings.vectorReferenceImage : undefined,
-    }));
-
-    const jobs: GenerationJob[] = [];
-    let globalKeyIdx = 0;
 
     const THEMATIC_PILLARS = [
       'Focus on dynamic action postures, ergonomic professional tools, and specialized artisan craft interactions',
@@ -745,31 +730,76 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
       'Focus on precision technical workflows, specialized machinery, and intricate functional props',
     ];
 
-    rawConcepts.forEach((concept, cIdx) => {
-      const placeholder = placeholders[cIdx];
-      const chunksCount = Math.min(totalRequested, numKeys);
-      const baseChunkSize = Math.floor(totalRequested / chunksCount);
-      const remainder = totalRequested % chunksCount;
+    const placeholders: any[] = [];
+    const jobs: GenerationJob[] = [];
+    let globalKeyIdx = 0;
 
-      for (let i = 0; i < chunksCount; i++) {
-        const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
-        if (countForThisJob <= 0) continue;
-        const assignedKey = globalKeyIdx % numKeys;
-        const angle = THEMATIC_PILLARS[i % THEMATIC_PILLARS.length];
+    if (hasImages) {
+      // Multi-image mode: distribute total prompts evenly across images
+      const imgCount = refImages.length;
+      const basePerImage = Math.floor(totalRequested / imgCount);
+      const extraImages = totalRequested % imgCount;
 
-        if (hasImage && settings.vectorReferenceImage) {
-          const match = settings.vectorReferenceImage.match(/^data:([^;]+);base64,(.+)$/);
-          const mimeType = match ? match[1] : 'image/png';
-          const data = match ? match[2] : settings.vectorReferenceImage;
+      refImages.forEach((imgDataUrl, imgIdx) => {
+        const promptsForThisImage = basePerImage + (imgIdx < extraImages ? 1 : 0);
+        if (promptsForThisImage <= 0) return;
+
+        const placeholder = {
+          id: generateUuid(),
+          originalConcept: settings.vectorInstruction?.trim() || `Referensi #${imgIdx + 1}`,
+          prompts: [],
+          hasError: false,
+          inputMode: 'vector' as const,
+          thumbnailUrl: imgDataUrl,
+        };
+        placeholders.push(placeholder);
+
+        const match = imgDataUrl.match(/^data:([^;]+);base64,(.+)$/);
+        const mimeType = match ? match[1] : 'image/png';
+        const data = match ? match[2] : imgDataUrl;
+
+        // Split this image's prompts across available API keys
+        const chunksCount = Math.min(promptsForThisImage, numKeys);
+        const baseChunkSize = Math.floor(promptsForThisImage / chunksCount);
+        const chunkRemainder = promptsForThisImage % chunksCount;
+
+        for (let i = 0; i < chunksCount; i++) {
+          const countForThisJob = baseChunkSize + (i < chunkRemainder ? 1 : 0);
+          if (countForThisJob <= 0) continue;
+          const assignedKey = globalKeyIdx % numKeys;
 
           jobs.push(() =>
             processAndGenerate(
               placeholder,
-              () => PromptBuilder.buildImagePrompt({ data, mimeType }, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, conceptsInput: concept, vectorAttributes: settings.vectorInstruction }, isQuick),
+              () => PromptBuilder.buildImagePrompt({ data, mimeType }, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, conceptsInput: settings.vectorInstruction || '', vectorAttributes: settings.vectorInstruction }, isQuick),
               assignedKey
             )
           );
-        } else {
+          globalKeyIdx += 1;
+        }
+      });
+    } else {
+      // Text-only mode (no images)
+      rawConcepts.forEach((concept, cIdx) => {
+        const placeholder = {
+          id: generateUuid(),
+          originalConcept: concept,
+          prompts: [],
+          hasError: false,
+          inputMode: 'vector' as const,
+        };
+        placeholders.push(placeholder);
+
+        const chunksCount = Math.min(totalRequested, numKeys);
+        const baseChunkSize = Math.floor(totalRequested / chunksCount);
+        const remainder = totalRequested % chunksCount;
+
+        for (let i = 0; i < chunksCount; i++) {
+          const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
+          if (countForThisJob <= 0) continue;
+          const assignedKey = globalKeyIdx % numKeys;
+          const angle = THEMATIC_PILLARS[i % THEMATIC_PILLARS.length];
+
           jobs.push(() =>
             processAndGenerate(
               placeholder,
@@ -777,10 +807,10 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
               assignedKey
             )
           );
+          globalKeyIdx += 1;
         }
-        globalKeyIdx += 1;
-      }
-    });
+      });
+    }
 
     return { placeholders, jobs };
   }, [settings, processAndGenerate, apiKeys, t]);

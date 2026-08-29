@@ -35,48 +35,45 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
   const attributes = settings.vectorAttributes || '';
   const whiteBg = settings.vectorWhiteBg ?? true;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+  const addImageFromFile = (file: File) => {
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') {
-        settings.setVectorReferenceImage?.(reader.result);
+        settings.addVectorReferenceImage?.(reader.result);
       }
     };
     reader.readAsDataURL(file);
   };
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) addImageFromFile(file);
+    });
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
   const handleDropImage = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
-    const file = e.dataTransfer.files?.[0];
-    if (file && file.type.startsWith('image/')) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        if (typeof reader.result === 'string') {
-          settings.setVectorReferenceImage?.(reader.result);
-        }
-      };
-      reader.readAsDataURL(file);
+    const files = e.dataTransfer.files;
+    if (files) {
+      Array.from(files).forEach(file => {
+        if (file.type.startsWith('image/')) addImageFromFile(file);
+      });
     }
   };
 
   const handlePasteImage = (e: React.ClipboardEvent) => {
     const items = e.clipboardData?.items ? Array.from(e.clipboardData.items) : [];
-    const imageItem = items.find(item => item.type.startsWith('image/'));
-    if (imageItem) {
-      const file = imageItem.getAsFile();
-      if (file) {
-        e.preventDefault();
-        const reader = new FileReader();
-        reader.onload = () => {
-          if (typeof reader.result === 'string') {
-            settings.setVectorReferenceImage?.(reader.result);
-          }
-        };
-        reader.readAsDataURL(file);
-      }
+    const imageItems = items.filter(item => item.type.startsWith('image/'));
+    if (imageItems.length > 0) {
+      e.preventDefault();
+      imageItems.forEach(item => {
+        const file = item.getAsFile();
+        if (file) addImageFromFile(file);
+      });
     }
   };
 
@@ -322,19 +319,23 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
         </div>
       </div>
 
-      {/* Gambar Referensi (Kiri) & Instruksi Tambahan (Kanan) (2 Column) */}
+      {/* Gambar Referensi (Multiple) & Instruksi Tambahan (2 Column) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {/* Kolom Kiri: Tempel / Unggah Gambar Referensi */}
+        {/* Kolom Kiri: Tempel / Unggah Banyak Gambar Referensi */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <label className="text-xs font-medium text-gray-400 flex items-center gap-1.5">
               <span className="material-symbols-outlined text-sm text-indigo-400">image</span>
-              <span>Tempel Gambar (Opsional)</span>
+              <span>Referensi Gambar ({(settings.vectorReferenceImages || []).length})</span>
             </label>
-            {settings.vectorReferenceImage && (
-              <span className="text-[10px] text-emerald-400 font-semibold bg-emerald-500/10 px-1.5 py-0.5 rounded border border-emerald-500/20">
-                Terpasang
-              </span>
+            {(settings.vectorReferenceImages || []).length > 0 && (
+              <button
+                type="button"
+                onClick={() => settings.clearVectorReferenceImages?.()}
+                className="text-[10px] text-red-400 hover:text-red-300 font-semibold cursor-pointer"
+              >
+                Hapus Semua
+              </button>
             )}
           </div>
 
@@ -342,34 +343,35 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
             ref={fileInputRef}
             type="file"
             accept="image/*"
+            multiple
             className="hidden"
             onChange={handleFileChange}
             disabled={disabled || isLoading}
           />
 
-          {settings.vectorReferenceImage ? (
-            <div className="relative group w-full h-[88px] bg-[#202024] border border-indigo-500/40 rounded-xl overflow-hidden flex items-center p-2 gap-3">
-              <img
-                src={settings.vectorReferenceImage}
-                alt="Referensi Visual"
-                className="h-full w-20 object-cover rounded-lg border border-white/10 shrink-0 bg-black/40"
-              />
-              <div className="flex-1 min-w-0 pr-6">
-                <p className="text-xs font-medium text-white truncate">Gambar Referensi Visual</p>
-                <p className="text-[11px] text-gray-400 mt-0.5">AI akan membaca DNA motif, warna & siluet sport gambar ini</p>
-              </div>
-              <button
-                type="button"
-                onClick={() => {
-                  settings.setVectorReferenceImage?.('');
-                  if (fileInputRef.current) fileInputRef.current.value = '';
-                }}
-                disabled={disabled || isLoading}
-                className="absolute top-2 right-2 p-1 rounded-lg bg-red-500/20 hover:bg-red-500 text-red-300 hover:text-white border border-red-500/30 transition-all cursor-pointer"
-                title="Hapus Gambar"
+          {(settings.vectorReferenceImages || []).length > 0 ? (
+            <div className="w-full min-h-[88px] bg-[#202024] border border-indigo-500/30 rounded-xl p-2 flex flex-wrap gap-1.5">
+              {(settings.vectorReferenceImages || []).map((img, idx) => (
+                <div key={idx} className="relative group w-16 h-16 shrink-0">
+                  <img
+                    src={img}
+                    alt={`Ref ${idx + 1}`}
+                    className="w-full h-full object-cover rounded-lg border border-white/10 bg-black/40"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => settings.removeVectorReferenceImage?.(idx)}
+                    className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center text-[9px] opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                  >✕</button>
+                </div>
+              ))}
+              <div
+                onClick={() => fileInputRef.current?.click()}
+                className="w-16 h-16 shrink-0 border border-dashed border-white/20 hover:border-indigo-500/50 rounded-lg flex items-center justify-center cursor-pointer transition-all"
+                title="Tambah Gambar"
               >
-                <span className="material-symbols-outlined text-xs">close</span>
-              </button>
+                <span className="material-symbols-outlined text-gray-500 hover:text-indigo-400 text-lg">add</span>
+              </div>
             </div>
           ) : (
             <div
@@ -377,7 +379,7 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
               onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
               onDrop={handleDropImage}
               className="w-full h-[88px] bg-[#202024] border border-dashed border-white/15 hover:border-indigo-500/60 hover:bg-[#26262b] rounded-xl p-2.5 flex flex-col items-center justify-center text-center cursor-pointer transition-all group"
-              title="Klik untuk memilih file, atau tekan Ctrl + V untuk tempel gambar screenshot"
+              title="Klik, Drag, atau Ctrl+V untuk tempel gambar"
             >
               <span className="material-symbols-outlined text-gray-400 group-hover:text-indigo-400 text-xl transition-colors mb-1">
                 add_photo_alternate
@@ -386,7 +388,7 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
                 Tempel (<span className="text-indigo-400 font-semibold">Ctrl+V</span>) / Klik Unggah
               </p>
               <p className="text-[10px] text-gray-500 mt-0.5">
-                AI akan membedah motif DNA & warna gambar
+                Bisa kirim banyak gambar sekaligus
               </p>
             </div>
           )}
@@ -396,13 +398,13 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
         <div>
           <label htmlFor="vector-instruction" className="text-xs font-medium text-gray-400 block mb-1.5 flex items-center gap-1.5">
             <span className="material-symbols-outlined text-sm text-indigo-400">edit_note</span>
-            <span>Instruksi Tambahan dari Gambar (Opsional)</span>
+            <span>Instruksi Tambahan (Opsional)</span>
           </label>
           <textarea
             id="vector-instruction"
             value={settings.vectorInstruction || ''}
             onChange={(e) => settings.setVectorInstruction?.(e.target.value)}
-            placeholder="e.g. fokus ke ombak birunya, ubah jadi jersey basket, palet warna merah putih..."
+            placeholder="e.g. fokus ke motif zigzag-nya, ubah jadi jersey basket, palet merah hitam..."
             rows={3}
             disabled={disabled || isLoading}
             className="w-full h-[88px] bg-[#202024] border border-white/[0.08] hover:border-white/20 focus:border-indigo-500 rounded-xl px-3.5 py-2 text-xs text-white placeholder-gray-500 focus:outline-none transition-all resize-none"
@@ -529,7 +531,7 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
       <button
         type="button"
         onClick={handleSubmit}
-        disabled={disabled || isLoading || (!((settings.conceptsInput || '').trim()) && !settings.vectorReferenceImage)}
+        disabled={disabled || isLoading || (!((settings.conceptsInput || '').trim()) && (settings.vectorReferenceImages || []).length === 0)}
         className="w-full py-3.5 px-4 rounded-xl bg-[#8e8e93] hover:bg-[#a1a1a6] active:bg-[#7c7c80] text-black font-semibold text-sm flex items-center justify-center gap-2 shadow-lg transition-all disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer mt-1"
       >
         {isLoading ? (

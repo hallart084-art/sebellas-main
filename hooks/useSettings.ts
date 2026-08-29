@@ -18,7 +18,7 @@ type ModeSpecificSettings = {
   vectorPose?: string;
   vectorAttributes?: string;
   vectorInstruction?: string;
-  vectorReferenceImage?: string;
+  vectorReferenceImages?: string[];
   vectorWhiteBg?: boolean;
 };
 
@@ -51,7 +51,7 @@ const defaultVectorSettings: ModeSpecificSettings & { conceptsInput: string } = 
   vectorPose: '',
   vectorAttributes: '',
   vectorInstruction: '',
-  vectorReferenceImage: '',
+  vectorReferenceImages: [],
   vectorWhiteBg: true,
 };
 
@@ -148,7 +148,7 @@ export const useSettings = () => {
       if (!VECTOR_ART_STYLES.includes(loadedVector.vectorArtStyle as any)) {
         loadedVector.vectorArtStyle = DEFAULT_VECTOR_ART_STYLE;
       }
-      loadedVector.vectorReferenceImage = '';
+      loadedVector.vectorReferenceImages = [];
       return {
         text: { ...defaultTextSettings, ...(parsed?.text || {}) },
         image: { ...defaultImageSettings, ...(parsed?.image || {}) },
@@ -211,7 +211,7 @@ export const useSettings = () => {
           vector: {
             ...allSettings.vector,
             conceptsInput: '',
-            vectorReferenceImage: ''
+            vectorReferenceImages: []
           }
         };
         window.localStorage.setItem('allSettings', JSON.stringify(settingsToSave));
@@ -310,8 +310,23 @@ export const useSettings = () => {
     setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorInstruction: value, vectorAttributes: value } }));
   }, []);
 
-  const setVectorReferenceImage = useCallback((value: string) => {
-    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorReferenceImage: value } }));
+  const addVectorReferenceImage = useCallback((dataUrl: string) => {
+    setAllSettings(s => {
+      const current = s.vector?.vectorReferenceImages || [];
+      return { ...s, vector: { ...(s.vector || defaultVectorSettings), vectorReferenceImages: [...current, dataUrl] } };
+    });
+  }, []);
+
+  const removeVectorReferenceImage = useCallback((index: number) => {
+    setAllSettings(s => {
+      const current = [...(s.vector?.vectorReferenceImages || [])];
+      current.splice(index, 1);
+      return { ...s, vector: { ...(s.vector || defaultVectorSettings), vectorReferenceImages: current } };
+    });
+  }, []);
+
+  const clearVectorReferenceImages = useCallback(() => {
+    setAllSettings(s => ({ ...s, vector: { ...(s.vector || defaultVectorSettings), vectorReferenceImages: [] } }));
   }, []);
 
   const setVectorWhiteBg = useCallback((value: boolean) => {
@@ -358,8 +373,10 @@ export const useSettings = () => {
     setVectorAttributes,
     vectorInstruction: allSettings.vector?.vectorInstruction || allSettings.vector?.vectorAttributes || '',
     setVectorInstruction,
-    vectorReferenceImage: allSettings.vector?.vectorReferenceImage || '',
-    setVectorReferenceImage,
+    vectorReferenceImages: allSettings.vector?.vectorReferenceImages || [],
+    addVectorReferenceImage,
+    removeVectorReferenceImage,
+    clearVectorReferenceImages,
     vectorWhiteBg: allSettings.vector?.vectorWhiteBg ?? true,
     setVectorWhiteBg,
   };

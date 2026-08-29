@@ -960,67 +960,82 @@ const buildImageVectorAnalysisPrompt = (
   if (isJerseyPattern) {
     activeSuffix = getJerseyPatternSuffix(whiteBg);
     specificRules = `
-JERSEY PATTERN VISUAL DNA EXTRACTION & SPORT LOCKING RULES:
-1. **VISUAL SPORT SILHOUETTE DETECTION**:
-   - Analyze the image to detect if it features a specific sport garment (e.g. basketball tank top, soccer jersey, cycling top, esports tournament shirt, motocross suit, volleyball shirt, rugby kit).
-   - If a specific sport is visually identified in the image, you MUST tailor the garment silhouette to that sport in the suffix, while keeping the front description purely focused on the artwork motif!
-2. **PURE GRAPHIC MOTIF EXPANSION**:
-   - Extract the core motif DNA: fluid motion waves, aerodynamic velocity shards, diagonal speed sashes, raptor claw cuts, or topographic contour ribbons, along with the high-contrast solid color palette.
-   - **STRICT BAN**: DO NOT write words like 'basketball jersey', 'soccer jersey', 'jersey', 'shirt', 'kit', or 'tank top' in the front description. Describe ONLY the pure graphic artwork and solid flat colors.
-3. **DUAL SPLIT 50:50 PRESENTATION**:
-   - Left half: Matching technical vector jersey mockup cleanly isolated on solid pure white background.
-   - Right half: Pure full-bleed vector sublimation pattern tile with strictly ZERO text, ZERO numbers, ZERO logos, and ZERO crest badges.
-4. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
+JERSEY PATTERN — FAITHFUL REPRODUCTION RULES:
+1. **SPORT SILHOUETTE DETECTION**:
+   - Detect the sport from the image (soccer, basketball, cycling, esports, motocross, volleyball, rugby, etc.).
+   - Lock the garment silhouette to that exact sport in the suffix.
+2. **EXACT MOTIF CLONING**:
+   - Describe the EXACT same geometric pattern you see: if it has zigzag chevrons, write zigzag chevrons. If it has diagonal slashes, write diagonal slashes. If it has diamond argyle, write diamond argyle.
+   - Use the EXACT same color palette: list the specific colors you see (e.g. "deep red #CC0000, jet black #111111, pure white #FFFFFF").
+   - Preserve the same pattern scale, repetition rhythm, angle direction, and visual weight distribution.
+3. **VARIATIONS = SAME DNA, SMALL TWEAKS**:
+   - Each prompt must keep the SAME core motif geometry and SAME color family.
+   - Variations should be subtle: slightly different angle (e.g. 45° → 60°), slightly rearranged panel placement, mirrored layout, or minor accent color shift within the same warm/cool family.
+   - DO NOT invent completely new patterns. DO NOT change the fundamental motif type (e.g. don't turn zigzags into circles).
+4. **DUAL SPLIT 50:50**:
+   - Left half: Technical vector jersey mockup on solid pure white background.
+   - Right half: Pure full-bleed sublimation pattern tile with ZERO text, ZERO numbers, ZERO logos, ZERO crest badges.
+5. **PURE GRAPHIC DESCRIPTION**: The front description must describe ONLY the flat artwork pattern and colors. NEVER write 'jersey', 'shirt', 'kit' in the front description.
+6. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
   } else if (isCarWrapLivery) {
     activeSuffix = getCarWrapLiverySuffix(whiteBg);
     specificRules = `
-CAR WRAP LIVERY VISUAL DNA EXTRACTION RULES:
-1. **RACING DECAL DNA EXTRACTION**:
-   - Extract the dynamic aerodynamic velocity flow, asymmetrical racing slashes, speed swooshes, and 3-tone high-contrast motorsport color formula.
-   - Strictly NO repeating wallpaper patterns, NO honeycomb meshes, NO spiral vortexes.
-2. **DUAL SPLIT 50:50 PRESENTATION**:
-   - Top half: Clean 2D side-profile of generic unbranded vehicle with racing livery.
-   - Bottom half: Full-bleed edge-to-edge decal wrap graphic banner.
-3. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
+CAR WRAP LIVERY — FAITHFUL REPRODUCTION RULES:
+1. Describe the EXACT same racing flow dynamics, slash angles, and 3-tone color palette from the image.
+2. Variations = same flow DNA, minor tweaks in panel proportions or accent placement.
+3. Top half: Clean 2D side-profile of generic unbranded vehicle with the livery.
+4. Bottom half: Full-bleed edge-to-edge decal wrap graphic banner.
+5. **MANDATORY SUFFIX**: Append "${activeSuffix}" to every prompt.`;
   } else if (isSeamlessPattern) {
     activeSuffix = getSeamlessVectorPatternSuffix(whiteBg);
     specificRules = `
-SEAMLESS PATTERN DNA EXTRACTION:
-- Extract key graphic motifs and palette, transforming them into a 100% flat 2D seamless all-over repeating surface print.
+SEAMLESS PATTERN — FAITHFUL REPRODUCTION:
+- Reproduce the EXACT same motif geometry, tile arrangement, and color palette from the image.
+- Variations = same motif family, slightly altered scale/rotation/color accent.
 - Mandatory Suffix: "${activeSuffix}".`;
   } else if (isAbstractPictogramLogo) {
     activeSuffix = getAbstractPictogramLogoSuffix(whiteBg);
     specificRules = `
-PICTOGRAM LOGO DNA EXTRACTION:
-- Distill visual subject into a radical minimalist flat 2D iconic pictogram symbol.
+PICTOGRAM LOGO — FAITHFUL REPRODUCTION:
+- Reproduce the same iconic shape, proportions, and silhouette from the image.
+- Variations = same shape family, slightly altered proportion/orientation.
 - Mandatory Suffix: "${activeSuffix}".`;
   } else {
     activeSuffix = getActiveVectorSuffix(chosenStyle, whiteBg);
     specificRules = `
-VECTOR ART DNA EXTRACTION:
-- Translate the image into clean, modern, commercial 2D flat vector graphic assets.
+VECTOR ART — FAITHFUL REPRODUCTION:
+- Reproduce the same subject, composition, art direction, and color scheme from the image.
+- Variations = same subject and style, minor pose/angle/detail changes.
 - Mandatory Suffix: "${activeSuffix}".`;
   }
 
-  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a World-Class Master Prompt Engineer and Visual AI Art Director specializing in 2D commercial vector graphics and visual DNA reverse-engineering.
+  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a Precision Visual Prompt Replicator. Your job is to describe EXACTLY what you see in the reference image, then produce faithful variations that look almost identical.
 
-Task: Deeply analyze the provided reference image, extract its core visual DNA (geometric motifs, flow dynamics, and solid color harmonies), and generate EXACTLY ${numPrompts} wildly creative, high-value, non-repetitive vector prompts in English, returned as a JSON array.
+Task: Analyze the reference image with extreme precision, then generate EXACTLY ${numPrompts} prompts in English as a JSON array. Every prompt must produce a result that looks VERY SIMILAR to the original image — same motif geometry, same color palette, same visual rhythm.
 
-CRITICAL GUIDELINES:
-1. **VISUAL DNA REVERSE-ENGINEERING**:
-   - Accurately read the underlying visual structure, curvature, speed angles, rhythm, and palette from the image.
-   - Expand into diverse creative variations inspired by this visual DNA.
-2. **100% FLAT 2D VECTOR & ZERO GRADIENTS**:
-   - Pure hard-edge solid color planes. Strictly ZERO gradients, NO airbrush shading, NO glow, NO bloom, NO 3D rendering, NO photorealism.
-   - Strictly BANNED words: 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', 'amber'. Use pure solid flat colors.
+ABSOLUTE RULES:
+1. **DESCRIBE WHAT YOU SEE — NOT WHAT YOU IMAGINE**:
+   - Read the exact shapes: are they zigzag chevrons? diagonal speed slashes? diamond argyle? horizontal stripes? triangular shards? curved waves? Write EXACTLY what you see.
+   - Read the exact colors: list the 2-5 dominant colors by name and approximate hex. Use these SAME colors in every prompt.
+   - Read the exact composition: where are elements placed? what's the visual flow direction? what's the scale?
+
+2. **FAITHFUL VARIATIONS — NOT CREATIVE DEPARTURES**:
+   - Each prompt keeps the SAME core pattern/motif.
+   - Each prompt keeps the SAME color palette (±1 accent color shift allowed).
+   - Variation means: different angle (30° vs 45° vs 60°), mirrored layout, shifted panel distribution, slightly thicker/thinner stripes, minor rhythmic density change.
+   - NEVER invent a completely different motif. If the image shows zigzags, ALL prompts must describe zigzags.
+
+3. **100% FLAT 2D VECTOR & ZERO GRADIENTS**:
+   - Pure hard-edge solid color planes. ZERO gradients, NO airbrush, NO glow, NO bloom, NO 3D, NO photorealism.
+   - BANNED words: 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', 'amber'.
 ${specificRules}
-3. **JSON OUTPUT ONLY**:
-   - You MUST respond with a single, valid JSON array containing exactly ${numPrompts} strings. Do NOT include markdown code fences, prose, or commentary.
+4. **JSON OUTPUT ONLY**:
+   - Respond with a single valid JSON array of exactly ${numPrompts} strings. No markdown fences, no commentary.
 ${humanAncestryInstruction}
 ${plainPromptFormattingInstruction}
 ${jsonStringSafetyInstruction}`;
 
-  const contents = `Perform deep visual DNA analysis on the provided image and generate EXACTLY ${numPrompts} unique, non-repetitive vector prompts based on the system instructions, returning a JSON array.`;
+  const contents = `Study this image with extreme precision. Identify the EXACT geometric patterns, EXACT color palette, EXACT visual flow, and EXACT composition. Then generate EXACTLY ${numPrompts} prompts that would each reproduce a result visually almost identical to this image, with only subtle variations. Return as JSON array.`;
   return { systemInstruction, contents };
 };
 
