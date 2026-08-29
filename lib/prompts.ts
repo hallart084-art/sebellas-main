@@ -553,17 +553,17 @@ const buildVectorTextPrompt = (
    - Bold athletic color combinations (e.g. electric cyan + midnight navy + stark white, forest green + cream + gold, crimson red + obsidian black + stark white, neon lime + matte black, royal purple + golden yellow).
 
 6. **STRICTLY ZERO EXTRA TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
-   - Absolutely NO manufacturer brand logos (Nike, Adidas, Puma, etc. are strictly forbidden). The ONLY allowed text is the optional uppercase word "SPONSOR" and squad numbers on the mockup half.
+   - Absolutely NO manufacturer brand logos. The ONLY allowed text is the optional uppercase word "SPONSOR" and squad numbers on the mockup half.
 
 7. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "Basketball jersey wave panels" -> "Dynamic aerodynamic fluid wave panels with sweeping fiery solar orange contour ribbons, dark obsidian flank inserts, and crisp stark white motion darts on a solid stark white base, ${activeSuffix}"
-- "soccer jersey teamgeist" -> "Modern athletic football jersey design with sweeping curved Teamgeist wave panels on a plain solid white base body with retro turn-down polo collar, featuring fluid vertical forest green wave texture bands and cream contrast waist ribbons, with a small compact textless geometric shield crest centered directly below the collar and the clean uppercase word 'SPONSOR' across the midriff, ${activeSuffix}"
-- "futsal velocity prism" -> "Modern geometric velocity prism futsal jersey design with curved raglan sleeve cuts and sporty crossover V-neck on a plain solid stark white base body, featuring interlocking cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast side panels, with a small compact textless geometric shield crest on left chest, a bold squad number 10, and clean uppercase word 'SPONSOR' across center chest, ${activeSuffix}"
-- "esports mecha claw" -> "Futuristic mecha cyber claw esports tournament performance jersey design on a plain solid matte black base body with reinforced crossover collar and ergonomic shoulder panels, featuring sweeping neon-lime predator claw slashes, aerodynamic razor winglet facets, and stealth dark gray armor cuts, with a single small compact textless geometric shield crest on chest and zero sponsor text, ${activeSuffix}"
-- "cycling topographic wave" -> "Aerodynamic fluid topographic contour line road cycling jersey design on a plain solid teal base quarter-zip performance shirt with streamlined raglan sleeves, featuring flowing navy blue contour elevation map ribbons, deep charcoal gray side contour strips, and vibrant mustard yellow accent darts, with a small compact textless geometric shield crest on chest, ${activeSuffix}"`;
+- "Basketball wave panels" -> "Dynamic aerodynamic fluid motion waves with sweeping electric cyan shockwaves, sharp dark obsidian flank inserts, and blazing crisp stark white velocity contrast stripes on a solid stark white base, ${activeSuffix}"
+- "soccer teamgeist" -> "Sweeping curved Teamgeist wave panels on a solid stark white base with fluid vertical forest green texture bands and warm cream contrast waist ribbons, with a small compact textless geometric shield crest centered below collar and uppercase word 'SPONSOR' across the midriff, ${activeSuffix}"
+- "futsal velocity prism" -> "Interlocking vibrant cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast flank cuts on a solid stark white base, with a small compact textless geometric shield crest on left chest and uppercase word 'SPONSOR' across center chest, ${activeSuffix}"
+- "esports mecha claw" -> "Sweeping fluorescent neon-lime predator claw slashes, aerodynamic razor winglet facets, and stealth matte-black armor cuts on a solid dark titanium base, with a single small compact textless geometric shield crest on chest and zero sponsor text, ${activeSuffix}"
+- "cycling topographic wave" -> "Flowing teal contour elevation map ribbons, deep charcoal gray side contour strips, and vibrant mustard yellow accent darts on a solid aqua base, with a small compact textless geometric shield crest on chest, ${activeSuffix}"`;
   } else if (isCarWrapLivery) {
     activeSuffix = getCarWrapLiverySuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (CAR WRAP LIVERY):
@@ -603,11 +603,11 @@ FEW-SHOT EXAMPLES:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "fluid wave drift" -> "Dynamic fluid liquid drift wave car wrap livery on an unbranded widebody sports coupe with solid polar white base body, featuring high-contrast sweeping electric cyan fluid ribbons, midnight navy speed contours, and crisp stark white motion splash trails arching fluidly across the side panels, ${activeSuffix}"
-- "velocity shards" -> "High-velocity explosive shard racing livery on an unbranded modern supercar with solid obsidian black base body, featuring high-contrast directional forward-thrusting fiery solar orange lightning blades, fragmented white crystal splinter shards, and dark charcoal velocity thrust streaks, ${activeSuffix}"
-- "mecha dragon claw" -> "Ferocious mecha dragon wing tribal livery on an unbranded drift sedan with solid stark white base body, featuring high-contrast fluorescent neon-lime cyber claw slashes, aerodynamic razor wing contours, and stealth matte-black scale cuts slicing dynamically along the side profile, ${activeSuffix}"
-- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe livery on a modern commercial cargo box van with solid stark white base body, featuring high-contrast diagonal cobalt blue chevron bands, sharp canary yellow forward arrows, and deep charcoal grey base blocks across the cargo body, ${activeSuffix}"
-- "rally kinetic slash" -> "Dynamic kinetic rally slash car wrap livery on an off-road 4x4 rally hatchback with solid stark white base body, featuring high-contrast diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and dark gunmetal aerofoil streak panels with extreme asymmetric directional flow, ${activeSuffix}"`;
+- "fluid wave drift" -> "Dynamic fluid liquid drift wave racing graphic on an unbranded widebody sports coupe with solid polar white base body, featuring high-contrast sweeping electric cyan fluid ribbons, midnight navy speed contours, and crisp stark white motion splash trails arching fluidly across the side panels, ${activeSuffix}"
+- "velocity shards" -> "High-velocity explosive shard racing graphic on an unbranded modern supercar with solid obsidian black base body, featuring high-contrast directional forward-thrusting fiery solar orange lightning blades, fragmented white crystal splinter shards, and dark charcoal velocity thrust streaks, ${activeSuffix}"
+- "mecha dragon claw" -> "Ferocious mecha dragon wing tribal graphic on an unbranded drift sedan with solid stark white base body, featuring high-contrast fluorescent neon-lime cyber claw slashes, aerodynamic razor wing contours, and stealth matte-black scale cuts slicing dynamically along the side profile, ${activeSuffix}"
+- "commercial cargo box van" -> "Dynamic aerodynamic speed stripe graphic on a modern commercial cargo box van with solid stark white base body, featuring high-contrast diagonal cobalt blue chevron bands, sharp canary yellow forward arrows, and deep charcoal grey base blocks across the cargo body, ${activeSuffix}"
+- "rally kinetic slash" -> "Dynamic kinetic rally slash graphic on an off-road 4x4 rally hatchback with solid stark white base body, featuring high-contrast diagonal crimson red speed slashes, high-density white halftone dot matrix bursts, and dark gunmetal aerofoil streak panels with extreme asymmetric directional flow, ${activeSuffix}"`;
   } else if (isSeamlessPattern) {
     activeSuffix = getSeamlessVectorPatternSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (SEAMLESS VECTOR PATTERN):
@@ -661,65 +661,61 @@ FEW-SHOT EXAMPLES:
 1. **STRICTLY INANIMATE OBJECTS ONLY (ZERO HUMANS, ZERO CHARACTERS, ZERO FACES)**:
    - Focus PURELY on inanimate physical objects, vehicles, industrial machines, scientific tools, culinary items, furniture, consumer electronics, botanical specimens, or architectural props.
    - Absolutely NO humans, NO drivers, NO workers, NO children, NO animals, NO cartoon mascots, NO anthropomorphic faces, NO eyes, and NO smiles on objects.
-   - Example: If theme is "mobil" / "car" → describe purely the car/vehicle itself (e.g. modern electric SUV, logistics delivery van, vintage roadster) without driver or passengers. If theme is "coffee" → describe coffee machine, portafilter, ceramic mug, grinder without barista. If theme is "construction" → describe excavator, tool set, hardhat, builder equipment without workers.
-2. **CHUNKY GEOMETRY & PROPORTIONS**: Simplified chunky stylized rounded geometry, clean solid forms, bold simplified mechanical or structural parts.
-3. **NO SURFACE CLUTTER / BLANK SCREENS**: Absolutely DO NOT include tiny badges, small icons, stickers, text, logos, or UI charts on object surfaces. Screens and panels must be solid, blank, and clean.
-4. **COLOR & SHADING**: Colors must be ultra-vibrant, sharp, and cheerful with saturated azure blue and radiant bright orange accents. Shading must be bold, clean-cut, hard-edge 2-tone flat shadow shapes. Strictly zero outlines/strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare.
-5. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**: The background MUST be a single flat solid color with NO floor, NO ground surface, NO floor line, NO scenery, zero gradients, no gradients, and zero fake lighting. The object must be cleanly isolated on this single solid background.
-6. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
-
-FEW-SHOT EXAMPLES:
-- "delivery car" -> "A chunky modern electric delivery van in three-quarter isometric perspective with bold solid wheels, smooth aerodynamic body panels, and hard-edge two-tone flat shadows on solid pure white background, no driver, no people, ${activeSuffix}"
-- "coffee setup" -> "A stylized manual espresso coffee machine with stainless steel portafilter, standing beside a cylindrical bean grinder and a blank ceramic mug with scattered roasted coffee beans, ${activeSuffix}"
-- "camera" -> "A vintage twin-lens reflex camera with chunky stylized dials, blank solid glass lenses, and sharp two-tone azure and orange body accents, ${activeSuffix}"
-- "gardening equipment" -> "A chunky yellow metal watering can standing beside a pair of solid garden pruning shears, a ceramic potted plant, and a stylized wooden garden trowel, ${activeSuffix}"
-- "smart robotics" -> "A futuristic modular industrial robotic assembly arm mounted on a circular base with precision mechanical joints and a blank digital interface panel, ${activeSuffix}"`;
-  } else if (isMonolineVector) {
-    activeSuffix = getMonolineVectorSuffix(isWhiteBg);
-    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (MONOLINE GEOMETRIC VECTOR):
-1. **LINE ART & UNIFORM STROKES**: Strictly continuous uniform single-weight black outline strokes. Clean, consistent stroke thickness throughout the entire artwork without calligraphic tapering, without hatching, without rough sketch lines.
-2. **GEOMETRIC & ABSTRACT COMPOSITION**: Abstract and deconstruct the concept into clean geometric contour shapes (arcs, circles, polygonal facets, clean linear silhouettes). Keep the composition balanced, stylized, and iconic.
-3. **COLOR, ZERO GRADIENTS & ZERO FAKE LIGHTING**: Strictly black line art on pure solid white background. No colors, no color fills, zero shading, zero cel shadows, zero gradients, no gradients, zero fake lighting, no glow, no lens flare.
-4. **BACKGROUND**: The subject MUST be cleanly isolated on a solid pure white background with zero background clutter, zero floor lines, and zero noise.
+2. **CHUNKY 2D SHAPES & CLEAN VECTOR GEOMETRY**:
+   - Heavy simplified silhouettes with bold geometric bevels and clean 2D cutouts.
+3. **HIGH-CONTRAST SOLID COLOR PLANES**:
+   - Bold flat color blocking with hard-edge flat shadow planes. Zero gradients, no gradients, zero fake lighting, zero glow.
+4. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**:
+   - Isolated on clean solid background with zero floor, zero ground shadow.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "wolf head" -> "A stylized geometric wolf head composed of symmetrical arched clean black lines and sharp polygonal facets, ${activeSuffix}"
-- "desert landscape" -> "A minimalist desert landscape with simplified rolling dunes, a geometric sun with straight radiant rays, and a stylized single palm tree, ${activeSuffix}"
-- "coffee and plants" -> "A minimalist continuous line composition of a coffee cup with rising steam beside a stylized geometric monstera leaf in a clean vase, ${activeSuffix}"
-- "elephant" -> "A stylized geometric elephant in profile view constructed with clean continuous curved black outlines and arch lines, ${activeSuffix}"`;
-  } else if (isGeometricSilhouette) {
-    activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
-    const subjectColor = isWhiteBg ? 'solid black' : 'solid white';
-    const bgColor = isWhiteBg ? 'pure white' : 'pure black';
-    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (GEOMETRIC SILHOUETTE):
-1. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} subject on ${bgColor} background. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
-2. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean, sweeping vector masses with sharp planar facet cuts and clean aerodynamic contours. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
-3. **STRICTLY LINELESS, ZERO GRADIENTS & ZERO FAKE LIGHTING**: Absolutely NO outlines, NO strokes, NO line art, NO hatching, zero gradients, no gradients, no fake lighting, zero glow, no lens flare. Every shape is a solid flat color block.
+- "coffee machine" -> "An artisan commercial chrome espresso coffee maker machine with portafilter, dual pressure dials, and steam wand, chunky 2D geometric vector styling, ${activeSuffix}"
+- "power drill" -> "A cordless industrial rotary hammer power drill with textured grip handle, lithium battery pack, and steel chuck bit in 3/4 isometric perspective, ${activeSuffix}"
+- "microscope" -> "A precision laboratory compound optical microscope with brass turret lenses, mechanical slide stage, and solid base, ${activeSuffix}"
+- "delivery van" -> "A modern electric commercial delivery box cargo van in sleek side profile with solid aerodynamic body panels and charging port, ${activeSuffix}"
+- "gardening shears" -> "A heavy-duty bypass pruning garden shears with ergonomic rubberized handles and sharp steel blades, ${activeSuffix}"`;
+  } else if (isMonolineVector) {
+    activeSuffix = getMonolineVectorSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (MONOLINE GEOMETRIC VECTOR):
+1. **UNIFORM SINGLE-WEIGHT CONTINUOUS LINE ART**: Pure continuous uniform-weight black stroke line art.
+2. **GEOMETRIC PLANAR DECONSTRUCTION**: Subjects deconstructed into elegant intersecting geometric lines, circular arcs, and clean vector nodes.
+3. **ZERO FILL COLORS, ZERO GRADIENTS & ZERO SHADING**: 100% black line art on pure clean background.
 4. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "wolf" -> "A stylized ${subjectColor} wolf in dynamic stalking profile with raised paw and sharp geometric fur facets on ${bgColor} background, ${activeSuffix}"
-- "leaping lion" -> "A bold ${subjectColor} leaping lion silhouette in full stride with sharp geometric mane facets and dynamic angular leg joints on ${bgColor} background, ${activeSuffix}"
-- "warrior chieftain" -> "A noble side-profile silhouette of a ${subjectColor} warrior chieftain wearing a tiered geometric feather headdress composed of clean angular wedge shapes on ${bgColor} background, ${activeSuffix}"
-- "unicorn" -> "A graceful leaping ${subjectColor} unicorn silhouette with a sharp spiraled horn and stylized sweeping aerodynamic mane facets on ${bgColor} background, ${activeSuffix}"`;
-  } else if (isNegativeSpaceCutout) {
-    activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
-    const subjectColor = isWhiteBg ? 'solid black' : 'solid white';
-    const bgColor = isWhiteBg ? 'pure white' : 'pure black';
-    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (NEGATIVE SPACE CUTOUT):
-1. **STRICTLY FRAMELESS & ZERO BORDERS (NO BADGE / NO OUTER SHAPE)**: The artwork MUST be a completely free-standing silhouette with internal negative space cuts. Absolutely NO outer badges, NO border outlines, NO geometric frames (NO circle borders, NO hexagon frames, NO triangle frames, NO shield badges, NO bounding boxes, NO enclosing shapes). The subject silhouette itself is the only shape, cleanly isolated on the solid canvas.
-2. **STRICT TWO-COLOR BLACK AND WHITE ONLY (ZERO OTHER COLORS)**: Every prompt MUST strictly use only 2 colors: ${subjectColor} and ${bgColor}. If subject is black, background is white. If subject is white, background is black. Absolutely NO third color, no yellow, no red, no blue, no gray tones.
-3. **SIMPLE, MINIMALIST & ELEGANT (NO TINY DETAILS)**: Focus on bold, clean geometric silhouette shapes. Clever negative space cutouts for major facial features, muscles, contours, or lighting highlights. STRICTLY AVOID tiny micro-details, complex textures, small specks, or decorative clutter.
-4. **STRICTLY LINELESS, ZERO GRADIENTS & ZERO FAKE LIGHTING**: Strictly flat solid fills and negative space cuts, zero outlines, zero strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, zero shadows.
-5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+- "eagle in flight" -> "A majestic eagle soaring with wings outstretched, composed of precise uniform single-weight geometric monoline curves and intersecting arc segments, ${activeSuffix}"
+- "motorcycle" -> "A vintage cafe racer motorcycle side profile, defined purely by continuous single-weight black contour line work with geometric wireframe spokes, ${activeSuffix}"
+- "astronomy telescope" -> "A precision astronomical observatory telescope on a tripod, rendered in clean geometric single-weight monoline vector line art, ${activeSuffix}"`;
+  } else if (isGeometricSilhouette) {
+    activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (GEOMETRIC SILHOUETTE):
+1. **HIGH-CONTRAST 2-COLOR SOLID SHAPE MASS**: Pure solid black silhouette shape with sharp planar facet contours.
+2. **STRICTLY LINELESS (ZERO STROKES / NO OUTLINES)**: Formed purely from solid filled black shapes.
+3. **DYNAMIC AERODYNAMIC FLOW**: Bold forward momentum, powerful stance, and clean anatomical silhouette.
+4. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
-- "lion head" -> "A fierce ${subjectColor} lion head silhouette with the nose, muzzle, eyes, and mane highlights ingeniously carved from negative space cutouts on ${bgColor} background, strictly frameless, no border, ${activeSuffix}"
+- "charging bull" -> "A powerful muscular charging bull silhouette in aggressive forward leap with lowered horns and sharp geometric contour facets, solid black fill, ${activeSuffix}"
+- "howling wolf" -> "A dramatic howling wolf silhouette perched on a cliff ledge, sharp planar fur edge cuts and chiseled jaw contour, solid black shape, ${activeSuffix}"
+- "gymnast" -> "A dynamic athletic gymnast silhouette in mid-air arched split leap, elegant aerodynamic contour with sharp angular planar cuts, ${activeSuffix}"`;
+  } else if (isNegativeSpaceCutout) {
+    activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
+    const subjectColor = isWhiteBg ? 'solid black' : 'solid crisp white';
+    const bgColor = isWhiteBg ? 'solid white' : 'solid dark';
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (NEGATIVE SPACE CUTOUT - STRICTLY FRAMELESS SILHOUETTES):
+1. **FRAMELESS SILHOUETTES ONLY (STRICT BAN ON ALL BADGES/FRAMES/BOXES/CIRCLES)**:
+   - The subject MUST be a 100% free-standing solid silhouette cut directly onto the background.
+   - Absolutely NO badge shapes, NO shield frames, NO circular containers, NO outer bounding boxes, and NO emblem borders.
+2. **INTERNAL DETAILS CARVED OUT OF NEGATIVE SPACE**:
+   - The subject's internal features (eyes, jawlines, wing feathers, muscle separations, facial contours) MUST be carved as clean negative space channels and slits.
+3. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+   "${activeSuffix}"
+
+FEW-SHOT EXAMPLES:
 - "athletic figure" -> "A dynamic ${subjectColor} athletic figure in mid-leap with limb muscles, momentum lines, and anatomical contours carved sharply from negative space slices on ${bgColor} background, free-standing silhouette, strictly no badge, no border, ${activeSuffix}"
 - "bearded god" -> "A majestic bust profile of a bearded Greek god with hair locks, chiseled brow, and deep jaw shadows sharply carved out through negative space on ${bgColor} background, strictly frameless, no border, ${activeSuffix}"
 - "wolf in motion" -> "A stylized ${subjectColor} running wolf silhouette with fur facets, eye, and jaw highlights defined purely through high-contrast negative space cuts on ${bgColor} background, free-standing silhouette, no border, no frame, ${activeSuffix}"`;
@@ -744,6 +740,20 @@ FEW-SHOT EXAMPLES:
 - Every prompt must strictly follow "${chosenStyle}" with clean 2D vector styling, bold simplified shapes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, and vivid color schemes.
 - Strictly no photorealism, camera metadata, or 3D noise.`;
   }
+
+  const isJersey = chosenArtStyle.toLowerCase().includes('jersey') || chosenArtStyle.toLowerCase().includes('jersy');
+  const isCarWrap = chosenArtStyle.toLowerCase().includes('livery') || chosenArtStyle.toLowerCase().includes('wrap');
+
+  const cleanMotif = concept
+    .replace(/(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)/gi, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim() || concept;
+
+  const extraRule = isJersey
+    ? `\n- STRICT BAN: DO NOT write words like 'basketball jersey', 'soccer jersey', 'jersey', 'shirt', 'kit', or 'tank top' in your description. The sport apparel cut is ALREADY locked in the suffix. Focus 100% on the graphic art motif: "${cleanMotif}", sweeping lines, speed shards, color blocking, and dynamic energy.`
+    : isCarWrap
+    ? `\n- STRICT BAN: DO NOT write full wallpaper textures or repeating tiles. Focus 100% on aerodynamic racing decal graphics: "${cleanMotif}".`
+    : '';
 
   return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
 
@@ -799,7 +809,7 @@ Creative Configuration:
 ${pose ? `- Specified Target Pose: ${pose}` : '- Target Pose: Dynamically vary distinct postures, actions, and gestures across all prompts without repetition.'}
 ${attributes ? `- Specified Attributes: ${attributes}` : '- Target Attributes: Keep props clean, iconic, solid, and simplified without intricate surface noise.'}
 
-${styleRules}
+${styleRules}${extraRule}
 
 Core Output Rules:
 1. **Excellence**: Deliver EXACTLY ${numPrompts} prompts of unmatched artistic quality, descriptive clarity, and commercial stock appeal.
@@ -838,8 +848,8 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 - Act as an ultra-smart, wildly creative commercial microstock director.
 - Selected Art Style: "${chosenArtStyle}"
-- For every prompt, write a rich, highly specific 2D vector scene/design description based on "${concept}", followed by the mandatory style suffix:
-"[DETAILED SPECIFIC 2D SCENE DESCRIPTION OF ${concept}], ${activeSuffix}"
+- For every prompt, write a rich, highly specific 2D vector graphic scene/motif description, followed by the mandatory style suffix:
+"[DETAILED 2D GRAPHIC SCENE/MOTIF DESCRIPTION], ${activeSuffix}"
 
 Return ONLY a valid JSON array of ${settings.numPrompts} complete prompt strings.`;
   } else {

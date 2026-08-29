@@ -573,7 +573,7 @@ const App: React.FC = () => {
       }
 
       // Guaranteed Vector Suffix Enforcement:
-      // Pastikan 100% setiap prompt selalu memiliki deskripsi tema yang valid + sufiks paten style yang lengkap.
+      // Pastikan 100% setiap prompt selalu memiliki deskripsi tema yang valid + sufiks paten style yang lengkap tanpa duplikasi kata jersey/sufiks.
       const isWhiteBg = settings.vectorWhiteBg ?? true;
       const targetSuffix = PromptBuilder.getActiveVectorSuffix(settings.vectorArtStyle || 'Flat illustration', isWhiteBg, placeholder.originalConcept);
 
@@ -587,28 +587,27 @@ const App: React.FC = () => {
           text = text.replace(/^\d+[\s.)\-:]+/, '').trim();
           text = text.replace(/^[-*•]\s+/, '').trim();
 
-          // 2. If item is empty or only syntax/commas, provide fallback from concept
-          if (text.length < 5 || /^[,.;:\[\]{}()]+$/.test(text)) {
-            const rawConcept = placeholder.originalConcept || 'Dynamic athletic sports';
-            text = `Dynamic creative ${rawConcept} design with high-contrast geometric vector styling`;
-          }
-
-          // 3. Remove duplicate or partial suffix fragments if already appended
-          if (text.endsWith(targetSuffix)) {
-            return text;
-          }
-
-          // Strip partial suffixes or old style endings
-          text = text.replace(new RegExp(`,?\\s*${targetSuffix.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}$`, 'i'), '').trim();
-          text = text.replace(/,?\s*(professional sports jersey sublimation|professional car wrap livery|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art).*$/i, '').trim();
+          // 2. Remove ANY partial or full suffix that the AI might have started writing
+          text = text.replace(/,?\s*professional\s+(sports|basketball|soccer|football|esports|cycling|motocross|volleyball|badminton|rugby|running|car wrap|athletic).*$/i, '').trim();
+          text = text.replace(/,?\s*(dual split 50:50|one vertical half displays|the other vertical half is|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art).*$/i, '').trim();
           text = text.replace(/[,.]\s*$/, '').trim();
 
-          // 4. Ensure we have a valid concept before attaching suffix
-          if (!text || text.length < 3) {
-            const rawConcept = placeholder.originalConcept || 'Dynamic athletic sports';
-            text = `Dynamic creative ${rawConcept} design with high-contrast geometric vector styling`;
+          // 3. Strip redundant sport/jersey intro words if the AI included them at the start
+          text = text.replace(/^(A sleek|A modern|A dynamic|A high-octane|An aerodynamic|A bold|An energetic|A vibrant)?\s*(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)\s*(design|featuring|showcasing|with)?\s*/i, '').trim();
+          if (text.length > 0) {
+            text = text.charAt(0).toUpperCase() + text.slice(1);
           }
 
+          // 4. If text became too short or empty, provide high quality motif fallback
+          if (text.length < 5) {
+            const rawMotif = placeholder.originalConcept
+              .replace(/(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running|jersey|shirt|kit|tank top)/gi, '')
+              .replace(/\s{2,}/g, ' ')
+              .trim() || 'Dynamic fluid wave panels';
+            text = `Dynamic aerodynamic ${rawMotif} with high-contrast geometric velocity styling`;
+          }
+
+          // 5. Append targetSuffix cleanly ONCE
           return `${text}, ${targetSuffix}`;
         })
         .filter(p => p.length > 0);
