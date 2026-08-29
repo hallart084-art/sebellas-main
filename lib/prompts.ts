@@ -573,7 +573,7 @@ FEW-SHOT EXAMPLES:
    - The vehicle MUST have a clean, solid base body color (e.g. solid stark white body, solid pitch black body, or solid dark graphite grey).
    - Livery graphics are **DIRECTIONAL ASYMMETRICAL RACING DECAL STRIPES & SPEED ACCENTS** covering 30% to 60% of the side flank (sweeping aggressively from front fender/bumper across the doors to the rear quarter panels).
    - **STRICTLY FORBIDDEN**: All-over repetitive texture prints, dense honeycomb mesh wallpapers, repeating hexagonal grids, hypnotic spiral vortexes, uniform wallpaper prints plastered over the vehicle body, polka dots, checkerboard tiles.
-   - **MANDATORY**: High-speed velocity thrust vectors, explosive angled speed slash shards, aerodynamic wind-tunnel contour ribbons, fluid drift smoke streams, and aggressive racing decals.
+   - **MANDATORY**: Follow the user's concept. If they want tribal, use sweeping tribal curves. If they want geometric, use angular speed cuts. Keep the shapes appropriate and diverse.
 
 2. **STRICT HIGH-CONTRAST 3-TONE MOTORSPORT COLOR FORMULA (ZERO METALLICS & ZERO DULL/MUDDY COLORS)**:
    - Every prompt MUST enforce high-contrast, razor-sharp 3-tone color harmony that pops with extreme clarity on pure solid background:
@@ -586,11 +586,11 @@ FEW-SHOT EXAMPLES:
    - **STRICT WORD BAN**: DO NOT USE 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', or 'amber'.
    - Strictly FORBIDDEN: Dull muddy midtones, low-contrast grey-on-grey blends, washed-out tones, or dark graphics that disappear into a dark vehicle body.
 
-3. **MANDATORY DIVERSITY ACROSS 4 FLUID WRAPPING ARCHETYPES (ROTATE IN EVERY BATCH)**:
-   - **Archetype 1 (Fluid Liquid & Drift Smoke Flow)**: Undulating curvilinear ribbons, swirling vortex drift smoke contours, and organic fluid velocity streaks.
-   - **Archetype 2 (Explosive Velocity Shards & Fractured Energy)**: Directional forward-thrusting angular lightning blades, fragmented crystal splinters, and explosive speed streaks.
-   - **Archetype 3 (Mecha Beast & Biomorphic Claw Slashes)**: Stylized predator claw cuts, aerodynamic razor winglet sweeps, and biomechanical scale contours.
-   - **Archetype 4 (Modern Kinetic Rally Dash & Halftone Speed Fade)**: Aggressive diagonal aerodynamic speed slashes, high-density halftone dot matrix bursts, and asymmetric air-channel fins.
+3. **MANDATORY DIVERSITY ACROSS 4 FLUID WRAPPING ARCHETYPES (NEUTRAL SHAPES)**:
+   - **Archetype 1 (Fluid Liquid & Drift Flow)**: Undulating curvilinear ribbons, sweeping aerodynamic arcs, and organic fluid velocity streaks.
+   - **Archetype 2 (Tribal & Flame Contours)**: Aggressive tribal curves, biomorphic flame licks, and stylized sweeping claw marks.
+   - **Archetype 3 (Classic Racing Stripes)**: Clean horizontal dual racing stripes, elegant pinstripe borders, and minimalist vintage rally decals.
+   - **Archetype 4 (Modern Kinetic Angular)**: Diagonal aerodynamic speed slashes, geometric thrust blocks, and fragmented polygonal energy facets.
 
 4. **DUAL SPLIT 50:50 COMPOSITION (TOP PREVIEW + BOTTOM FULL-BLEED WRAP)**:
    - **TOP HALF (50%)**: Displays a clean, flat 2D vector side-profile illustration of a generic unbranded vehicle with clean solid base body and the high-contrast racing livery decals applied across its body panels. Dynamically vary vehicle types across prompts (supercar, rally hot hatch, 4x4 pickup truck, commercial cargo box van/truck, performance drift sedan, widebody GT coupe) with strictly ZERO manufacturer brand logos.
