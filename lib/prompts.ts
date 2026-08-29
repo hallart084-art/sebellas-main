@@ -966,7 +966,7 @@ CATEGORY: ${chosenStyle}
 - DO NOT append any format suffix like 'flat 2d vector', 'isolated on white', etc. — the system adds that automatically.`;
   }
 
-  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a Visual Reference Analyst. Your job is to study the reference image and generate CONCEPT DESCRIPTIONS that capture the same visual DNA.
+  const systemInstruction = `${buildNegativePromptInstruction(negativePrompt)}You are a Visual Reference Analyst. Your job is to study the reference image and generate CONCEPT DESCRIPTIONS that capture the exact same visual DNA and coverage level.
 
 IMPORTANT: You generate ONLY the creative motif/concept description. The system will automatically append the standard format suffix. Do NOT include any suffix, layout description, or format instructions in your output.
 
@@ -974,21 +974,22 @@ Task: Generate EXACTLY ${numPrompts} concept descriptions as a JSON array of str
 ${categoryContext}
 
 ## HOW TO READ THE IMAGE:
-1. **MOTIF**: What exact geometric pattern do you see? Zigzag chevrons? Diagonal slashes? Diamond argyle? Wavy curves? Abstract shards? Hatched line textures? Organic cloud shapes? Describe PRECISELY.
-2. **COLORS**: What are the 3-5 dominant colors? Name them specifically (e.g. "deep crimson red", "jet black", "pure white"). What is the BASE color?
-3. **FLOW & COVERAGE**: What's the visual direction? Is it a FULL-BODY edge-to-edge pattern, or a MINIMALIST chest stripe? Does it only cover the shoulders? Pay close attention to NEGATIVE SPACE. If the reference is 80% solid white with just one small zigzag across the chest, your description MUST specify "minimalist chest zigzag on a solid white base".
-4. **TEXTURE STYLE**: Solid flat blocks? Hatched line fills? Tone-on-tone overlays? Sharp geometric cuts?
+1. **COVERAGE & NEGATIVE SPACE (CRITICAL)**: Is this a FULL-BODY aggressive pattern covering everything, or a MINIMALIST design (e.g. 80% solid white with just one graphic on the chest)? If the image is mostly a solid color, your prompt MUST explicitly state "vast clean negative space" and pinpoint where the graphic lives (e.g., "chest band", "lower flank panels", "shoulder accent").
+2. **MOTIF**: What exact geometric pattern do you see? Zigzag chevrons? Diagonal slashes? Diamond argyle? Stepped blocks? Describe PRECISELY.
+3. **COLORS**: What is the BASE color? What are the 2-3 accent colors? Name them specifically (e.g. "jet black", "crimson red").
+4. **FLOW**: What's the visual direction? Horizontal bands? Diagonal sweeps? Radial burst?
 
 ## HOW TO CREATE VARIATIONS:
 Each prompt must be a DEVELOPMENT of the reference — recognizably similar but creatively expanded:
-- **MOTIF & COVERAGE**: Keep the SAME fundamental pattern type and the SAME level of coverage (minimalist vs full-body). You CAN vary: angle (30°→60°), scale (micro→macro), density, panel layout, mirror/rotate. DO NOT invent a completely different motif. If the reference is minimalist, ALL variations must be minimalist.
-- **COLORS**: Start from the reference palette but you CAN develop. Keep at least 1-2 anchor colors, then explore complementary accents, warm/cool shifts, or fresh color pops. NOT locked to exact same colors.
-- **COMPOSITION**: Vary panel proportions, element placement, visual weight distribution.
+- **COVERAGE (STRICT)**: If the reference is minimalist, ALL variations MUST be minimalist. DO NOT generate full-body concepts from a minimalist image. You must retain the same ratio of negative space.
+- **MOTIF**: Keep the SAME fundamental pattern type. You CAN vary: angle (30°→60°), scale (micro→macro), density, panel layout, mirror/rotate. DO NOT invent a completely different motif.
+- **COLORS**: Start from the reference palette but you CAN develop. Keep at least 1-2 anchor colors, explore complementary accents.
 
-## WHAT EACH PROMPT SHOULD LOOK LIKE:
-Good minimalist example: "Minimalist geometric chevron chest band in deep crimson and black on a solid pure white base"
-Good full-body example: "Aggressive diagonal velocity shards covering the entire area with deep crimson red and jet black angular panels"
-Bad example: "professional sports jersey sublimation vector design, dual split 50:50..." ← NO! Never write layout/suffix.
+## EXAMPLES OF CORRECT OUTPUT (Concept Only):
+[MINIMALIST REFERENCE] -> "Minimalist stepped geometric chevron chest band in jet black, crimson red, and golden yellow on a solid pure white base, accompanied by curved solid black lower flank panels and vast clean white negative space"
+[MINIMALIST REFERENCE] -> "Minimalist asymmetrical staggered chest band flowing diagonally in jet black and crimson red on a solid pure white base, featuring vast clean negative space"
+[FULL-BODY REFERENCE] -> "Aggressive full-body diagonal velocity shards in deep crimson red and jet black angular panels intersecting across the entire canvas"
+[BAD EXAMPLE] -> "professional sports jersey sublimation vector design, dual split 50:50..." (NEVER output suffixes)
 
 ## RULES:
 - Output ONLY the creative concept/motif description. NO suffix. NO layout description.
@@ -1001,14 +1002,14 @@ ${jsonStringSafetyInstruction}`;
 
   const contents = `Study this reference image — it is your ONLY creative source.
 
-Read the EXACT pattern geometry, color palette, visual flow, level of coverage (minimalist vs full-body), and texture style from this image.
+Read the EXACT level of coverage (minimalist vs full-body), negative space, pattern geometry, color palette, and visual flow from this image.
 
 Generate EXACTLY ${numPrompts} concept descriptions that are faithful developments of what you see:
-- Same core motif (with angle/scale/density variations)
-- Colors developed from the reference (keep anchors, explore new accents)  
-- Each should look like a "sibling design" of the reference
+- If the image is minimalist, YOUR PROMPTS MUST BE MINIMALIST (explicitly mention negative space and specific placement like "chest band").
+- Same core motif geometry (with subtle angle/scale/density variations).
+- Colors developed from the reference (keep anchors, explore new accents).
 
-Output ONLY the concept description for each prompt. Do NOT include any suffix, layout, or format instructions — the system adds those automatically.
+Output ONLY the concept description for each prompt. Do NOT include any suffix, layout, or format instructions.
 
 Return as JSON array.`;
 
