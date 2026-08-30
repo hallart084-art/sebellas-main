@@ -967,17 +967,75 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
     const isWhiteBg = settings.vectorWhiteBg ?? true;
     const activeSuffix = getActiveVectorSuffix(chosenArtStyle, isWhiteBg, concept);
 
+    const chosenPreset = settings.vectorPreset || 'Single Image';
+    const isLayout1 = chosenPreset.includes('Layout 1');
+    const isLayout2 = chosenPreset.includes('Layout 2');
+    const isLayout3 = chosenPreset.includes('Layout 3');
+    const isLayout4 = chosenPreset.includes('Layout 4');
+    const isLayout5 = chosenPreset.includes('Layout 5');
+    const isLayout6 = chosenPreset.includes('Layout 6');
+    const isLayout7 = chosenPreset.includes('Layout 7');
+    const isStickerSet = chosenPreset.includes('Sticker');
+    const isMultiItemLayout = isLayout1 || isLayout2 || isLayout3 || isLayout4 || isLayout5 || isLayout6 || isLayout7 || isStickerSet;
+
     systemInstruction = buildVectorTextPrompt(
       settings.negativePrompt,
       settings.numPrompts,
       chosenArtStyle,
-      settings.vectorPreset,
+      chosenPreset,
       settings.vectorPose,
       settings.vectorAttributes,
       isWhiteBg,
       concept
     );
-    contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
+
+    if (isMultiItemLayout) {
+      let layoutFormula = '';
+      let slotCount = 5;
+      if (isLayout1) {
+        slotCount = 5;
+        layoutFormula = 'organized in a five-panel presentation layout: the left half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], while the right half features A 2x2 QUAD GRID OF FOUR DISTINCT SUPPORTING PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+      } else if (isLayout2) {
+        slotCount = 5;
+        layoutFormula = 'organized in a five-panel presentation layout: the left half features A 2x2 QUAD GRID OF FOUR DISTINCT SPECIALIZED PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION]';
+      } else if (isLayout3) {
+        slotCount = 5;
+        layoutFormula = 'organized in a five-panel center-spotlight presentation layout: a central DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], symmetrically flanked by two distinct vertical sub-panels on the left [ITEM_1], [ITEM_2] and two distinct vertical sub-panels on the right [ITEM_3], [ITEM_4]';
+      } else if (isLayout4) {
+        slotCount = 6;
+        layoutFormula = 'organized in a symmetrical 2x3 matrix grid layout displaying SIX DISTINCT NON-REPETITIVE SUBJECTS AND POSES evenly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+      } else if (isLayout5) {
+        slotCount = 12;
+        layoutFormula = 'organized in an expansive 3x4 matrix grid layout displaying TWELVE DISTINCT NON-REPETITIVE SUBJECTS, PROPS, OR ENTITIES neatly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+      } else if (isLayout6) {
+        slotCount = 4;
+        layoutFormula = 'organized in a balanced 2x2 quad matrix presentation layout displaying FOUR EXHAUSTIVELY DETAILED APEX SUBJECTS with each quadrant meticulously rendered with the full anatomical and artistic depth of an individual heroic centerpiece: in the top-left quadrant [ITEM_1], in the top-right quadrant [ITEM_2], in the bottom-left quadrant [ITEM_3], and in the bottom-right quadrant [ITEM_4]';
+      } else if (isLayout7) {
+        slotCount = 3;
+        layoutFormula = 'organized in a balanced three-column vertical triptych layout showcasing THREE DISTINCT SUBJECTS OR POSES side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
+      } else if (isStickerSet) {
+        slotCount = 6;
+        layoutFormula = 'organized as a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+      }
+
+      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} BUNDLE PACK PROMPTS in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
+
+MANDATORY BUNDLE PACK & GRID LAYOUT SPECIFICATION:
+- Layout Preset: "${chosenPreset}" (${slotCount} distinct items per sheet)
+- Art Style: "${chosenArtStyle}"
+- YOU MUST STRUCTURE EVERY SINGLE PROMPT AS A MULTI-ITEM BUNDLE PACK SHEET USING THIS EXACT COMPOSITION:
+  "${layoutFormula}"
+- DEEP ITEM CHARACTERIZATION: You MUST exhaustively describe all ${slotCount} individual items/characters/tools with rich anatomical details, unique poses, and specific equipment — exactly equal in descriptive weight to an individual standalone hero image!
+- UNIFIED COHESIVE THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}" and share a matching color palette.
+- STRICT FORMAT: Output each prompt as ONE continuous line without line breaks.
+- STRICT ZERO-TEXT: Strictly no letters, words, numbers, or labels in the artwork.
+
+Output format for every item in the JSON array:
+"A unified cohesive ${concept} collection sheet, ${layoutFormula}, all sharing an identical cohesive palette, ${activeSuffix}"
+
+Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
+    } else {
+      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
 
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 - Act as an ultra-smart, wildly creative commercial microstock director.
@@ -986,6 +1044,7 @@ CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 "[DETAILED 2D GRAPHIC SCENE/MOTIF DESCRIPTION], ${activeSuffix}"
 
 Return ONLY a valid JSON array of ${settings.numPrompts} complete prompt strings.`;
+    }
   } else {
     switch (settings.styleOption) {
       case 'isolated':
