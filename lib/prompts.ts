@@ -862,6 +862,69 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
    - Dynamically rotate perspectives across the prompts: dynamic low-angle heroic view, 3/4 isometric perspective, intimate eye-level craftsmanship, balanced overhead top-down flatlay, and sleek side-profile action.`;
   }
 
+  let layoutInstruction = '';
+  const isLayout1 = chosenPreset.includes('Layout 1');
+  const isLayout2 = chosenPreset.includes('Layout 2');
+  const isLayout3 = chosenPreset.includes('Layout 3');
+  const isLayout4 = chosenPreset.includes('Layout 4');
+  const isLayout5 = chosenPreset.includes('Layout 5');
+  const isLayout6 = chosenPreset.includes('Layout 6');
+  const isLayout7 = chosenPreset.includes('Layout 7');
+  const isStickerSet = chosenPreset.includes('Sticker');
+  const isMultiItemLayout = isLayout1 || isLayout2 || isLayout3 || isLayout4 || isLayout5 || isLayout6 || isLayout7 || isStickerSet;
+
+  if (isMultiItemLayout) {
+    let layoutSchema = '';
+    let totalItems = 5;
+    if (isLayout1) {
+      totalItems = 5;
+      layoutSchema = 'organized in a five-panel presentation layout: the left half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], while the right half features A 2x2 QUAD GRID OF FOUR DISTINCT SUPPORTING PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+    } else if (isLayout2) {
+      totalItems = 5;
+      layoutSchema = 'organized in a five-panel presentation layout: the left half features A 2x2 QUAD GRID OF FOUR DISTINCT SPECIALIZED PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION]';
+    } else if (isLayout3) {
+      totalItems = 5;
+      layoutSchema = 'organized in a five-panel center-spotlight presentation layout: a central DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], symmetrically flanked by two distinct vertical sub-panels on the left [ITEM_1], [ITEM_2] and two distinct vertical sub-panels on the right [ITEM_3], [ITEM_4]';
+    } else if (isLayout4) {
+      totalItems = 6;
+      layoutSchema = 'organized in a symmetrical 2x3 matrix grid layout displaying SIX DISTINCT NON-REPETITIVE SUBJECTS AND POSES evenly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+    } else if (isLayout5) {
+      totalItems = 12;
+      layoutSchema = 'organized in an expansive 3x4 matrix grid layout displaying TWELVE DISTINCT NON-REPETITIVE SUBJECTS, PROPS, OR ENTITIES neatly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+    } else if (isLayout6) {
+      totalItems = 4;
+      layoutSchema = 'organized in a balanced 2x2 quad matrix presentation layout displaying FOUR EXHAUSTIVELY DETAILED APEX SUBJECTS with each quadrant meticulously rendered with the full anatomical and artistic depth of an individual heroic centerpiece: in the top-left quadrant [ITEM_1], in the top-right quadrant [ITEM_2], in the bottom-left quadrant [ITEM_3], and in the bottom-right quadrant [ITEM_4]';
+    } else if (isLayout7) {
+      totalItems = 3;
+      layoutSchema = 'organized in a balanced three-column vertical triptych layout showcasing THREE DISTINCT SUBJECTS OR POSES side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
+    } else if (isStickerSet) {
+      totalItems = 6;
+      layoutSchema = 'organized as a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas';
+    }
+
+    layoutInstruction = `
+═══════════════════════════════════════════════════════════════════════════════════════
+👑 MANDATORY MULTI-ITEM BUNDLE PACK & GRID LAYOUT FORMULA (${chosenPreset.toUpperCase()})
+═══════════════════════════════════════════════════════════════════════════════════════
+1. 🎯 **SINGLE COHESIVE THEME ACROSS THE ENTIRE SHEET**:
+   - Every single generated prompt must describe ONE unified thematic universe (e.g. "Modern Coffee Barista Artisans", "Deep Space Astronaut Explorers", "Woodworking Carpentry Tools", "Apex Wildlife Predators").
+   - ALL ${totalItems} items/slots MUST share the exact same cohesive art style, identical high-contrast 2-3 tone color palette, and matching stylistic morphology!
+
+2. 📐 **MANDATORY LAYOUT STRUCTURE**:
+   - Every prompt MUST structure the canvas using this exact composition:
+     "${layoutSchema}"
+
+3. 💎 **DEEP, EXHAUSTIVE CHARACTERIZATION PER ITEM (EQUAL TO SINGLE IMAGE QUALITY)**:
+   - YOU MUST NOT write brief, lazy, or generic summaries for the slots (e.g. do NOT just say "a lion, a bear, an eagle").
+   - For EVERY SINGLE SLOT, you MUST write full, rich, masterclass-level anatomical detail, specific breed/species/tool model, distinctive physical attributes, and a unique dynamic action!
+   - Every slot must feel like a standalone heroic illustration crafted with deep thought and precision!
+
+4. 🚫 **STRICT ZERO-TEXT & ZERO-NEWLINES CONTRACT**:
+   - STRICTLY FORBIDDEN: DO NOT write label headers like "Card 1:", "Row 1:", "Slot 1:", "Top-Left:". Weave the slot descriptions smoothly in natural English.
+   - STRICTLY FORBIDDEN: NO NEWLINES / NO ENTER CHARACTERS in the prompt. Output each prompt as a single continuous unbroken line of text.
+   - The final artwork must have STRICTLY ZERO TEXT, ZERO LETTERS, ZERO NUMBERS, ZERO LABELS, ZERO TYPOGRAPHY, AND ZERO WATERMARKS.`;
+  }
+
   return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
 
 Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
@@ -873,7 +936,7 @@ ${expansionRules}
    - **Monoline geometric vector**: Pure continuous uniform single-weight black contour line art, abstract geometric planar deconstruction, zero colors, zero gradients, zero shadows.
    - **Geometric silhouette**: Powerful aerodynamic contour silhouettes with sharp planar facet cuts, high-contrast solid mass shapes, strictly lineless (no strokes), 100% two-color black/white contrast.
    - **Negative space cutout**: Ingenious free-standing silhouette cutouts (strictly frameless, zero border, zero outer badge/frame/box/circle) where facial features, muscles, or lighting highlights are sharply carved out of negative space.
-
+${layoutInstruction}
 Creative Configuration:
 - Selected Art Style: ${chosenStyle}
 - Preset Format: ${chosenPreset}

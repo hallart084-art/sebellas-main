@@ -5,14 +5,12 @@ import { generateModelContent } from '../lib/apiClient';
 import { readStoredProviderApiKeys } from '../hooks/useGemini';
 import Spinner from './Spinner';
 
-export { VECTOR_ART_STYLES };
+import { VECTOR_LAYOUT_PRESETS, LayoutMiniPreview } from '../lib/layoutPresets';
 
-export const VECTOR_PRESETS = [
-  'Single Image',
-  'Sticker Pack / Set',
-  'Icon Set Grid',
-  'Pattern / Seamless',
-] as const;
+export { VECTOR_ART_STYLES };
+export { VECTOR_LAYOUT_PRESETS };
+
+export const VECTOR_PRESETS = VECTOR_LAYOUT_PRESETS.map(p => p.name);
 
 interface VectorBrainstormCardProps {
   settings: UseSettingsReturn;
@@ -449,8 +447,8 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
         {/* Preset */}
         <div>
           <label htmlFor="vector-preset" className="flex items-center gap-1.5 text-xs font-bold text-gray-300 uppercase mb-1.5">
-            <span className="material-symbols-outlined text-sm text-indigo-400">settings</span>
-            <span>Preset</span>
+            <span className="material-symbols-outlined text-sm text-indigo-400">dashboard_customize</span>
+            <span>Preset Layout</span>
           </label>
           <div className="relative">
             <select
@@ -460,9 +458,9 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
               disabled={disabled || isLoading}
               className="w-full appearance-none bg-[#202024] border border-white/[0.08] hover:border-white/20 focus:border-indigo-500 rounded-xl px-3.5 py-2.5 pr-8 text-sm text-white focus:outline-none transition-all cursor-pointer truncate"
             >
-              {VECTOR_PRESETS.map((p) => (
-                <option key={p} value={p} className="bg-[#18181b] text-white">
-                  {p}
+              {VECTOR_LAYOUT_PRESETS.map((p) => (
+                <option key={p.id} value={p.name} className="bg-[#18181b] text-white">
+                  {p.label}
                 </option>
               ))}
             </select>
@@ -490,6 +488,34 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
           />
         </div>
       </div>
+
+      {/* Visual Layout Preview Info Card */}
+      {(() => {
+        const currentPresetDef = VECTOR_LAYOUT_PRESETS.find(p => p.name === preset) || VECTOR_LAYOUT_PRESETS[0];
+        return (
+          <div className="p-3 rounded-xl bg-[#1c1c20] border border-white/[0.08] flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div className="shrink-0 bg-black/60 p-2 rounded-lg border border-white/10 flex items-center justify-center shadow-inner">
+                <LayoutMiniPreview layoutId={preset} className="w-14 h-8" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold text-white truncate">{currentPresetDef.label}</span>
+                  {currentPresetDef.itemsCount > 1 && (
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
+                      {currentPresetDef.itemsCount} Objek / Lembar
+                    </span>
+                  )}
+                </div>
+                <p className="text-[11px] text-gray-400 truncate mt-0.5">{currentPresetDef.shortDesc}</p>
+              </div>
+            </div>
+            <span className="text-[10px] text-indigo-400/90 font-medium px-2 py-1 rounded bg-indigo-500/10 border border-indigo-500/20 whitespace-nowrap hidden sm:inline-block">
+              Auto Grid Schema
+            </span>
+          </div>
+        );
+      })()}
 
       {/* Background Putih Polos Toggle */}
       <div className="flex items-center justify-between p-3 rounded-xl bg-[#1c1c20] border border-white/[0.08] hover:border-white/15 transition-all">
