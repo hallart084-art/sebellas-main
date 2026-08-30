@@ -83,91 +83,118 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
     let styleInstruction = '';
     if (currentStyle.includes('jersey') || currentStyle.includes('jersy')) {
       const JERSEY_DOMAINS = [
-        'modern geometric velocity prism shards futsal football jersey',
-        'aerodynamic falcon wing predator slash esports tournament jersey',
-        'high-octane kinetic speed slash sleeveless basketball jersey',
-        'hydrodynamic fluid isobar topographic contour road cycling jersey',
-        'sweeping curved Teamgeist wave panels forest green soccer kit',
-        'archival crescent shoulder Total 90 football jersey kit',
-        'aggressive modern Polynesian chevron motif rugby jersey',
-        'ultra-light aerodynamic speed chevron volleyball badminton jersey',
-        'flame velocity diagonal sash streak motocross race jersey',
-        'urban constructivist kinetic angular color-block street football jersey',
+        'soccer jersey', 'futsal jersey', 'basketball jersey', 'cycling jersey',
+        'volleyball jersey', 'motocross jersey', 'esports jersey', 'rugby jersey',
+        'American football jersey', 'handball jersey', 'athletics track jersey',
+        'ice hockey jersey', 'polo shirt jersey', 'badminton jersey', 'swimming jersey',
+        'boxing jersey', 'martial arts jersey', 'racing overalls', 'ski racing suit', 'tennis jersey',
       ];
       const picked = JERSEY_DOMAINS[Math.floor(Math.random() * JERSEY_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, highly dynamic athletic sports jersey concept in English (2 to 5 words only). Focus on: "${picked}". Focus on real sports jersey kits (soccer, basketball, esports, cycling, volleyball, motocross). NEVER output brand logos, letters, or numbers.`;
+      styleInstruction = `Generate 1 specific athletic jersey or sports kit type in English. Maximum 2 words. Output ONLY the jersey type name itself. Example outputs: "soccer jersey", "cycling kit", "esports jersey". Focus on: "${picked}".`;
+
     } else if (currentStyle.includes('livery') || currentStyle.includes('wrap')) {
       const LIVERY_DOMAINS = [
-        'fluid liquid drift smoke wave decals for sports coupe',
-        'aggressive geometric speed shard racing stripes for modern supercar',
-        'ferocious aerodynamic predator claw racing decals for drift sedan',
-        'dynamic aerodynamic rally speed slashes for hot hatchback',
-        'kinetic vector dot matrix racing stripes for commercial cargo box van',
-        'desert rally racing speed streaks for 4x4 trophy truck',
-        'lightning chevron velocity blades for widebody GT racer',
-        'high-speed flame velocity swoosh decals for performance track car',
+        'sports coupe', 'racing sedan', 'rally hatchback', 'drift car',
+        'supercar', 'cargo van', 'trophy truck', 'GT racer',
+        'muscle car', 'electric hypercar', 'formula car', 'motorbike fairing',
+        'dragster', 'touring car', 'Le Mans prototype', 'buggy racer',
+        'safari rally truck', 'speedboat hull', 'racing kart', 'motorcycle sidecar',
       ];
       const picked = LIVERY_DOMAINS[Math.floor(Math.random() * LIVERY_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, highly dynamic automotive motorsport racing livery / car wrap decal concept in English (2 to 5 words only). Focus on: "${picked}". Focus on real racing stripes, speed swooshes, asymmetric velocity slashes, and drift decals. STRICTLY FORBIDDEN: NEVER output repeating wallpaper patterns, honeycomb meshes, spiral vortexes, car brand names, letters, or numbers.`;
+      styleInstruction = `Generate 1 specific vehicle type for a racing livery or car wrap design in English. Maximum 2 words. Output ONLY the vehicle type. Example outputs: "drift car", "cargo van", "GT racer". Focus on: "${picked}".`;
+
     } else if (currentStyle.includes('pictogram') || currentStyle.includes('logo') || currentStyle.includes('abstract')) {
       const LOGO_DOMAINS = [
-        'stylized wildlife animal emblem with rhythmic comb tines (stag, gazelle, falcon, lion, whale)',
-        'minimalist culinary gastronomy symbol (espresso steam glyph, burger emblem, sushi mark)',
-        'modern kinetic sports speed icon (aerodynamic runner mark, cyclist blade glyph)',
-        'botanical leaf flourishing arabesque seal (monstera, lotus crown, olive branch)',
-        'modern academic architectural temple crest (knowledge beacon, graduation cap star)',
-        'artisan craftsman portrait emblem (bearded barista, chef profile, astronaut helmet)',
+        'wolf emblem', 'eagle crest', 'lion mark', 'phoenix seal', 'dragon glyph',
+        'falcon icon', 'bear badge', 'shark emblem', 'ox crest', 'panther mark',
+        'coffee glyph', 'burger icon', 'sushi mark', 'ramen bowl', 'pizza slice',
+        'runner icon', 'cyclist mark', 'swimmer glyph', 'archer crest', 'boxer seal',
+        'lotus seal', 'oak leaf', 'mountain crest', 'wave glyph', 'compass mark',
+        'architect crest', 'lab flask', 'barista seal', 'chef mark', 'astronaut glyph',
       ];
       const picked = LOGO_DOMAINS[Math.floor(Math.random() * LOGO_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, ultra-minimalist, iconic brand logo mark or abstract pictogram concept in English (2 to 4 words only). Focus on: "${picked}". Think Swiss graphic design, Zalo Estévez style, radical shape reduction.`;
+      styleInstruction = `Generate 1 specific logo mark or pictogram subject in English. Maximum 2 words. Output ONLY the subject name. Example outputs: "wolf emblem", "coffee glyph", "archer crest". Focus on: "${picked}".`;
+
     } else if (currentStyle.includes('pattern') || currentStyle.includes('seamless')) {
       const PATTERN_DOMAINS = [
-        'vibrant retro 1970s Scandinavian organic Matisse floral pattern',
-        'swimming pool top-down liquid blue water caustics ripple pattern',
-        'playful cheerful scattered breakfast food doodles with bright happy colors',
-        'cute baby woodland animal face silhouettes with forest leaves',
-        'modern geometric op-art herringbone wave line maze pattern',
-        'back-to-school educational stationery doodles with science icons',
-        'friendly pediatric healthcare doodles with stethoscopes and smiling hearts',
+        'tropical leaves', 'geometric hexagon', 'Scandinavian folk', 'Japanese koi',
+        'Art Deco fan', 'retro 70s', 'floral watercolor', 'botanical fern',
+        'animal leopard', 'ocean wave', 'mountain terrain', 'galaxy star',
+        'bread pastry', 'coffee bean', 'fruit citrus', 'sushi roll',
+        'bicycle vintage', 'camping outdoors', 'boho mandala', 'ikat textile',
+        'Memphis 80s', 'Bauhaus grid', 'batik kawung', 'Aboriginal dot',
+        'Easter egg', 'Christmas holly', 'Halloween pumpkin', 'lunar festival',
+        'baby nursery', 'school stationery', 'medical healthcare', 'sport ball',
       ];
       const picked = PATTERN_DOMAINS[Math.floor(Math.random() * PATTERN_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, vibrant, cheerful 2D seamless surface pattern / wallpaper theme in English (2 to 5 words only). Focus on: "${picked}". Think playful, colorful, all-over surface print.`;
+      styleInstruction = `Generate 1 specific seamless pattern or surface print theme in English. Maximum 2 words. Output ONLY the theme name. Example outputs: "tropical leaves", "koi fish", "Art Deco". Focus on: "${picked}".`;
+
     } else if (currentStyle.includes('object')) {
       const OBJECT_DOMAINS = [
-        'precision artisan woodworking and mechanical workshop power tools',
-        'professional barista espresso coffee brewing station and grinder',
-        'futuristic electric mobility vehicles, delivery vans, and scooters',
-        'vintage analog twin-lens photography camera and optical lenses',
-        'cutting-edge STEM biotechnology laboratory microscope and glassware',
-        'modern indoor botanical gardening tools, ceramic pots, and shears',
+        // Kitchen & Food
+        'espresso machine', 'cast iron skillet', 'chef knife', 'stand mixer', 'wok pan',
+        'french press', 'sushi set', 'pizza oven', 'matcha whisk', 'curry pot',
+        // Tools & Workshop
+        'power drill', 'angle grinder', 'impact wrench', 'circular saw', 'laser level',
+        'soldering iron', 'oscilloscope', 'bench vise', 'torque wrench', 'pipe cutter',
+        // Vehicles & Mobility
+        'electric scooter', 'cargo bicycle', 'delivery drone', 'jet ski', 'vintage vespa',
+        'forklift truck', 'hot rod', 'yacht', 'submarine', 'ultralight aircraft',
+        // Technology & Electronics
+        'vintage camera', 'reel projector', 'vinyl turntable', 'tube amplifier', 'ham radio',
+        'oscilloscope', 'arcade joystick', 'CRT monitor', 'cassette walkman', 'film camera',
+        // Outdoor & Sports Gear
+        'mountaineering axe', 'surfboard', 'compound bow', 'fishing rod', 'ski poles',
+        'tennis racket', 'baseball glove', 'soccer cleat', 'boxing glove', 'fencing mask',
+        // Science & Lab
+        'microscope', 'lab centrifuge', 'chemistry flask', 'telescope', 'spectrometer',
+        // Fashion & Accessories
+        'leather sneaker', 'aviator watch', 'biker helmet', 'vintage suitcase', 'diamond ring',
       ];
       const picked = OBJECT_DOMAINS[Math.floor(Math.random() * OBJECT_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, high-value commercial inanimate physical object / vehicle / tool set concept in English (2 to 5 words only). Focus on: "${picked}". STRICT RULE: INANIMATE OBJECTS ONLY (Zero humans, zero characters, zero faces).`;
+      styleInstruction = `Generate 1 specific inanimate physical object for flat illustration in English. Maximum 2 words. Output ONLY the object name. Example outputs: "espresso machine", "power drill", "vintage camera". Focus on: "${picked}". STRICT: Zero humans, zero characters, zero faces.`;
+
     } else if (currentStyle.includes('geometric silhouette') || currentStyle.includes('negative space')) {
       const SILHOUETTE_DOMAINS = [
-        'powerful wild predator animal head (arctic wolf, charging bull, roaring lion, soaring eagle)',
-        'noble athletic warrior or mythical creature (winged griffin, roaring dragon, pegasus)',
-        'dynamic athletic gymnast or runner in dramatic mid-air leap',
-        'iconic wildlife forest stag deer with magnificent branching antlers',
-        'ancient mythical titan or bearded Olympian god bust',
+        'arctic wolf', 'charging bull', 'soaring eagle', 'roaring lion', 'leaping panther',
+        'stag deer', 'grizzly bear', 'great white shark', 'humpback whale', 'octopus',
+        'rearing horse', 'howling wolf', 'cobra snake', 'ram skull', 'bison',
+        'winged griffin', 'roaring dragon', 'soaring phoenix', 'kraken tentacle', 'chimera',
+        'warrior archer', 'samurai blade', 'gladiator helm', 'viking shield', 'ninja star',
+        'mountain peak', 'lighthouse cliff', 'ancient temple', 'space rocket', 'anchor cross',
       ];
       const picked = SILHOUETTE_DOMAINS[Math.floor(Math.random() * SILHOUETTE_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, powerful, high-contrast silhouette or negative space subject in English (2 to 4 words only). Focus on: "${picked}". Subject must have dramatic anatomical contour and high visual impact.`;
+      styleInstruction = `Generate 1 specific silhouette subject in English. Maximum 2 words. Output ONLY the subject name. Example outputs: "arctic wolf", "soaring eagle", "samurai blade". Focus on: "${picked}".`;
+
     } else {
+      // General / Flat Illustration / Mascot / Monoline
       const GENERAL_DOMAINS = [
-        'renewable green energy and environmental engineering',
-        'specialized medical healthcare and modern wellness',
-        'artisan craft workshop and handmade manufacturing',
-        'logistics supply chain and smart delivery commute',
-        'cutting-edge STEM laboratory science and robotics',
-        'culinary gastronomy and artisan specialty baking',
-        'outdoor athletics sports and active lifestyle',
-        'wildlife nature encounters and adorable domestic pets',
-        'creative visual design architecture and photography',
-        'fintech smart business analysis and investment growth',
+        // Food & Drink
+        'ramen bowl', 'bubble tea', 'sushi set', 'tacos street', 'croissant bakery',
+        'smoothie bowl', 'pizza slice', 'boba milk', 'dim sum', 'avocado toast',
+        // Animals
+        'red panda', 'axolotl', 'capybara', 'arctic fox', 'giant panda',
+        'sea otter', 'quokka', 'snow leopard', 'meerkat', 'sloth bear',
+        // Vehicles
+        'vintage vespa', 'retro campervan', 'electric bicycle', 'steam locomotive', 'wooden sailboat',
+        // Sports & Fitness
+        'rock climber', 'surfer wave', 'skateboard trick', 'yoga pose', 'trail runner',
+        // Tech & Gaming
+        'retro gaming', 'robot friend', 'space explorer', 'VR headset', 'hologram lab',
+        // Nature & Seasons
+        'cherry blossom', 'autumn forest', 'coral reef', 'northern lights', 'desert cactus',
+        // Lifestyle & Career
+        'urban barista', 'street photographer', 'home gardener', 'city cyclist', 'dj booth',
+        // Fantasy & Culture
+        'samurai warrior', 'ninja cat', 'pirate ship', 'viking village', 'dragon knight',
+        'witchy potion', 'ancient Egypt', 'Aztec temple', 'medieval castle', 'space wizard',
+        // Health & Science
+        'emergency doctor', 'lab scientist', 'bone anatomy', 'mental wellness', 'dental care',
+        // Business
+        'startup pitch', 'remote work', 'data analyst', 'fintech app', 'e-commerce delivery',
       ];
       const picked = GENERAL_DOMAINS[Math.floor(Math.random() * GENERAL_DOMAINS.length)];
-      styleInstruction = `Generate 1 fresh, highly specific, high-value commercial 2D microstock vector theme in English (2 to 5 words only). Focus on the domain of: "${picked}".`;
+      styleInstruction = `Generate 1 specific microstock illustration concept in English. Maximum 2 words. Output ONLY the subject/theme name itself — no extra words, no explanation. Example outputs: "ramen bowl", "red panda", "vintage vespa", "cherry blossom". Focus on: "${picked}".`;
     }
 
     try {
@@ -194,10 +221,10 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
       const rawContent = await generateModelContent({
         model: settings.selectedModel,
         apiKey: activeKey,
-        contents: `${styleInstruction} STRICT RULES: Output ONLY plain text in English. DO NOT output JSON. DO NOT use curly braces, brackets, quotes, markdown code blocks, or JSON keys. NEVER output meta words like 'AI', 'vector', 'illustration', or 'prompt'. Output ONLY the raw subject phrase (2 to 5 words).`,
+        contents: `${styleInstruction} ABSOLUTE RULE: Output ONLY the subject phrase. MAXIMUM 2 WORDS. No explanation, no punctuation, no extra text, no JSON. Just the 2-word phrase itself. Examples of perfect output: "ramen bowl", "arctic fox", "power drill", "jazz band". BAD outputs (FORBIDDEN): "Here is a theme: ramen bowl", "The concept is: arctic fox".`,
         config: {
-          temperature: 1.0,
-          maxOutputTokens: 60,
+          temperature: 1.1,
+          maxOutputTokens: 20,
         },
       });
 
@@ -234,14 +261,18 @@ export const VectorBrainstormCard: React.FC<VectorBrainstormCardProps> = ({
         .replace(/^[{\[\s]*["']?[a-zA-Z0-9_\-]+["']?\s*:\s*["']?/, '')
         .replace(/["']?[}\]\s]*$/, '')
         .replace(/^["'`\s.\-]+|["'`\s.\-]+$/g, '')
-        .replace(/^(theme|concept|idea|here is|here's|prompt):\s*/i, '')
+        .replace(/^(theme|concept|idea|here is|here's|prompt|output|result)[\s:]+/i, '')
         .replace(/\b(ai[- ]powered|ai[- ]generated|ai assistant|\bai\b|artificial intelligence|vector|illustration|microstock)\b/gi, '')
         .replace(/\s{2,}/g, ' ')
         .replace(/[\r\n].*/s, '')
         .trim();
 
-      if (cleaned && cleaned.length >= 2 && cleaned.length <= 80) {
-        settings.setConceptsInput(cleaned);
+      // 4. ENFORCE max 2 words — truncate if LLM was verbose
+      const words = cleaned.split(/\s+/).filter(Boolean);
+      const finalResult = words.slice(0, 2).join(' ');
+
+      if (finalResult && finalResult.length >= 2 && finalResult.length <= 40) {
+        settings.setConceptsInput(finalResult);
       }
     } catch (err: any) {
       console.error('Error generating AI idea via API:', err);

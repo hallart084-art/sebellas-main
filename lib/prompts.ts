@@ -825,77 +825,79 @@ When processing ANY user concept/keyword for a Car Wrap Livery:
   } else {
     expansionRules = `
 ════════════════════════════════════════════════════════════════════════════════════
-👑 ULTRA-SMART CROSS-NICHE MICROSTOCK EXPANSION ENGINE (MANDATORY — DO NOT SKIP)
+👑 ULTRA-SMART DEPTH-FIRST CROSS-NICHE MICROSTOCK EXPANSION ENGINE (MANDATORY)
 ════════════════════════════════════════════════════════════════════════════════════
 
-Your job is to act as a world-class commercial art director who deeply understands the FULL BREADTH of any topic. When given a concept, you MUST NOT generate similar-looking variations of the same thing. You MUST explore radically different sub-categories, niches, and angles of that concept.
+You are a world-class microstock art director. Your task: given a concept, generate the MAXIMUM possible number of unique, specific, commercially-valuable subjects BEFORE ever expanding to related or peripheral topics.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 1 — CONCEPT DECOMPOSITION (DO THIS MENTALLY BEFORE GENERATING ANY PROMPT)
+STEP 1 — DEPTH-FIRST PRIMARY EXHAUSTION (MOST IMPORTANT RULE)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Before writing a single prompt, mentally decompose the concept into AT LEAST 8 completely different sub-categories. Each sub-category must be a genuinely distinct niche — different culture, context, format, or use-case of the concept.
+First, generate a mental list of ALL specific primary subjects within the concept.
+Then fill prompts with them ONE BY ONE, in order of diversity, BEFORE moving to related topics.
 
-EXAMPLE for concept "food":
-  Sub-category A: Street food / fast food (burger, taco, hot dog)
-  Sub-category B: Asian noodle & soup dishes (ramen, pho, udon)
-  Sub-category C: Baked goods & pastries (croissant, sourdough, donut)
-  Sub-category D: Fine dining / plated cuisine (steak, lobster, sushi)
-  Sub-category E: Snacks & junk food (chips, popcorn, nachos)
-  Sub-category F: Beverages & drinks (bubble tea, iced coffee, smoothie)
-  Sub-category G: Desserts & sweets (ice cream, cake, macaron)
-  Sub-category H: Healthy / organic (grain bowl, avocado toast, salad)
-  Sub-category I: Traditional / cultural dishes (paella, biryani, jollof rice)
-  Sub-category J: Cooking tools & raw ingredients (spices, fresh produce)
+EXAMPLES OF CORRECT DEPTH-FIRST EXHAUSTION:
 
-EXAMPLE for concept "animals":
-  Sub-cat A: Domestic pets (golden retriever, tabby cat, parrot)
-  Sub-cat B: Wild predators (wolf, tiger, bald eagle)
-  Sub-cat C: Ocean creatures (dolphin, octopus, sea turtle)
-  Sub-cat D: Farm animals (horse, cow, rooster)
-  Sub-cat E: Small mammals (otter, meerkat, hedgehog)
-  Sub-cat F: Insects & bugs (butterfly, stag beetle, mantis)
-  Sub-cat G: Reptiles (chameleon, iguana, crocodile)
-  Sub-cat H: Birds (peacock, flamingo, snowy owl)
-  Sub-cat I: Endangered / exotic (giant panda, snow leopard, axolotl)
+Concept "Asian food" (10 prompts requested):
+  Prompt 1 → sushi nigiri set (Japanese)
+  Prompt 2 → beef rendang (Indonesian)
+  Prompt 3 → matcha dessert roll (Japanese)
+  Prompt 4 → pho bo noodle bowl (Vietnamese)
+  Prompt 5 → dim sum basket set (Chinese)
+  Prompt 6 → bibimbap stone pot (Korean)
+  Prompt 7 → pad thai stir fry (Thai)
+  Prompt 8 → miso ramen bowl (Japanese)
+  Prompt 9 → banh mi sandwich (Vietnamese)
+  Prompt 10 → nasi goreng fried rice (Indonesian)
+  ← ALL 10 prompts filled with actual Asian food dishes. Zero repetition, zero jumping to "chopsticks" or "bamboo steamer" yet.
 
-EXAMPLE for concept "vehicles":
-  Sub-cat A: Personal cars (sports car, classic muscle car, electric SUV)
-  Sub-cat B: Commercial trucks & vans (cargo van, semi-truck, pickup truck)
-  Sub-cat C: Two-wheelers (cafe racer motorcycle, electric scooter, bicycle)
-  Sub-cat D: Public transport (metro train, city bus, rickshaw)
-  Sub-cat E: Air vehicles (biplane, hot air balloon, drone)
-  Sub-cat F: Water vehicles (sailing yacht, jet ski, fishing boat)
-  Sub-cat G: Specialty / off-road (ATV, monster truck, military jeep)
-  Sub-cat H: Futuristic / concept (flying car, hyperloop pod, hovercraft)
+Concept "animals" (12 prompts requested):
+  Prompt 1 → golden retriever puppy
+  Prompt 2 → arctic fox
+  Prompt 3 → giant panda
+  Prompt 4 → humpback whale
+  Prompt 5 → barn owl
+  Prompt 6 → chameleon
+  Prompt 7 → axolotl
+  Prompt 8 → capybara
+  Prompt 9 → snow leopard
+  Prompt 10 → red macaw parrot
+  Prompt 11 → sea otter
+  Prompt 12 → meerkat
+  ← ALL 12 prompts are actual animals. Zero repetition of species type.
 
-APPLY THIS SAME DECOMPOSITION LOGIC TO ANY CONCEPT. Think broadly.
+Concept "vehicles" (8 prompts requested):
+  Prompt 1 → vintage red Vespa scooter
+  Prompt 2 → electric cargo bicycle
+  Prompt 3 → steam locomotive train
+  Prompt 4 → hot air balloon
+  Prompt 5 → wooden sailboat
+  Prompt 6 → military jeep off-road
+  Prompt 7 → city double-decker bus
+  Prompt 8 → racing go-kart
 
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 2 — STRICT CROSS-NICHE ASSIGNMENT (ONE PROMPT = ONE UNIQUE SUB-CATEGORY)
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Assign EACH prompt to a DIFFERENT sub-category from Step 1.
-- Prompt 1 → Sub-cat A
-- Prompt 2 → Sub-cat B
-- Prompt 3 → Sub-cat C
-- ... and so on, cycling if needed.
-
-ABSOLUTE FORBIDDEN: No two prompts may share the same:
-  ✗ Primary subject type (e.g., two prompts cannot both be "burger")
-  ✗ Cultural origin (e.g., two Japanese dishes in a row is forbidden)
-  ✗ Visual composition angle (e.g., two overhead flat-lays in a row is forbidden)
-  ✗ Format type (e.g., two street food prompts in a row is forbidden)
+ONLY AFTER the primary list is exhausted (or if the numPrompts count exceeds available primaries), THEN expand to closely related tools, props, ingredients, or scenes.
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 3 — ULTRA-SPECIFIC SUBJECT NAMING (NO GENERIC LABELS ALLOWED)
+STEP 2 — CROSS-NICHE DIVERSITY WITHIN THE PRIMARY LIST
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Every subject MUST be named with precision. Never use a vague label when a specific one exists.
-  ✗ FORBIDDEN: "a food item", "an animal", "a vehicle", "a tool"
-  ✓ REQUIRED: "a golden-glazed Korean corn dog with mozzarella stretch", "an arctic wolf mid-leap", "a vintage Kawasaki café racer motorcycle"
+Even within the primary list, you MUST vary across sub-categories. For "Asian food", do NOT list 5 Japanese dishes in a row. Rotate: Japanese → Indonesian → Vietnamese → Korean → Thai → Chinese → Indian → Filipino, etc.
+
+ABSOLUTE FORBIDDEN within any batch:
+  ✗ Same primary subject type in two prompts (e.g., two "ramen" prompts)
+  ✗ Same cultural origin back-to-back (e.g., two Japanese dishes consecutively)
+  ✗ Same composition angle in adjacent prompts (e.g., two overhead flat-lays)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3 — ULTRA-SPECIFIC SUBJECT NAMING (NO GENERIC LABELS)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  ✗ FORBIDDEN: "a food item", "an animal", "a dish", "a vehicle"
+  ✓ REQUIRED: "golden-glazed Korean corn dog with mozzarella stretch", "arctic wolf mid-leap in snowstorm", "vintage Kawasaki café racer motorcycle"
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 STEP 4 — COMPOSITIONAL ANGLE VARIETY (MANDATORY ROTATION)
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Rotate the visual composition angle across prompts:
+Rotate visual angles across prompts:
   - Overhead top-down flat-lay
   - 3/4 isometric view
   - Dramatic low-angle hero shot
@@ -903,9 +905,9 @@ Rotate the visual composition angle across prompts:
   - Clean side-profile silhouette
 
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-STEP 5 — COMMERCIAL MICROSTOCK SEO PRIORITY (SEARCH DEMAND VALIDATION)
+STEP 5 — COMMERCIAL MICROSTOCK SEO PRIORITY
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Every subject chosen MUST be a high-search-volume, commercially in-demand microstock item. Prioritize subjects that buyers actively search for on Adobe Stock, Shutterstock, and Freepik.`;
+Every subject must be commercially in-demand on Adobe Stock, Shutterstock, and Freepik. Prioritize subjects with high real-world buyer search volume.`;
   }
 
   let layoutInstruction = '';
