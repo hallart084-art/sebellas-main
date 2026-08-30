@@ -916,8 +916,9 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
 
 3. 💎 **DEEP, EXHAUSTIVE CHARACTERIZATION PER ITEM (EQUAL TO SINGLE IMAGE QUALITY)**:
    - YOU MUST NOT write brief, lazy, or generic summaries for the slots (e.g. do NOT just say "a lion, a bear").
-   - For EVERY SINGLE SLOT, you MUST write full, rich, masterclass-level anatomical detail, specific breed/species/tool model, distinctive physical attributes, and a unique dynamic action!
-   - Every slot must be described with the depth and richness of a standalone heroic illustration! You MUST NOT truncate or skip any slots!
+   - ⚠️ EXTREME LENGTH REQUIRED: You MUST write AT LEAST 40 WORDS FOR EVERY SINGLE ITEM in the grid! 
+   - For EVERY SINGLE SLOT, describe its exact physical pose, its intricate clothing/gear, its distinct materials and colors, a unique prop it is holding, and its specific facial expression or micro-details!
+   - Every slot must be described with the massive depth and richness of a standalone heroic illustration! You MUST NOT truncate or skip any slots!
 
 4. 🚫 **STRICT ZERO-TEXT & ZERO-NEWLINES CONTRACT**:
    - STRICTLY FORBIDDEN: DO NOT write label headers in uppercase like "ONE DOMINANT HERO VERTICAL PANEL" or "A 2x2 QUAD GRID". Midjourney will literally render these words as text in the image!
@@ -1028,15 +1029,21 @@ MANDATORY BUNDLE PACK & GRID LAYOUT SPECIFICATION:
   "${layoutFormula}"
 
 CRITICAL RULES FOR ITEM EXPANSION (IGNORE AT YOUR PERIL):
-1. NO LAZY SUMMARIES: Do NOT just do a short fill-in-the-blank substitution (e.g., "a red car").
-2. EXHAUSTIVE DETAIL FOR EVERY SLOT: You MUST expand EVERY single item (hero and sub-items) into a massive, masterclass-level description (at least 30 words per item). Describe specific poses, intricate outfits, rich physical characteristics, and dynamic actions just like a high-end standalone image.
-3. UNIFIED THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
-4. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). Weave the descriptions smoothly.
-5. SUFFIX RULE: You MUST append the exact style suffix at the very end of the completed prompt string.
+1. NO LAZY SUMMARIES: Do NOT just do a short fill-in-the-blank substitution (e.g., "a red car"). 
+2. ⚠️ EXTREME LENGTH REQUIRED FOR EVERY SLOT: Your previous attempts were too short! You are currently only writing 10-15 words per item. THIS IS UNACCEPTABLE. You MUST force yourself to write AT LEAST 40 WORDS FOR EACH AND EVERY ITEM (both hero and sub-items).
+3. HOW TO ACHIEVE LENGTH: For every single item, you MUST describe: 
+   - Its exact physical pose and dynamic action
+   - Its intricate clothing, gear, or mechanical parts
+   - Its distinct materials, textures, and specific color shades
+   - A unique prop it is holding, standing on, or interacting with
+   - Its facial expression or micro-details (e.g. "glowing LED dashboard", "rosy cheeks")
+4. UNIFIED THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
+5. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). Weave the descriptions smoothly into the sentence.
+6. SUFFIX RULE: You MUST append the exact style suffix at the very end of the completed prompt string.
    - Suffix to append: ${activeSuffix}
 
-EXAMPLE OF A HIGH-QUALITY EXPANDED ITEM (Use this level of depth for EVERY item):
-"a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation"
+EXAMPLE OF A HIGH-QUALITY EXPANDED ITEM (Use this massive level of depth for EVERY item!):
+"a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with an oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation, eyes wide with pure excitement and lips parted in a bright laugh"
 
 Return ONLY a valid JSON array of ${settings.numPrompts} prompt strings.`;
     } else {
