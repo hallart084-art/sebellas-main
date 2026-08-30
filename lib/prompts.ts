@@ -921,10 +921,9 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
    - For EVERY SINGLE SLOT, describe its exact physical pose, its intricate clothing/gear, its distinct materials and colors, a unique prop it is holding, and its specific facial expression or micro-details!
    - Every slot must be described with the massive depth and richness of a standalone heroic illustration! You MUST NOT truncate or skip any slots!
 
-4. 🚫 **STRICT ZERO-TEXT & ZERO-NEWLINES CONTRACT**:
+4. 🚫 **STRICT ZERO-TEXT CONTRACT**:
    - STRICTLY FORBIDDEN: DO NOT write label headers in uppercase like "ONE DOMINANT HERO VERTICAL PANEL" or "A 2x2 QUAD GRID". Midjourney will literally render these words as text in the image!
-   - Weave the layout purely as natural English descriptions (e.g. "a split-panel layout, the left half is a large vertical panel featuring a chubby-cheeked toddler... while the right half is a 2x2 grid featuring a toy car...").
-   - STRICTLY FORBIDDEN: NO NEWLINES / NO ENTER CHARACTERS. Output each prompt as a single continuous unbroken line of text.
+   - Weave the layout purely as natural English descriptions.
    - The final artwork must have STRICTLY ZERO TEXT, ZERO LETTERS, ZERO NUMBERS, ZERO LABELS, AND ZERO WATERMARKS.`;
   }
 
@@ -1031,8 +1030,8 @@ MANDATORY BUNDLE PACK & GRID LAYOUT SPECIFICATION:
 
 CRITICAL RULES FOR ITEM EXPANSION (IGNORE AT YOUR PERIL):
 1. NO LAZY SUMMARIES: Do NOT just do a short fill-in-the-blank substitution (e.g., "a red car"). 
-2. ⚠️ EXTREME LENGTH REQUIRED FOR EVERY SLOT: Your previous attempts were too short! You are currently only writing 10-15 words per item. THIS IS UNACCEPTABLE. You MUST force yourself to write AT LEAST 40 WORDS FOR EACH AND EVERY ITEM (both hero and sub-items).
-3. ⚠️ DO NOT SKIP ITEMS: The format uses numbers (e.g., "1)", "2)"). You MUST explicitly write out a description for EVERY numbered item. If there are 6 items, do NOT stop at 1!
+2. ⚠️ EXTREME LENGTH REQUIRED: You MUST write AT LEAST 40 WORDS FOR EACH AND EVERY ITEM (both hero and sub-items).
+3. ⚠️ DO NOT SKIP ITEMS: You MUST explicitly create a JSON key/value for EVERY single item requested in the layout. If there are 6 items, your JSON object MUST have 6 item keys!
 4. HOW TO ACHIEVE LENGTH: For every single item, you MUST describe: 
    - Its exact physical pose and dynamic action
    - Its intricate clothing, gear, or mechanical parts
@@ -1040,14 +1039,21 @@ CRITICAL RULES FOR ITEM EXPANSION (IGNORE AT YOUR PERIL):
    - A unique prop it is holding, standing on, or interacting with
    - Its facial expression or micro-details (e.g. "glowing LED dashboard", "rosy cheeks")
 5. UNIFIED THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
-6. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). Weave the descriptions smoothly into the sentence, retaining the numbers (e.g. "1) a chubby kid..., 2) a toy car...").
-7. SUFFIX RULE: You MUST append the exact style suffix at the very end of the completed prompt string.
-   - Suffix to append: ${activeSuffix}
+6. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). 
 
-EXAMPLE OF A HIGH-QUALITY EXPANDED ITEM (Use this massive level of depth for EVERY item!):
-"1) a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with an oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation, eyes wide with pure excitement and lips parted in a bright laugh"
+YOU MUST OUTPUT EXACTLY THIS JSON FORMAT (Array of Objects):
+[
+  {
+    "layout_prefix": "${layoutFormula}",
+    "item_1": "1) a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with an oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation, eyes wide with pure excitement and lips parted in a bright laugh",
+    "item_2": "2) [massive 40+ word description for item 2...]",
+    "item_3": "3) [massive 40+ word description for item 3...]"
+    // ... continue for ALL items required by the layout ...
+  }
+  // ... repeat for ${settings.numPrompts} total prompts ...
+]
 
-Return ONLY a valid JSON array of ${settings.numPrompts} prompt strings.`;
+Return ONLY a valid JSON array of objects. DO NOT output the suffix (the system will add it automatically).`;
     } else {
       contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
 

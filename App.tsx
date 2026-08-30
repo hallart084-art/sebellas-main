@@ -537,15 +537,26 @@ const App: React.FC = () => {
 
       try {
         const parsed = JSON.parse(sanitizedText);
+        
+        const mapPromptItem = (p: any): string => {
+          if (typeof p === 'string') return p;
+          if (Array.isArray(p)) return p.filter(v => typeof v === 'string').join(', ');
+          if (typeof p === 'object' && p !== null) {
+            // Join all string values in the object (e.g. { item1: "...", item2: "..." })
+            return Object.values(p).filter(v => typeof v === 'string').join(', ');
+          }
+          return String(p);
+        };
+
         if (Array.isArray(parsed)) {
-          parsedPrompts = parsed.map(p => typeof p === 'string' ? p : (typeof p === 'object' && p !== null ? (Object.values(p)[0] as string || JSON.stringify(p)) : String(p)));
+          parsedPrompts = parsed.map(mapPromptItem);
         } else if (parsed && typeof parsed === 'object') {
           const firstArr = Object.values(parsed).find(v => Array.isArray(v));
           if (firstArr) {
-            parsedPrompts = (firstArr as any[]).map(p => typeof p === 'string' ? p : (typeof p === 'object' && p !== null ? (Object.values(p)[0] as string || JSON.stringify(p)) : String(p)));
+            parsedPrompts = (firstArr as any[]).map(mapPromptItem);
           } else {
-            const values = Object.values(parsed).filter(v => typeof v === 'string') as string[];
-            parsedPrompts = values.length > 0 ? values : [sanitizedText];
+            // If it's a single object, maybe it's just one prompt with multiple items
+            parsedPrompts = [mapPromptItem(parsed)];
           }
         } else {
           parsedPrompts = [sanitizedText];
