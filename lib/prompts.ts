@@ -528,44 +528,45 @@ const buildVectorTextPrompt = (
 
   if (isJerseyPattern) {
     activeSuffix = getJerseyPatternSuffix(isWhiteBg, concept);
-    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (JERSEY PATTERN):
-1. **INTELLIGENT SPORT-SPECIFIC SUFFIX LOCKING**:
-   - The exact sport cutting silhouette (e.g. basketball sleeveless tank, soccer polo/crossover, esports tournament raglan, cycling quarter-zip, motocross long-sleeve) is ALREADY locked into the mandatory style suffix.
-   - The AI Expanded Concept MUST focus purely on the graphic pattern motifs, curved ribbons, tribal flames, clean pinstripes, geometric cuts, and high-contrast color harmony!
+    styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (JERSEY SUBLIMATION PATTERN):
+1. **AUTHENTIC SOCCER & SPORTSWEAR SUBLIMATION DESIGN (STRICTLY NO GENERIC WALLPAPERS / NO CAR LIVERIES)**:
+   - This is an authentic sportswear sublimation kit design for football/soccer and athletic apparel.
+   - The design MUST feature a balanced holistic composition designed specifically for a sports garment: front torso graphic, collar integration, sleeve harmony, and chest sponsor/crest placement zone.
+   - **STRICT BAN**: DO NOT create random repeating tile wallpapers, generic abstract backgrounds, or vehicle decal stickers.
 
-2. **DUAL SPLIT 50:50 VERTICAL PRESENTATION (MATCHING MOCKUP ON SOLID WHITE + PURE FULL-BLEED PATTERN)**:
-   - **LEFT VERTICAL HALF (50%)**: Displays a clean, flat 2D technical vector front-view athletic sports jersey shirt mockup featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described.
-   - **RIGHT VERTICAL HALF (50%)**: Displays a 100% PURE FULL-BLEED SEAMLESS REPEATING FLAT 2D VECTOR SUBLIMATION GRAPHIC PATTERN TILE touching all outer canvas edges.
-     * STRICTLY ZERO SPONSOR TEXT, ZERO NUMBERS, ZERO CLUB LOGOS, ZERO LETTERS, ZERO CREST BADGES, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES ON THE PATTERN HALF!
+2. **MASTER SOCCER JERSEY APPAREL ARCHETYPES (CHOOSE & EXPAND)**:
+   - **Archetype 1 (Liquid Marble & Topographic Swirls)**: Organic marbling fluid flow, liquid distortion ripples, biomorphic topographical contour lines, and flowing camo-liquid curves.
+   - **Archetype 2 (90s Retro Geometric & Chevron Speed Shards)**: Multi-angled diagonal speed slashes, layered V-shaped chevron arrows, fractured diamond matrix blocks, and German/Dutch 1988-90 inspired geometric tessellations.
+   - **Archetype 3 (Distressed Dry-Brush & Splatter Sashes)**: Grunge paintbrush sweeps, dry-brush textured diagonal sashes across the chest, spray stencil splatter textures, and aggressive dynamic streak bands.
+   - **Archetype 4 (Halftone Dot Matrix & Gradient Mesh Fades)**: Fading halftone dot matrix grids transitioning from dense to dispersed, engineered mesh texture illusions, and dynamic micro-dot energy rays.
+   - **Archetype 5 (Modernized Club Stripes & Tournament Sashes)**: Modernized vertical bar stripes embedded with micro-geometric hatching, dynamic diagonal tournament sashes, and symmetrical chest chevron winglets.
+   - **Archetype 6 (Cultural / Ornamental / Subtle Tonal Jacquard)**: Subtle tone-on-tone jacquard embossing, traditional ornamental geometric borders, and tribal/batik line art integrated into central vertical chest bands.
 
-3. **COVERAGE & NEGATIVE SPACE (CRITICAL)**:
-   - Carefully read the user's prompt. If they ask for "minimalist" or "clean" or "center block", DO NOT generate full-body all-over patterns. 
-   - Explicitly mention "vast clean negative space" and pinpoint where the graphic lives (e.g. "minimalist chest band", "clean shoulder accents").
-   - If they ask for aggressive/full-body, then generate edge-to-edge patterns.
+3. **DYNAMIC APPAREL CUT & COLLAR ROTATION**:
+   - In your prompt concept, ALWAYS specify a distinct collar and sleeve cut for variety:
+     * "crossover ribbed V-neck with contrast raglan sleeves"
+     * "classic 90s fold-over polo collar with button placket"
+     * "two-tone ribbed crew neck with contrasting shoulder yoke panels"
+     * "modern aerodynamic stand-up blade collar with curved flank mesh inserts"
+     * "overlapping wrap-around ribbed collar with matching patterned short sleeves"
 
-4. **MASTER APPAREL DESIGN ARCHETYPES (DIVERSE & NEUTRAL SHAPES)**:
-   - **Organic & Fluid**: Sweeping tribal flame curves, aerodynamic wave pipelines, organic contour liquid lines.
-   - **Classic & Minimalist**: Elegant vertical pinstripes, simple horizontal chest bands, structured symmetrical center shields.
-   - **Constructivist & Geometric**: Asymmetrical color-block wedges, sharp angular momentum cuts, diagonal racing sashes.
+4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY (ZERO GRADIENTS, ZERO SHADOWS, ZERO 3D)**:
+   - Hard-edge solid flat color planes only. Zero photographic reflections, zero airbrush shading, zero glow/bloom, zero 3D fabric folds/wrinkles.
+   - **STRICT WORD BAN**: DO NOT USE 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', or 'amber'. Use solid flat colors: 'solid canary yellow', 'solid stark white', 'solid jet black', 'solid crimson red', 'solid royal blue', 'solid emerald green', 'solid solar orange'.
 
-4. **100% FLAT 2D VECTOR & AUTO-TRACE FRIENDLY (STRICTLY ZERO GRADIENTS, ZERO GLOW & ZERO METALLICS)**:
-   - Render all elements with razor-sharp hard-edge solid flat color planes without photographic reflections, without soft gradients, without color ramps, without ombré blending, without airbrush shading, without glow/bloom effects, without 3D mannequin rendering, and without fabric wrinkles.
-   - **STRICT WORD BAN**: DO NOT USE words like 'gold', 'golden', 'titanium', 'metallic', 'chrome', 'bronze', 'silver', 'neon', 'glowing', 'cyber', 'glitch', 'shiny', or 'amber'. Use pure solid flat colors: 'solid canary yellow', 'solid crisp white', 'solid jet black', 'solid scarlet red', 'solid royal blue'.
+5. **BOLD 2-3 TONE ATHLETIC COLOR HARMONY**:
+   - High-contrast sportswear palettes: (e.g. crimson red + obsidian black + stark white, royal samurai blue + cyber cyan + crisp white, forest green + acid lime + jet black, vibrant magenta + midnight navy + stark white, bold solar orange + deep navy + crisp white).
 
-5. **ULTRA-VIBRANT HIGH-CONTRAST SOLID COLOR PALETTE**:
-   - Bold athletic color combinations (e.g. electric cyan + midnight navy + stark white, forest green + cream + sun yellow, crimson red + obsidian black + stark white, acid lime + matte black, royal purple + canary yellow).
-
-6. **STRICTLY ZERO EXTRA TEXT / ZERO BRAND LOGOS / ZERO WATERMARKS**:
-   - Absolutely NO manufacturer brand logos. The ONLY allowed text is the optional uppercase word "SPONSOR".
-
-7. **DO NOT OUTPUT THE SUFFIX**:
-   - The system will automatically append the layout/mockup suffix. YOU MUST ONLY OUTPUT THE CORE GRAPHIC CONCEPT. Do not write the layout instructions!
+6. **DO NOT OUTPUT THE SUFFIX**:
+   - The system will automatically append the layout/mockup suffix. YOU MUST ONLY OUTPUT THE CORE JERSEY & GRAPHIC CONCEPT.
 
 FEW-SHOT EXAMPLES (CONCEPT ONLY):
-- "minimalist japan style tribal curve" -> "Minimalist fluid tribal flame curves in bold crimson red wrapping around the sleeves and lower flanks, set against a vast clean samurai blue negative space base"
-- "elegant classic retro" -> "Minimalist elegant vertical pinstripes in deep navy framing a solid stark white central chest block, featuring vast clean negative space"
-- "futsal velocity aggressive" -> "Aggressive full-body interlocking vibrant cyan-blue triangular shards, crisp white speed chevron arrows, and deep navy blue contrast flank cuts covering the entire canvas"
-- "cycling topographic wave" -> "Flowing teal contour elevation map ribbons sweeping as a wide chest band across a solid aqua negative space base"`;
+- "korea tiger red" -> "Dynamic tiger-stripe camouflage dry-brush pattern in deep crimson and bright scarlet across the torso, paired with a crossover ribbed V-neck and contrast obsidian black flank panels"
+- "indonesia dark chevron" -> "Tonal charcoal and jet black diagonal chevron speed stripes with fine pinstripe hatching across the chest, featuring a two-tone ribbed crew neck and solid black raglan sleeves"
+- "fluid ocean wave" -> "Undulating topographical liquid marble swirls in deep samurai blue and crisp white sweeping across the torso, framed by a classic ribbed collar and solid contrast sleeve cuffs"
+- "90s retro geometric diamond" -> "Aggressive 1990s retro geometric chevron shards and fading halftone dot matrix blocks in electric cyan, royal blue, and stark white with a fold-over polo collar"
+- "tribal cultural ornament" -> "Symmetrical ornamental tribal contour motifs flanking a solid solar yellow vertical chest band on a jet black negative space base, with a modern blade collar"
+- "grunge diagonal slash" -> "Distressed dry-brush diagonal speed sashes in bold crimson and matte black slicing across a clean white negative space torso with contrast shoulder yokes"`;
   } else if (isCarWrapLivery) {
     styleRules = `MANDATORY PROMPT STRUCTURE & RULES (CAR WRAP LIVERY):
 1. **AUTHENTIC MOTORSPORT RACING DECALS (STRICTLY NO WALLPAPER / NO REPETITIVE TEXTURE TILES)**:
@@ -744,32 +745,65 @@ FEW-SHOT EXAMPLES:
   const isAbstractGraphicStyle = isJersey || isCarWrap || isSeamlessPattern;
 
   let expansionRules = '';
-  if (isAbstractGraphicStyle) {
+  if (isJersey) {
     expansionRules = `
 ═══════════════════════════════════════════════════════════════════════════════════════
-👑 GRAPHIC DESIGN & APPAREL MOTIF EXPANSION RULES (MANDATORY FOR THIS STYLE)
+👑 AUTHENTIC SOCCER & SPORTS JERSEY SUBLIMATION EXPANSION (MANDATORY FOR JERSEYS)
 ═══════════════════════════════════════════════════════════════════════════════════════
 
-When processing ANY user concept/keyword for this graphic pattern style:
-1. 🎯 **STRICTLY NO TANGIBLE MICRO-SCENES OR OBJECT ARRAYS**:
-   - DO NOT generate scenes, landscapes, isometric villages, people, or arrays of physical props (like cameras or coffee cups).
-   - You must generate authentic, high-end sportswear/motorsport sublimation graphics: geometric cuts, fluid waves, halftone fading dots, 90s retro kit patterns, or modern aerodynamic vector motifs!
+You are a legendary Head Kit Designer for global football/soccer clubs (like Nike, Adidas, Puma, Umbro).
+When expanding ANY user concept/keyword for a Jersey design:
 
-2. 👕 **DYNAMIC APPAREL CUT VARIETY (MANDATORY FOR JERSEYS)**:
-   - If generating a Jersey, you MUST explicitly describe a unique collar and sleeve cut in your prompt to create variety!
-   - Examples of cuts to rotate: "thick ribbed V-neck with raglan sleeves", "classic 90s polo collar with button placket", "modern asymmetrical blade collar", "retro crossover crew neck with contrasting shoulder yokes", "aerodynamic seamless collar".
+1. 🎯 **HOLISTIC SPORTSWEAR GARMENT COMPOSITION (NOT JUST A WALLPAPER)**:
+   - You MUST design a complete, authentic sportswear kit: front torso graphic, collar/neckline construction, sleeve treatment, and dynamic flank panels.
+   - STRICT BAN: DO NOT output inanimate props, isolated objects (like cameras or coffee), generic wallpaper tiles, or car decals.
 
-3. ⚙️ **INTELLIGENT MOTIF EXPANSION**:
-   - If the user types "fire", expand to "Sweeping biomorphic tribal flame curves, dynamic solar orange heat contours, and aggressive fluid magma cuts with contrasting raglan sleeves".
-   - If the user types "cyber", expand to "Explosive diagonal electric cyan speed slashes, high-density halftone dot matrix bursts, and fragmented obsidian black crystal lightning blades".
-   - If the user types "retro", expand to "Classic minimalist horizontal pinstripes, elegant vintage racing sashes, fading jacquard texture effect, and clean pastel block panels with a retro polo collar".
+2. 👕 **MANDATORY 6 MASTER SOCCER SUBLIMATION ARCHETYPES**:
+   - **Archetype 1 (Liquid Distortion & Topographic Marble)**: Fluid marbling distortion, biomorphic contour wave ripples, flowing camo-liquid curves across torso.
+   - **Archetype 2 (90s Retro Geometric Chevrons & Speed Shards)**: Layered V-chevrons, diamond matrix blocks, fractured speed slashes, 1988-90 German/Dutch retro kit geometry.
+   - **Archetype 3 (Distressed Dry-Brush & Splatter Sashes)**: Grunge paintbrush streaks, textured diagonal sashes, dry-brush splatter effects across chest.
+   - **Archetype 4 (Halftone Dot Matrix & Gradient Mesh Fades)**: Fading halftone dot grids transitioning from dense chest to dispersed hem, engineered breathable mesh illusions.
+   - **Archetype 5 (Modernized Club Stripes & Tournament Sashes)**: Modernized vertical bar stripes with embedded geometric micro-hatching, diagonal lightning edge sashes.
+   - **Archetype 6 (Cultural / Ornamental / Subtle Tonal Jacquard)**: Subtle tone-on-tone jacquard texture embossing, ornamental traditional/tribal geometric borders on chest or sleeves.
+
+3. ✂️ **DYNAMIC APPAREL CUT & COLLAR ROTATION**:
+   - In every prompt, explicitly describe a unique collar & sleeve style:
+     * "crossover ribbed V-neck with contrast raglan sleeves"
+     * "classic 90s polo collar with button placket"
+     * "two-tone ribbed crew neck with contrasting shoulder yoke panels"
+     * "modern aerodynamic stand-up blade collar with curved flank mesh inserts"
+     * "overlapping wrap-around ribbed collar with matching patterned sleeves"
 
 4. 🚫 **STRICT ZERO-REPETITION**:
-   - In ANY batch of prompts, NO TWO PROMPTS MAY SHARE THE SAME MOTIF STRUCTURE OR COLLAR TYPE.
-   - Dynamically rotate through fluid curves, aggressive geometric shards, retro 90s aesthetics, and intricate halftone patterns.
+   - In ANY batch of prompts, dynamically rotate across different Archetypes (e.g. Prompt 1: Liquid Marble, Prompt 2: 90s Chevron Shards, Prompt 3: Distressed Brush Sash, Prompt 4: Halftone Mesh, etc.) and different collar styles!
 
 5. 💎 **AUTHENTIC SPORTSWEAR TERMINOLOGY**:
-   - Use precise, vivid vector terminology (e.g. "fading halftone dot gradients", "dynamic mesh texture graphics", "razor-sharp aerodynamic winglet facets", "retro 90s geometric color-block wedges", "fluid undulating contour ribbons").`;
+   - Use precise, vivid vector terminology: "fading halftone dot matrix", "topographical liquid swirl", "dry-brush diagonal sash", "crossover ribbed V-neck", "tonal pinstripe hatching", "contrasting shoulder yokes", "aerodynamic flank panels".`;
+  } else if (isCarWrap) {
+    expansionRules = `
+═══════════════════════════════════════════════════════════════════════════════════════
+👑 MOTORSPORT CAR WRAP LIVERY EXPANSION RULES (MANDATORY FOR CAR WRAPS)
+═══════════════════════════════════════════════════════════════════════════════════════
+
+When processing ANY user concept/keyword for a Car Wrap Livery:
+1. 🎯 **DIRECTIONAL RACING DECALS (STRICTLY NO WALLPAPERS / NO FULL TEXTURES)**:
+   - Focus 100% on aerodynamic racing decal stripes, speed shards, fluid drift graphics, and high-contrast color blocking sweeping across vehicle side panels.
+   - STRICT BAN: DO NOT create repeating wallpaper grids or texture tiles.
+
+2. 🏎️ **DIVERSE MOTORSPORT ARCHETYPES**:
+   - Rotate between: Fluid Drift Liquid ribbons, Aggressive Tribal Claw arcs, Classic Dual Racing Stripes, and Modern Kinetic Angular thrust blocks.
+
+3. 💎 **AUTHENTIC AUTOMOTIVE TERMINOLOGY**:
+   - Use precise vector terms: "aerodynamic velocity streaks", "razor-sharp winglet facets", "high-contrast diagonal speed slashes", "sweeping side fender decal".`;
+  } else if (isSeamlessPattern) {
+    expansionRules = `
+═══════════════════════════════════════════════════════════════════════════════════════
+👑 SEAMLESS SURFACE PATTERN EXPANSION RULES
+═══════════════════════════════════════════════════════════════════════════════════════
+
+1. 🎯 **FULL-BLEED SEAMLESS ALL-OVER REPEAT**:
+   - Design an edge-to-edge seamless repeating surface pattern (textile print, wallpaper, packaging aesthetic).
+   - Scatter or rhythmically tile theme motifs evenly across the canvas. Lineless 2D flat vector only.`;
   } else {
     expansionRules = `
 ═══════════════════════════════════════════════════════════════════════════════════════
