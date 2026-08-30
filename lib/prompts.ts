@@ -875,54 +875,54 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
 
   if (isMultiItemLayout) {
     let layoutSchema = '';
-    let totalItems = 5;
     if (isLayout1) {
       totalItems = 5;
-      layoutSchema = 'organized in a five-panel presentation layout: the left half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], while the right half features A 2x2 QUAD GRID OF FOUR DISTINCT SUPPORTING PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+      layoutSchema = 'a split-panel layout: the left half is a single large vertical panel featuring [HERO_SUBJECT], while the right half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
     } else if (isLayout2) {
       totalItems = 5;
-      layoutSchema = 'organized in a five-panel presentation layout: the left half features A 2x2 QUAD GRID OF FOUR DISTINCT SPECIALIZED PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION]';
+      layoutSchema = 'a split-panel layout: the left half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half is a single large vertical panel featuring [HERO_SUBJECT]';
     } else if (isLayout3) {
       totalItems = 5;
-      layoutSchema = 'organized in a five-panel center-spotlight presentation layout: a central DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], symmetrically flanked by two distinct vertical sub-panels on the left [ITEM_1], [ITEM_2] and two distinct vertical sub-panels on the right [ITEM_3], [ITEM_4]';
+      layoutSchema = 'a symmetrical three-section layout: the center is a large dominant vertical panel featuring [HERO_SUBJECT], flanked by two smaller stacked vertical panels on the left featuring [ITEM_1] and [ITEM_2], and two smaller stacked vertical panels on the right featuring [ITEM_3] and [ITEM_4]';
     } else if (isLayout4) {
       totalItems = 6;
-      layoutSchema = 'organized in a symmetrical 2x3 matrix grid layout displaying SIX DISTINCT NON-REPETITIVE SUBJECTS AND POSES evenly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+      layoutSchema = 'a symmetrical 2x3 matrix grid layout displaying six distinct items evenly arranged: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
     } else if (isLayout5) {
       totalItems = 12;
-      layoutSchema = 'organized in an expansive 3x4 matrix grid layout displaying TWELVE DISTINCT NON-REPETITIVE SUBJECTS, PROPS, OR ENTITIES neatly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+      layoutSchema = 'an expansive 3x4 matrix grid layout displaying twelve distinct items arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
     } else if (isLayout6) {
       totalItems = 4;
-      layoutSchema = 'organized in a balanced 2x2 quad matrix presentation layout displaying FOUR EXHAUSTIVELY DETAILED APEX SUBJECTS with each quadrant meticulously rendered with the full anatomical and artistic depth of an individual heroic centerpiece: in the top-left quadrant [ITEM_1], in the top-right quadrant [ITEM_2], in the bottom-left quadrant [ITEM_3], and in the bottom-right quadrant [ITEM_4]';
+      layoutSchema = 'a balanced 2x2 quad matrix presentation layout displaying four apex subjects: in the top-left [ITEM_1], in the top-right [ITEM_2], in the bottom-left [ITEM_3], and in the bottom-right [ITEM_4]';
     } else if (isLayout7) {
       totalItems = 3;
-      layoutSchema = 'organized in a balanced three-column vertical triptych layout showcasing THREE DISTINCT SUBJECTS OR POSES side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
+      layoutSchema = 'a balanced three-column vertical triptych layout showcasing three distinct subjects side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
     } else if (isStickerSet) {
       totalItems = 6;
-      layoutSchema = 'organized as a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas';
+      layoutSchema = 'a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
     }
 
     layoutInstruction = `
 ═══════════════════════════════════════════════════════════════════════════════════════
 👑 MANDATORY MULTI-ITEM BUNDLE PACK & GRID LAYOUT FORMULA (${chosenPreset.toUpperCase()})
 ═══════════════════════════════════════════════════════════════════════════════════════
-1. 🎯 **SINGLE COHESIVE THEME ACROSS THE ENTIRE SHEET**:
-   - Every single generated prompt must describe ONE unified thematic universe (e.g. "Modern Coffee Barista Artisans", "Deep Space Astronaut Explorers", "Woodworking Carpentry Tools", "Apex Wildlife Predators").
-   - ALL ${totalItems} items/slots MUST share the exact same cohesive art style, identical high-contrast 2-3 tone color palette, and matching stylistic morphology!
+1. 🎯 **SINGLE COHESIVE THEME**:
+   - Every single generated prompt must describe ONE unified thematic universe (e.g. "Modern Coffee Barista Artisans", "Deep Space Astronaut Explorers").
+   - ALL ${totalItems} items/slots MUST share the exact same cohesive art style, identical high-contrast color palette, and matching stylistic morphology!
 
 2. 📐 **MANDATORY LAYOUT STRUCTURE**:
-   - Every prompt MUST structure the canvas using this exact composition:
+   - Every prompt MUST structure the canvas using this exact composition format:
      "${layoutSchema}"
 
 3. 💎 **DEEP, EXHAUSTIVE CHARACTERIZATION PER ITEM (EQUAL TO SINGLE IMAGE QUALITY)**:
-   - YOU MUST NOT write brief, lazy, or generic summaries for the slots (e.g. do NOT just say "a lion, a bear, an eagle").
+   - YOU MUST NOT write brief, lazy, or generic summaries for the slots (e.g. do NOT just say "a lion, a bear").
    - For EVERY SINGLE SLOT, you MUST write full, rich, masterclass-level anatomical detail, specific breed/species/tool model, distinctive physical attributes, and a unique dynamic action!
-   - Every slot must feel like a standalone heroic illustration crafted with deep thought and precision!
+   - Every slot must be described with the depth and richness of a standalone heroic illustration! You MUST NOT truncate or skip any slots!
 
 4. 🚫 **STRICT ZERO-TEXT & ZERO-NEWLINES CONTRACT**:
-   - STRICTLY FORBIDDEN: DO NOT write label headers like "Card 1:", "Row 1:", "Slot 1:", "Top-Left:". Weave the slot descriptions smoothly in natural English.
-   - STRICTLY FORBIDDEN: NO NEWLINES / NO ENTER CHARACTERS in the prompt. Output each prompt as a single continuous unbroken line of text.
-   - The final artwork must have STRICTLY ZERO TEXT, ZERO LETTERS, ZERO NUMBERS, ZERO LABELS, ZERO TYPOGRAPHY, AND ZERO WATERMARKS.`;
+   - STRICTLY FORBIDDEN: DO NOT write label headers in uppercase like "ONE DOMINANT HERO VERTICAL PANEL" or "A 2x2 QUAD GRID". Midjourney will literally render these words as text in the image!
+   - Weave the layout purely as natural English descriptions (e.g. "a split-panel layout, the left half is a large vertical panel featuring a chubby-cheeked toddler... while the right half is a 2x2 grid featuring a toy car...").
+   - STRICTLY FORBIDDEN: NO NEWLINES / NO ENTER CHARACTERS. Output each prompt as a single continuous unbroken line of text.
+   - The final artwork must have STRICTLY ZERO TEXT, ZERO LETTERS, ZERO NUMBERS, ZERO LABELS, AND ZERO WATERMARKS.`;
   }
 
   return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
@@ -994,28 +994,28 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
       let slotCount = 5;
       if (isLayout1) {
         slotCount = 5;
-        layoutFormula = 'organized in a five-panel presentation layout: the left half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], while the right half features A 2x2 QUAD GRID OF FOUR DISTINCT SUPPORTING PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+        layoutFormula = 'a split-panel layout: the left half is a single large vertical panel featuring [HERO_SUBJECT], while the right half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
       } else if (isLayout2) {
         slotCount = 5;
-        layoutFormula = 'organized in a five-panel presentation layout: the left half features A 2x2 QUAD GRID OF FOUR DISTINCT SPECIALIZED PANELS displaying four completely different subjects, poses, or specialized tools [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half features ONE DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION]';
+        layoutFormula = 'a split-panel layout: the left half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half is a single large vertical panel featuring [HERO_SUBJECT]';
       } else if (isLayout3) {
         slotCount = 5;
-        layoutFormula = 'organized in a five-panel center-spotlight presentation layout: a central DOMINANT HERO VERTICAL PANEL showcasing the primary centerpiece subject [HERO_DESCRIPTION], symmetrically flanked by two distinct vertical sub-panels on the left [ITEM_1], [ITEM_2] and two distinct vertical sub-panels on the right [ITEM_3], [ITEM_4]';
+        layoutFormula = 'a symmetrical three-section layout: the center is a large dominant vertical panel featuring [HERO_SUBJECT], flanked by two smaller stacked vertical panels on the left featuring [ITEM_1] and [ITEM_2], and two smaller stacked vertical panels on the right featuring [ITEM_3] and [ITEM_4]';
       } else if (isLayout4) {
         slotCount = 6;
-        layoutFormula = 'organized in a symmetrical 2x3 matrix grid layout displaying SIX DISTINCT NON-REPETITIVE SUBJECTS AND POSES evenly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+        layoutFormula = 'a symmetrical 2x3 matrix grid layout displaying six distinct items evenly arranged: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
       } else if (isLayout5) {
         slotCount = 12;
-        layoutFormula = 'organized in an expansive 3x4 matrix grid layout displaying TWELVE DISTINCT NON-REPETITIVE SUBJECTS, PROPS, OR ENTITIES neatly arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+        layoutFormula = 'an expansive 3x4 matrix grid layout displaying twelve distinct items arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
       } else if (isLayout6) {
         slotCount = 4;
-        layoutFormula = 'organized in a balanced 2x2 quad matrix presentation layout displaying FOUR EXHAUSTIVELY DETAILED APEX SUBJECTS with each quadrant meticulously rendered with the full anatomical and artistic depth of an individual heroic centerpiece: in the top-left quadrant [ITEM_1], in the top-right quadrant [ITEM_2], in the bottom-left quadrant [ITEM_3], and in the bottom-right quadrant [ITEM_4]';
+        layoutFormula = 'a balanced 2x2 quad matrix presentation layout displaying four apex subjects: in the top-left [ITEM_1], in the top-right [ITEM_2], in the bottom-left [ITEM_3], and in the bottom-right [ITEM_4]';
       } else if (isLayout7) {
         slotCount = 3;
-        layoutFormula = 'organized in a balanced three-column vertical triptych layout showcasing THREE DISTINCT SUBJECTS OR POSES side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
+        layoutFormula = 'a balanced three-column vertical triptych layout showcasing three distinct subjects side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
       } else if (isStickerSet) {
         slotCount = 6;
-        layoutFormula = 'organized as a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+        layoutFormula = 'a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
       }
 
       contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} BUNDLE PACK PROMPTS in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
@@ -1023,15 +1023,16 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
 MANDATORY BUNDLE PACK & GRID LAYOUT SPECIFICATION:
 - Layout Preset: "${chosenPreset}" (${slotCount} distinct items per sheet)
 - Art Style: "${chosenArtStyle}"
-- YOU MUST STRUCTURE EVERY SINGLE PROMPT AS A MULTI-ITEM BUNDLE PACK SHEET USING THIS EXACT COMPOSITION:
+- YOU MUST STRUCTURE EVERY SINGLE PROMPT USING EXACTLY THIS FORMAT:
   "${layoutFormula}"
-- DEEP ITEM CHARACTERIZATION: You MUST exhaustively describe all ${slotCount} individual items/characters/tools with rich anatomical details, unique poses, and specific equipment — exactly equal in descriptive weight to an individual standalone hero image!
-- UNIFIED COHESIVE THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}" and share a matching color palette.
-- STRICT FORMAT: Output each prompt as ONE continuous line without line breaks.
-- STRICT ZERO-TEXT: Strictly no letters, words, numbers, or labels in the artwork.
+- ⚠️ EXTREME ITEM DETAIL REQUIRED: Replace [HERO_SUBJECT] and [ITEM_X] with exhaustive, masterclass-level descriptions. You MUST write at least 30 words per item! Describe specific poses, unique outfits, rich physical characteristics, and detailed props for EVERY item. Do NOT summarize or use generic labels.
+- UNIFIED COHESIVE THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
+- STRICT FORMAT: Do NOT use uppercase layout labels. Weave the layout description naturally in lowercase.
+- FULL SUFFIX AT THE END: You MUST append the exact style suffix at the very end of the completed prompt string.
+- Suffix to append: ${activeSuffix}
 
-Output format for every item in the JSON array:
-"A unified cohesive ${concept} collection sheet, ${layoutFormula}, all sharing an identical cohesive palette, ${activeSuffix}"
+Output format for every prompt in the JSON array:
+"${layoutFormula}, all sharing an identical cohesive palette, ${activeSuffix}"
 
 Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
     } else {
