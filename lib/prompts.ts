@@ -878,28 +878,28 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
     let totalItems = 5;
     if (isLayout1) {
       totalItems = 5;
-      layoutSchema = 'a split-panel layout: the left half is a single large vertical panel featuring [HERO_SUBJECT], while the right half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] on the left side, and four smaller distinct elements arranged on the right side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
     } else if (isLayout2) {
       totalItems = 5;
-      layoutSchema = 'a split-panel layout: the left half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half is a single large vertical panel featuring [HERO_SUBJECT]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: four smaller distinct elements arranged on the left side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], and a large prominent [HERO_SUBJECT] on the right side';
     } else if (isLayout3) {
       totalItems = 5;
-      layoutSchema = 'a symmetrical three-section layout: the center is a large dominant vertical panel featuring [HERO_SUBJECT], flanked by two smaller stacked vertical panels on the left featuring [ITEM_1] and [ITEM_2], and two smaller stacked vertical panels on the right featuring [ITEM_3] and [ITEM_4]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] in the center, flanked by two smaller elements on the left ([ITEM_1], [ITEM_2]) and two smaller elements on the right ([ITEM_3], [ITEM_4])';
     } else if (isLayout4) {
       totalItems = 6;
-      layoutSchema = 'a symmetrical 2x3 matrix grid layout displaying six distinct items evenly arranged: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
     } else if (isLayout5) {
       totalItems = 12;
-      layoutSchema = 'an expansive 3x4 matrix grid layout displaying twelve distinct items arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
     } else if (isLayout6) {
       totalItems = 4;
-      layoutSchema = 'a balanced 2x2 quad matrix presentation layout displaying four apex subjects: in the top-left [ITEM_1], in the top-right [ITEM_2], in the bottom-left [ITEM_3], and in the bottom-right [ITEM_4]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
     } else if (isLayout7) {
       totalItems = 3;
-      layoutSchema = 'a balanced three-column vertical triptych layout showcasing three distinct subjects side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: [ITEM_1], [ITEM_2], and [ITEM_3]';
     } else if (isStickerSet) {
       totalItems = 6;
-      layoutSchema = 'a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+      layoutSchema = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
     }
 
     layoutInstruction = `
@@ -995,28 +995,28 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
       let slotCount = 5;
       if (isLayout1) {
         slotCount = 5;
-        layoutFormula = 'a split-panel layout: the left half is a single large vertical panel featuring [HERO_SUBJECT], while the right half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] on the left side, and four smaller distinct elements arranged on the right side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
       } else if (isLayout2) {
         slotCount = 5;
-        layoutFormula = 'a split-panel layout: the left half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], while the right half is a single large vertical panel featuring [HERO_SUBJECT]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: four smaller distinct elements arranged on the left side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], and a large prominent [HERO_SUBJECT] on the right side';
       } else if (isLayout3) {
         slotCount = 5;
-        layoutFormula = 'a symmetrical three-section layout: the center is a large dominant vertical panel featuring [HERO_SUBJECT], flanked by two smaller stacked vertical panels on the left featuring [ITEM_1] and [ITEM_2], and two smaller stacked vertical panels on the right featuring [ITEM_3] and [ITEM_4]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] in the center, flanked by two smaller elements on the left ([ITEM_1], [ITEM_2]) and two smaller elements on the right ([ITEM_3], [ITEM_4])';
       } else if (isLayout4) {
         slotCount = 6;
-        layoutFormula = 'a symmetrical 2x3 matrix grid layout displaying six distinct items evenly arranged: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
       } else if (isLayout5) {
         slotCount = 12;
-        layoutFormula = 'an expansive 3x4 matrix grid layout displaying twelve distinct items arranged across the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
       } else if (isLayout6) {
         slotCount = 4;
-        layoutFormula = 'a balanced 2x2 quad matrix presentation layout displaying four apex subjects: in the top-left [ITEM_1], in the top-right [ITEM_2], in the bottom-left [ITEM_3], and in the bottom-right [ITEM_4]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
       } else if (isLayout7) {
         slotCount = 3;
-        layoutFormula = 'a balanced three-column vertical triptych layout showcasing three distinct subjects side-by-side: in the left column [ITEM_1], in the center column [ITEM_2], and in the right column [ITEM_3]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: [ITEM_1], [ITEM_2], and [ITEM_3]';
       } else if (isStickerSet) {
         slotCount = 6;
-        layoutFormula = 'a cohesive die-cut sticker collection sheet displaying six distinct stylized vector stickers with clean white die-cut contour borders evenly spaced on the canvas: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+        layoutFormula = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
       }
 
       contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} BUNDLE PACK PROMPTS in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
