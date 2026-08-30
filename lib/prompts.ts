@@ -878,28 +878,28 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
     let totalItems = 5;
     if (isLayout1) {
       totalItems = 5;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] on the left side, and four smaller distinct elements arranged on the right side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: on the left side is 1) a large prominent [HERO_SUBJECT], and arranged on the right side are four smaller distinct elements: 2) [ITEM_1], 3) [ITEM_2], 4) [ITEM_3], and 5) [ITEM_4]';
     } else if (isLayout2) {
       totalItems = 5;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: four smaller distinct elements arranged on the left side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], and a large prominent [HERO_SUBJECT] on the right side';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: arranged on the left side are four smaller distinct elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4], and on the right side is 5) a large prominent [HERO_SUBJECT]';
     } else if (isLayout3) {
       totalItems = 5;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] in the center, flanked by two smaller elements on the left ([ITEM_1], [ITEM_2]) and two smaller elements on the right ([ITEM_3], [ITEM_4])';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: in the center is 1) a large prominent [HERO_SUBJECT], flanked by two smaller elements on the left: 2) [ITEM_1] and 3) [ITEM_2], and two smaller elements on the right: 4) [ITEM_3] and 5) [ITEM_4]';
     } else if (isLayout4) {
       totalItems = 6;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
     } else if (isLayout5) {
       totalItems = 12;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], 6) [ITEM_6], 7) [ITEM_7], 8) [ITEM_8], 9) [ITEM_9], 10) [ITEM_10], 11) [ITEM_11], and 12) [ITEM_12]';
     } else if (isLayout6) {
       totalItems = 4;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4]';
     } else if (isLayout7) {
       totalItems = 3;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: [ITEM_1], [ITEM_2], and [ITEM_3]';
+      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: 1) [ITEM_1], 2) [ITEM_2], and 3) [ITEM_3]';
     } else if (isStickerSet) {
       totalItems = 6;
-      layoutSchema = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+      layoutSchema = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
     }
 
     layoutInstruction = `
@@ -917,6 +917,7 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
 3. 💎 **DEEP, EXHAUSTIVE CHARACTERIZATION PER ITEM (EQUAL TO SINGLE IMAGE QUALITY)**:
    - YOU MUST NOT write brief, lazy, or generic summaries for the slots (e.g. do NOT just say "a lion, a bear").
    - ⚠️ EXTREME LENGTH REQUIRED: You MUST write AT LEAST 40 WORDS FOR EVERY SINGLE ITEM in the grid! 
+   - ⚠️ DO NOT SKIP ITEMS: You must explicitly write out the description for EVERY numbered item (e.g., "1) [description], 2) [description]..."). If the layout asks for 6 items, you MUST write exactly 6 detailed items!
    - For EVERY SINGLE SLOT, describe its exact physical pose, its intricate clothing/gear, its distinct materials and colors, a unique prop it is holding, and its specific facial expression or micro-details!
    - Every slot must be described with the massive depth and richness of a standalone heroic illustration! You MUST NOT truncate or skip any slots!
 
@@ -996,28 +997,28 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
       let slotCount = 5;
       if (isLayout1) {
         slotCount = 5;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] on the left side, and four smaller distinct elements arranged on the right side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: on the left side is 1) a large prominent [HERO_SUBJECT], and arranged on the right side are four smaller distinct elements: 2) [ITEM_1], 3) [ITEM_2], 4) [ITEM_3], and 5) [ITEM_4]';
       } else if (isLayout2) {
         slotCount = 5;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: four smaller distinct elements arranged on the left side: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4], and a large prominent [HERO_SUBJECT] on the right side';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: arranged on the left side are four smaller distinct elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4], and on the right side is 5) a large prominent [HERO_SUBJECT]';
       } else if (isLayout3) {
         slotCount = 5;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: a large prominent [HERO_SUBJECT] in the center, flanked by two smaller elements on the left ([ITEM_1], [ITEM_2]) and two smaller elements on the right ([ITEM_3], [ITEM_4])';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: in the center is 1) a large prominent [HERO_SUBJECT], flanked by two smaller elements on the left: 2) [ITEM_1] and 3) [ITEM_2], and two smaller elements on the right: 4) [ITEM_3] and 5) [ITEM_4]';
       } else if (isLayout4) {
         slotCount = 6;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
       } else if (isLayout5) {
         slotCount = 12;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], [ITEM_6], [ITEM_7], [ITEM_8], [ITEM_9], [ITEM_10], [ITEM_11], and [ITEM_12]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], 6) [ITEM_6], 7) [ITEM_7], 8) [ITEM_8], 9) [ITEM_9], 10) [ITEM_10], 11) [ITEM_11], and 12) [ITEM_12]';
       } else if (isLayout6) {
         slotCount = 4;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4]';
       } else if (isLayout7) {
         slotCount = 3;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: [ITEM_1], [ITEM_2], and [ITEM_3]';
+        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: 1) [ITEM_1], 2) [ITEM_2], and 3) [ITEM_3]';
       } else if (isStickerSet) {
         slotCount = 6;
-        layoutFormula = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: [ITEM_1], [ITEM_2], [ITEM_3], [ITEM_4], [ITEM_5], and [ITEM_6]';
+        layoutFormula = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
       }
 
       contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} BUNDLE PACK PROMPTS in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
@@ -1031,19 +1032,20 @@ MANDATORY BUNDLE PACK & GRID LAYOUT SPECIFICATION:
 CRITICAL RULES FOR ITEM EXPANSION (IGNORE AT YOUR PERIL):
 1. NO LAZY SUMMARIES: Do NOT just do a short fill-in-the-blank substitution (e.g., "a red car"). 
 2. ⚠️ EXTREME LENGTH REQUIRED FOR EVERY SLOT: Your previous attempts were too short! You are currently only writing 10-15 words per item. THIS IS UNACCEPTABLE. You MUST force yourself to write AT LEAST 40 WORDS FOR EACH AND EVERY ITEM (both hero and sub-items).
-3. HOW TO ACHIEVE LENGTH: For every single item, you MUST describe: 
+3. ⚠️ DO NOT SKIP ITEMS: The format uses numbers (e.g., "1)", "2)"). You MUST explicitly write out a description for EVERY numbered item. If there are 6 items, do NOT stop at 1!
+4. HOW TO ACHIEVE LENGTH: For every single item, you MUST describe: 
    - Its exact physical pose and dynamic action
    - Its intricate clothing, gear, or mechanical parts
    - Its distinct materials, textures, and specific color shades
    - A unique prop it is holding, standing on, or interacting with
    - Its facial expression or micro-details (e.g. "glowing LED dashboard", "rosy cheeks")
-4. UNIFIED THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
-5. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). Weave the descriptions smoothly into the sentence.
-6. SUFFIX RULE: You MUST append the exact style suffix at the very end of the completed prompt string.
+5. UNIFIED THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
+6. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). Weave the descriptions smoothly into the sentence, retaining the numbers (e.g. "1) a chubby kid..., 2) a toy car...").
+7. SUFFIX RULE: You MUST append the exact style suffix at the very end of the completed prompt string.
    - Suffix to append: ${activeSuffix}
 
 EXAMPLE OF A HIGH-QUALITY EXPANDED ITEM (Use this massive level of depth for EVERY item!):
-"a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with an oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation, eyes wide with pure excitement and lips parted in a bright laugh"
+"1) a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with an oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation, eyes wide with pure excitement and lips parted in a bright laugh"
 
 Return ONLY a valid JSON array of ${settings.numPrompts} prompt strings.`;
     } else {
