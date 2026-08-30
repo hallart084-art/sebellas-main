@@ -10,7 +10,6 @@ import { VECTOR_LAYOUT_PRESETS, LayoutMiniPreview } from '../lib/layoutPresets';
 export { VECTOR_ART_STYLES };
 export { VECTOR_LAYOUT_PRESETS };
 
-export const VECTOR_PRESETS = VECTOR_LAYOUT_PRESETS.map(p => p.name);
 
 interface VectorBrainstormCardProps {
   settings: UseSettingsReturn;
