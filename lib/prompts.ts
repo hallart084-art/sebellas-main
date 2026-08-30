@@ -875,6 +875,7 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
 
   if (isMultiItemLayout) {
     let layoutSchema = '';
+    let totalItems = 5;
     if (isLayout1) {
       totalItems = 5;
       layoutSchema = 'a split-panel layout: the left half is a single large vertical panel featuring [HERO_SUBJECT], while the right half is a 2x2 grid of four smaller distinct panels featuring [ITEM_1], [ITEM_2], [ITEM_3], and [ITEM_4]';
