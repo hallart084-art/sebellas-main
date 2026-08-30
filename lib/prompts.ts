@@ -427,35 +427,35 @@ export const getJerseyPatternSuffix = (whiteBg: boolean = true, concept: string 
   const lowerConcept = (concept || '').toLowerCase();
 
   let sportTitle = "professional sports jersey sublimation vector design";
-  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels";
 
   if (lowerConcept.includes('basket')) {
     sportTitle = "professional basketball jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup with contrast ribbed armholes and V-neck, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup with contrast ribbed armholes and V-neck";
   } else if (lowerConcept.includes('soccer') || lowerConcept.includes('football') || lowerConcept.includes('futsal') || lowerConcept.includes('sepak')) {
     sportTitle = "professional soccer football jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup with polo or crossover collar and curved flank panels, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup with polo or crossover collar and curved flank panels";
   } else if (lowerConcept.includes('esport') || lowerConcept.includes('gaming') || lowerConcept.includes('tournament')) {
     sportTitle = "professional esports gaming tournament jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup with blade collar, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup with blade collar";
   } else if (lowerConcept.includes('cycling') || lowerConcept.includes('sepeda') || lowerConcept.includes('bike')) {
     sportTitle = "professional road cycling jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic quarter-zip aerodynamic road cycling jersey shirt mockup with streamlined raglan sleeves, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view athletic quarter-zip aerodynamic road cycling jersey shirt mockup with streamlined raglan sleeves";
   } else if (lowerConcept.includes('motocross') || lowerConcept.includes('mx') || lowerConcept.includes('dirt bike')) {
     sportTitle = "professional motocross racing jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup with ribbed cuffs, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup with ribbed cuffs";
   } else if (lowerConcept.includes('volley') || lowerConcept.includes('voli') || lowerConcept.includes('badminton') || lowerConcept.includes('tennis')) {
     sportTitle = "professional volleyball badminton athletic jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup with contrast ribbed neckband, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup with contrast ribbed neckband";
   } else if (lowerConcept.includes('rugby')) {
     sportTitle = "professional rugby sports jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic raglan rugby jersey shirt mockup with durable polo placket, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic raglan rugby jersey shirt mockup with durable polo placket";
   } else if (lowerConcept.includes('running') || lowerConcept.includes('marathon') || lowerConcept.includes('lari')) {
     sportTitle = "professional athletic running marathon jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar, featuring the EXACT SAME matching sublimation graphic pattern integrated into the jersey design exactly as described";
+    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar";
   }
 
-  return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, the jersey mockup must be 100% FLAT with ZERO GRADIENTS ZERO SHADING ZERO SHADOWS ZERO FABRIC WRINKLES on the garment body, with only an optional small minimalist solid single-color geometric shield crest icon on chest and optional clean flat solid single-color uppercase word 'SPONSOR' as the ONLY decorative elements on the mockup, ABSOLUTELY NO SQUAD NUMBERS ON THE MOCKUP, the right vertical half is a 100% PURE FULL-BLEED SEAMLESS REPEATING FLAT 2D VECTOR SUBLIMATION GRAPHIC PATTERN TILE touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
+  return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, THE ENTIRE JERSEY BODY MUST BE FULLY COVERED BY THE DESCRIBED SUBLIMATION GRAPHIC MOTIF, the jersey mockup must be 100% FLAT with ZERO GRADIENTS ZERO SHADING ZERO SHADOWS ZERO FABRIC WRINKLES on the garment body, featuring an optional small minimalist solid single-color geometric shield crest icon on chest and optional clean flat solid single-color uppercase word 'SPONSOR', ABSOLUTELY NO SQUAD NUMBERS ON THE MOCKUP, the right vertical half is a 100% PURE FULL-BLEED FLAT 2D VECTOR SUBLIMATION GRAPHIC ARTWORK PANEL (displaying the expanded master graphic motif) touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
 };
 
 export const JERSEY_PATTERN_SUFFIX = getJerseyPatternSuffix(true);
