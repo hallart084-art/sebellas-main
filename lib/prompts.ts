@@ -824,42 +824,88 @@ When processing ANY user concept/keyword for a Car Wrap Livery:
    - Scatter or rhythmically tile theme motifs evenly across the canvas. Lineless 2D flat vector only.`;
   } else {
     expansionRules = `
-═══════════════════════════════════════════════════════════════════════════════════════
-👑 HIERARCHICAL HIGH-SEO MICROSTOCK EXPANSION RULES (MANDATORY ORDER OF PRIORITIZATION)
-═══════════════════════════════════════════════════════════════════════════════════════
+════════════════════════════════════════════════════════════════════════════════════
+👑 ULTRA-SMART CROSS-NICHE MICROSTOCK EXPANSION ENGINE (MANDATORY — DO NOT SKIP)
+════════════════════════════════════════════════════════════════════════════════════
 
-When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", "kopi/coffee", "kendaraan/vehicles", "medis/medical", "alat tukang/tools", "natal/christmas", "olahraga/sports"):
+Your job is to act as a world-class commercial art director who deeply understands the FULL BREADTH of any topic. When given a concept, you MUST NOT generate similar-looking variations of the same thing. You MUST explore radically different sub-categories, niches, and angles of that concept.
 
-1. 🎯 **TIER 1 (MANDATORY FIRST PRIORITY — CORE DIRECT HIGH-SEO ENTITIES)**:
-   - YOU MUST PRIORITIZE THE MOST DIRECT, POPULAR, HIGH-SEARCH-VOLUME, AND COMMERCIALLY IN-DEMAND SPECIFIC ITEMS OF THE CONCEPT FIRST!
-   - Examples of how to prioritize Tier 1:
-     * Concept "makanan / food" ➔ Prioritize iconic, high-demand popular food dishes first (e.g. gourmet double cheeseburger with melting cheddar, fresh salmon nigiri sushi roll set with wasabi, crispy pepperoni pizza slice with stringy mozzarella, rich tonkotsu ramen bowl with soft-boiled egg, golden glazed donut, spicy beef taco al pastor, stacked fluffy pancakes with maple syrup, golden French croissant, steamed dim sum dumplings, spaghetti bolognese).
-     * Concept "hewan / animal" ➔ Prioritize high-SEO popular species first (e.g. golden retriever puppy, fluffy calico cat, majestic stag deer, arctic wolf, giant panda, soaring bald eagle, playful river otter, humpback whale, barn owl).
-     * Concept "kendaraan / vehicle / mobil" ➔ Prioritize popular direct vehicles first (e.g. modern electric SUV, commercial delivery cargo van, vintage convertible roadster, sleek commuter motorcycle, city transit electric bus, heavy construction excavator).
-     * Concept "alat / tools" ➔ Prioritize core direct essential tools first (e.g. cordless power drill, chrome adjustable wrench, claw hammer, heavy-duty socket wrench set, sharp hand saw, precision utility knife).
-     * Concept "kopi / coffee" ➔ Prioritize core direct coffee preparations first (e.g. rich espresso extraction with golden crema, swan latte art cup, iced cold brew glass with condensation, copper V60 pour-over setup).
-     * Concept "medis / medical" ➔ Prioritize core direct medical items/scenarios first (e.g. stethoscope on doctor, digital ultrasound scan display, surgical scalpel instrument kit, first aid emergency trauma kit).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1 — CONCEPT DECOMPOSITION (DO THIS MENTALLY BEFORE GENERATING ANY PROMPT)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Before writing a single prompt, mentally decompose the concept into AT LEAST 8 completely different sub-categories. Each sub-category must be a genuinely distinct niche — different culture, context, format, or use-case of the concept.
 
-2. ⚙️ **TIER 2 (SECONDARY EXPANSION — RELATED EQUIPMENT, PROPS, INGREDIENTS & WORKFLOWS)**:
-   - ONLY after the core direct items of Tier 1 are thoroughly covered (or for subsequent variations in a larger batch of prompts), smoothly expand into directly related high-value peripheral items:
-     * For "food" ➔ High-grade chef santoku knife on wooden cutting board, vintage manual brass pepper grinder, cast iron skillet with sizzling olive oil, glass condiment dispenser bottle, take-out kraft paper food packaging box.
-     * For "vehicles" ➔ EV fast-charging station pillar, hydraulic mechanic car lift, digital tire pressure gauge, automotive spark plug and battery cluster.
-     * For "coffee" ➔ Manual coffee bean grinder with brass crank, stainless steel espresso portafilter, botanical branch of Coffea arabica with ripe red cherries.
-     * For "tools" ➔ Heavy-duty steel toolbox with organized compartments, rugged leather tool belt with pouches, cast iron workbench vise grip.
+EXAMPLE for concept "food":
+  Sub-category A: Street food / fast food (burger, taco, hot dog)
+  Sub-category B: Asian noodle & soup dishes (ramen, pho, udon)
+  Sub-category C: Baked goods & pastries (croissant, sourdough, donut)
+  Sub-category D: Fine dining / plated cuisine (steak, lobster, sushi)
+  Sub-category E: Snacks & junk food (chips, popcorn, nachos)
+  Sub-category F: Beverages & drinks (bubble tea, iced coffee, smoothie)
+  Sub-category G: Desserts & sweets (ice cream, cake, macaron)
+  Sub-category H: Healthy / organic (grain bowl, avocado toast, salad)
+  Sub-category I: Traditional / cultural dishes (paella, biryani, jollof rice)
+  Sub-category J: Cooking tools & raw ingredients (spices, fresh produce)
 
-3. 🎨 **TIER 3 (TERTIARY EXPANSION — SPECIALIZED ARTISAN WORKFLOWS & MICRO-SCENES)**:
-   - If the art style permits human characters (e.g. Flat illustration), feature focused artisan craftsmanship and high-value commercial actions (e.g. pastry chef scoring sourdough bread dough, technician inspecting solar panel connections).
+EXAMPLE for concept "animals":
+  Sub-cat A: Domestic pets (golden retriever, tabby cat, parrot)
+  Sub-cat B: Wild predators (wolf, tiger, bald eagle)
+  Sub-cat C: Ocean creatures (dolphin, octopus, sea turtle)
+  Sub-cat D: Farm animals (horse, cow, rooster)
+  Sub-cat E: Small mammals (otter, meerkat, hedgehog)
+  Sub-cat F: Insects & bugs (butterfly, stag beetle, mantis)
+  Sub-cat G: Reptiles (chameleon, iguana, crocodile)
+  Sub-cat H: Birds (peacock, flamingo, snowy owl)
+  Sub-cat I: Endangered / exotic (giant panda, snow leopard, axolotl)
 
-4. 🚫 **STRICT ZERO-REPETITION & SEARCH VOLUME VARIETY**:
-   - In ANY batch of prompts, NO TWO PROMPTS MAY SHARE THE SAME ACTION, POSE, COMPOSITION, OR PRIMARY SUBJECT.
-   - Every single generated prompt MUST describe a DIFFERENT specific dish, tool, species, vehicle, or scenario targeting a distinct top-selling commercial microstock keyword!
+EXAMPLE for concept "vehicles":
+  Sub-cat A: Personal cars (sports car, classic muscle car, electric SUV)
+  Sub-cat B: Commercial trucks & vans (cargo van, semi-truck, pickup truck)
+  Sub-cat C: Two-wheelers (cafe racer motorcycle, electric scooter, bicycle)
+  Sub-cat D: Public transport (metro train, city bus, rickshaw)
+  Sub-cat E: Air vehicles (biplane, hot air balloon, drone)
+  Sub-cat F: Water vehicles (sailing yacht, jet ski, fishing boat)
+  Sub-cat G: Specialty / off-road (ATV, monster truck, military jeep)
+  Sub-cat H: Futuristic / concept (flying car, hyperloop pod, hovercraft)
 
-5. 💎 **AUTHENTIC MICRO-DETAILS & TANGIBLE PROPS**:
-   - Avoid vague generic words like "a person with a tool" or "a machine".
-   - Use precise, vivid, tangible terminology (e.g. "a chunky chrome torque wrench tightening an engine bolt", "an ergonomic pruning shear trimming a bonsai branch", "a high-precision laser level projected on concrete").
+APPLY THIS SAME DECOMPOSITION LOGIC TO ANY CONCEPT. Think broadly.
 
-6. 📐 **MULTI-ANGLE COMPOSITIONAL BALANCING**:
-   - Dynamically rotate perspectives across the prompts: dynamic low-angle heroic view, 3/4 isometric perspective, intimate eye-level craftsmanship, balanced overhead top-down flatlay, and sleek side-profile action.`;
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 2 — STRICT CROSS-NICHE ASSIGNMENT (ONE PROMPT = ONE UNIQUE SUB-CATEGORY)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Assign EACH prompt to a DIFFERENT sub-category from Step 1.
+- Prompt 1 → Sub-cat A
+- Prompt 2 → Sub-cat B
+- Prompt 3 → Sub-cat C
+- ... and so on, cycling if needed.
+
+ABSOLUTE FORBIDDEN: No two prompts may share the same:
+  ✗ Primary subject type (e.g., two prompts cannot both be "burger")
+  ✗ Cultural origin (e.g., two Japanese dishes in a row is forbidden)
+  ✗ Visual composition angle (e.g., two overhead flat-lays in a row is forbidden)
+  ✗ Format type (e.g., two street food prompts in a row is forbidden)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3 — ULTRA-SPECIFIC SUBJECT NAMING (NO GENERIC LABELS ALLOWED)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Every subject MUST be named with precision. Never use a vague label when a specific one exists.
+  ✗ FORBIDDEN: "a food item", "an animal", "a vehicle", "a tool"
+  ✓ REQUIRED: "a golden-glazed Korean corn dog with mozzarella stretch", "an arctic wolf mid-leap", "a vintage Kawasaki café racer motorcycle"
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 4 — COMPOSITIONAL ANGLE VARIETY (MANDATORY ROTATION)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Rotate the visual composition angle across prompts:
+  - Overhead top-down flat-lay
+  - 3/4 isometric view
+  - Dramatic low-angle hero shot
+  - Intimate eye-level close-up
+  - Clean side-profile silhouette
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 5 — COMMERCIAL MICROSTOCK SEO PRIORITY (SEARCH DEMAND VALIDATION)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Every subject chosen MUST be a high-search-volume, commercially in-demand microstock item. Prioritize subjects that buyers actively search for on Adobe Stock, Shutterstock, and Freepik.`;
   }
 
   let layoutInstruction = '';
