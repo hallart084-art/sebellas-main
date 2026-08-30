@@ -540,10 +540,10 @@ const App: React.FC = () => {
         
         const mapPromptItem = (p: any): string => {
           if (typeof p === 'string') return p;
-          if (Array.isArray(p)) return p.filter(v => typeof v === 'string').join(', ');
+          if (Array.isArray(p)) return p.filter(v => typeof v === 'string').join(' ');
           if (typeof p === 'object' && p !== null) {
-            // Join all string values in the object (e.g. { item1: "...", item2: "..." })
-            return Object.values(p).filter(v => typeof v === 'string').join(', ');
+            // Join all string values in the object (e.g. { layout: "...", item1: "..." })
+            return Object.values(p).filter(v => typeof v === 'string').join(' ');
           }
           return String(p);
         };

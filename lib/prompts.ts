@@ -878,28 +878,28 @@ When processing ANY user concept/keyword (e.g. "makanan/food", "hewan/animals", 
     let totalItems = 5;
     if (isLayout1) {
       totalItems = 5;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: on the left side is 1) a large prominent [HERO_SUBJECT], and arranged on the right side are four smaller distinct elements: 2) [ITEM_1], 3) [ITEM_2], 4) [ITEM_3], and 5) [ITEM_4]';
+      layoutSchema = 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: on the left side is a large prominent hero subject, and arranged on the right side are four smaller distinct elements. ';
     } else if (isLayout2) {
       totalItems = 5;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: arranged on the left side are four smaller distinct elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4], and on the right side is 5) a large prominent [HERO_SUBJECT]';
+      layoutSchema = 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: arranged on the left side are four smaller distinct elements, and on the right side is a large prominent hero subject. ';
     } else if (isLayout3) {
       totalItems = 5;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: in the center is 1) a large prominent [HERO_SUBJECT], flanked by two smaller elements on the left: 2) [ITEM_1] and 3) [ITEM_2], and two smaller elements on the right: 4) [ITEM_3] and 5) [ITEM_4]';
+      layoutSchema = 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: in the center is a large prominent hero subject, flanked by two smaller elements on the left, and two smaller elements on the right. ';
     } else if (isLayout4) {
       totalItems = 6;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
+      layoutSchema = 'A flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: ';
     } else if (isLayout5) {
       totalItems = 12;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], 6) [ITEM_6], 7) [ITEM_7], 8) [ITEM_8], 9) [ITEM_9], 10) [ITEM_10], 11) [ITEM_11], and 12) [ITEM_12]';
+      layoutSchema = 'A flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: ';
     } else if (isLayout6) {
       totalItems = 4;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4]';
+      layoutSchema = 'A flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: ';
     } else if (isLayout7) {
       totalItems = 3;
-      layoutSchema = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: 1) [ITEM_1], 2) [ITEM_2], and 3) [ITEM_3]';
+      layoutSchema = 'A flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: ';
     } else if (isStickerSet) {
       totalItems = 6;
-      layoutSchema = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
+      layoutSchema = 'A cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: ';
     }
 
     layoutInstruction = `
@@ -996,28 +996,28 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
       let slotCount = 5;
       if (isLayout1) {
         slotCount = 5;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: on the left side is 1) a large prominent [HERO_SUBJECT], and arranged on the right side are four smaller distinct elements: 2) [ITEM_1], 3) [ITEM_2], 4) [ITEM_3], and 5) [ITEM_4]';
+        layoutFormula = 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: on the left side is a large prominent hero subject, and arranged on the right side are four smaller distinct elements. ';
       } else if (isLayout2) {
         slotCount = 5;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: arranged on the left side are four smaller distinct elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4], and on the right side is 5) a large prominent [HERO_SUBJECT]';
+        layoutFormula = 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: arranged on the left side are four smaller distinct elements, and on the right side is a large prominent hero subject. ';
       } else if (isLayout3) {
         slotCount = 5;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 5 isolated elements: in the center is 1) a large prominent [HERO_SUBJECT], flanked by two smaller elements on the left: 2) [ITEM_1] and 3) [ITEM_2], and two smaller elements on the right: 4) [ITEM_3] and 5) [ITEM_4]';
+        layoutFormula = 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: in the center is a large prominent hero subject, flanked by two smaller elements on the left, and two smaller elements on the right. ';
       } else if (isLayout4) {
         slotCount = 6;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
+        layoutFormula = 'A flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: ';
       } else if (isLayout5) {
         slotCount = 12;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], 6) [ITEM_6], 7) [ITEM_7], 8) [ITEM_8], 9) [ITEM_9], 10) [ITEM_10], 11) [ITEM_11], and 12) [ITEM_12]';
+        layoutFormula = 'A flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: ';
       } else if (isLayout6) {
         slotCount = 4;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], and 4) [ITEM_4]';
+        layoutFormula = 'A flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: ';
       } else if (isLayout7) {
         slotCount = 3;
-        layoutFormula = 'a flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: 1) [ITEM_1], 2) [ITEM_2], and 3) [ITEM_3]';
+        layoutFormula = 'A flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: ';
       } else if (isStickerSet) {
         slotCount = 6;
-        layoutFormula = 'a cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: 1) [ITEM_1], 2) [ITEM_2], 3) [ITEM_3], 4) [ITEM_4], 5) [ITEM_5], and 6) [ITEM_6]';
+        layoutFormula = 'A cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: ';
       }
 
       contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} BUNDLE PACK PROMPTS in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
