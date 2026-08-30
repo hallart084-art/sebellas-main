@@ -427,32 +427,32 @@ export const getJerseyPatternSuffix = (whiteBg: boolean = true, concept: string 
   const lowerConcept = (concept || '').toLowerCase();
 
   let sportTitle = "professional sports jersey sublimation vector design";
-  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup with polo or crossover collar, dynamic curved panels";
+  let mockupCut = "a clean flat 2d technical vector front-view athletic sports jersey shirt mockup";
 
   if (lowerConcept.includes('basket')) {
     sportTitle = "professional basketball jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup with contrast ribbed armholes and V-neck";
+    mockupCut = "a clean flat 2d technical vector front-view athletic sleeveless basketball tank top mockup";
   } else if (lowerConcept.includes('soccer') || lowerConcept.includes('football') || lowerConcept.includes('futsal') || lowerConcept.includes('sepak')) {
     sportTitle = "professional soccer football jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup with polo or crossover collar and curved flank panels";
+    mockupCut = "a clean flat 2d technical vector front-view athletic soccer football jersey shirt mockup";
   } else if (lowerConcept.includes('esport') || lowerConcept.includes('gaming') || lowerConcept.includes('tournament')) {
     sportTitle = "professional esports gaming tournament jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup with blade collar";
+    mockupCut = "a clean flat 2d technical vector front-view athletic esports tournament raglan jersey shirt mockup";
   } else if (lowerConcept.includes('cycling') || lowerConcept.includes('sepeda') || lowerConcept.includes('bike')) {
     sportTitle = "professional road cycling jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view athletic quarter-zip aerodynamic road cycling jersey shirt mockup with streamlined raglan sleeves";
+    mockupCut = "a clean flat 2d technical vector front-view athletic aerodynamic road cycling jersey shirt mockup";
   } else if (lowerConcept.includes('motocross') || lowerConcept.includes('mx') || lowerConcept.includes('dirt bike')) {
     sportTitle = "professional motocross racing jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup with ribbed cuffs";
+    mockupCut = "a clean flat 2d technical vector front-view heavy-duty long-sleeve motocross MX racing jersey shirt mockup";
   } else if (lowerConcept.includes('volley') || lowerConcept.includes('voli') || lowerConcept.includes('badminton') || lowerConcept.includes('tennis')) {
     sportTitle = "professional volleyball badminton athletic jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup with contrast ribbed neckband";
+    mockupCut = "a clean flat 2d technical vector front-view ultra-light athletic short-sleeve volleyball badminton jersey shirt mockup";
   } else if (lowerConcept.includes('rugby')) {
     sportTitle = "professional rugby sports jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic raglan rugby jersey shirt mockup with durable polo placket";
+    mockupCut = "a clean flat 2d technical vector front-view reinforced athletic rugby jersey shirt mockup";
   } else if (lowerConcept.includes('running') || lowerConcept.includes('marathon') || lowerConcept.includes('lari')) {
     sportTitle = "professional athletic running marathon jersey sublimation vector design";
-    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup with crossover collar";
+    mockupCut = "a clean flat 2d technical vector front-view breathable performance athletic running marathon jersey shirt mockup";
   }
 
   return `${sportTitle}, dual split 50:50 vertical presentation layout: the left vertical half displays ${mockupCut} on solid pure white background canvas, THE ENTIRE JERSEY BODY MUST BE FULLY COVERED BY THE DESCRIBED SUBLIMATION GRAPHIC MOTIF, the jersey mockup must be 100% FLAT with ZERO GRADIENTS ZERO SHADING ZERO SHADOWS ZERO FABRIC WRINKLES on the garment body, featuring an optional small minimalist solid single-color geometric shield crest icon on chest and optional clean flat solid single-color uppercase word 'SPONSOR', ABSOLUTELY NO SQUAD NUMBERS ON THE MOCKUP, the right vertical half is a 100% PURE FULL-BLEED FLAT 2D VECTOR SUBLIMATION GRAPHIC ARTWORK PANEL (displaying the expanded master graphic motif) touching all canvas edges with ABSOLUTELY ZERO WORDS, ZERO LETTERS, ZERO NUMBERS, ZERO SPONSOR TEXT, ZERO CHEST BADGES, ZERO CREST ICONS, ZERO CLUB EMBLEMS, ZERO LOGOS, ZERO BORDER LINES, ZERO OUTER FRAMES, NO MARGINS, NO BOUNDING BOX, AND NO SHIRT BLUEPRINT OUTLINES, pure 100% flat 2d vector art, razor-sharp hard-edge solid flat color planes, solid 2-tone color blocks, auto-trace friendly, strictly zero gradients, no color gradients, no smooth color blending, no soft transitions, no color fade, no ombré, no airbrush shading, no soft shading, zero glow effects, no bloom, no realistic fabric wrinkles, zero 3d rendering, zero fake lighting, zero shadows, no manufacturer brand logos, no watermark, ${bgClause}, commercial sportswear vector stock asset.`;
@@ -737,9 +737,7 @@ FEW-SHOT EXAMPLES:
     .replace(/\s{2,}/g, ' ')
     .trim() || concept;
 
-  const extraRule = isJersey
-    ? `\n- STRICT BAN: DO NOT write words like 'basketball jersey', 'soccer jersey', 'jersey', 'shirt', 'kit', or 'tank top' in your description. The sport apparel cut is ALREADY locked in the suffix. Focus 100% on the graphic art motif: "${cleanMotif}", sweeping lines, speed shards, color blocking, and dynamic energy.`
-    : isCarWrap
+  const extraRule = isCarWrap
     ? `\n- STRICT BAN: DO NOT write full wallpaper textures or repeating tiles. Focus 100% on aerodynamic racing decal graphics: "${cleanMotif}".`
     : '';
 
@@ -749,25 +747,29 @@ FEW-SHOT EXAMPLES:
   if (isAbstractGraphicStyle) {
     expansionRules = `
 ═══════════════════════════════════════════════════════════════════════════════════════
-👑 GRAPHIC DESIGN & MOTIF EXPANSION RULES (MANDATORY FOR THIS STYLE)
+👑 GRAPHIC DESIGN & APPAREL MOTIF EXPANSION RULES (MANDATORY FOR THIS STYLE)
 ═══════════════════════════════════════════════════════════════════════════════════════
 
 When processing ANY user concept/keyword for this graphic pattern style:
 1. 🎯 **STRICTLY NO TANGIBLE MICRO-SCENES OR OBJECT ARRAYS**:
    - DO NOT generate scenes, landscapes, isometric villages, people, or arrays of physical props (like cameras or coffee cups).
-   - This is for a GRAPHIC PATTERN (Jersey, Livery, or Seamless Surface). You must generate abstract motifs, geometric cuts, fluid waves, vector graphics, or highly stylized 2D graphic elements!
+   - You must generate authentic, high-end sportswear/motorsport sublimation graphics: geometric cuts, fluid waves, halftone fading dots, 90s retro kit patterns, or modern aerodynamic vector motifs!
 
-2. ⚙️ **INTELLIGENT MOTIF EXPANSION**:
-   - If the user types "fire", expand to "Sweeping biomorphic tribal flame curves, dynamic solar orange heat contours, and aggressive fluid magma cuts".
+2. 👕 **DYNAMIC APPAREL CUT VARIETY (MANDATORY FOR JERSEYS)**:
+   - If generating a Jersey, you MUST explicitly describe a unique collar and sleeve cut in your prompt to create variety!
+   - Examples of cuts to rotate: "thick ribbed V-neck with raglan sleeves", "classic 90s polo collar with button placket", "modern asymmetrical blade collar", "retro crossover crew neck with contrasting shoulder yokes", "aerodynamic seamless collar".
+
+3. ⚙️ **INTELLIGENT MOTIF EXPANSION**:
+   - If the user types "fire", expand to "Sweeping biomorphic tribal flame curves, dynamic solar orange heat contours, and aggressive fluid magma cuts with contrasting raglan sleeves".
    - If the user types "cyber", expand to "Explosive diagonal electric cyan speed slashes, high-density halftone dot matrix bursts, and fragmented obsidian black crystal lightning blades".
-   - If the user types "retro", expand to "Classic minimalist horizontal pinstripes, elegant vintage racing sashes, and clean pastel block panels".
+   - If the user types "retro", expand to "Classic minimalist horizontal pinstripes, elegant vintage racing sashes, fading jacquard texture effect, and clean pastel block panels with a retro polo collar".
 
-3. 🚫 **STRICT ZERO-REPETITION**:
-   - In ANY batch of prompts, NO TWO PROMPTS MAY SHARE THE SAME MOTIF STRUCTURE.
-   - Dynamically rotate through fluid curves, aggressive geometric shards, classic minimalism, and intricate organic patterns.
+4. 🚫 **STRICT ZERO-REPETITION**:
+   - In ANY batch of prompts, NO TWO PROMPTS MAY SHARE THE SAME MOTIF STRUCTURE OR COLLAR TYPE.
+   - Dynamically rotate through fluid curves, aggressive geometric shards, retro 90s aesthetics, and intricate halftone patterns.
 
-4. 💎 **AUTHENTIC GRAPHIC DESIGN TERMINOLOGY**:
-   - Use precise, vivid vector terminology (e.g. "fluid undulating contour ribbons", "razor-sharp aerodynamic winglet facets", "precision halftone dot gradients", "asymmetrical color-block wedges").`;
+5. 💎 **AUTHENTIC SPORTSWEAR TERMINOLOGY**:
+   - Use precise, vivid vector terminology (e.g. "fading halftone dot gradients", "dynamic mesh texture graphics", "razor-sharp aerodynamic winglet facets", "retro 90s geometric color-block wedges", "fluid undulating contour ribbons").`;
   } else {
     expansionRules = `
 ═══════════════════════════════════════════════════════════════════════════════════════
