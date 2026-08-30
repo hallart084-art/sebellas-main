@@ -1023,18 +1023,21 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
 MANDATORY BUNDLE PACK & GRID LAYOUT SPECIFICATION:
 - Layout Preset: "${chosenPreset}" (${slotCount} distinct items per sheet)
 - Art Style: "${chosenArtStyle}"
-- YOU MUST STRUCTURE EVERY SINGLE PROMPT USING EXACTLY THIS FORMAT:
+- Base Layout Structure:
   "${layoutFormula}"
-- ⚠️ EXTREME ITEM DETAIL REQUIRED: Replace [HERO_SUBJECT] and [ITEM_X] with exhaustive, masterclass-level descriptions. You MUST write at least 30 words per item! Describe specific poses, unique outfits, rich physical characteristics, and detailed props for EVERY item. Do NOT summarize or use generic labels.
-- UNIFIED COHESIVE THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
-- STRICT FORMAT: Do NOT use uppercase layout labels. Weave the layout description naturally in lowercase.
-- FULL SUFFIX AT THE END: You MUST append the exact style suffix at the very end of the completed prompt string.
-- Suffix to append: ${activeSuffix}
 
-Output format for every prompt in the JSON array:
-"${layoutFormula}, all sharing an identical cohesive palette, ${activeSuffix}"
+CRITICAL RULES FOR ITEM EXPANSION (IGNORE AT YOUR PERIL):
+1. NO LAZY SUMMARIES: Do NOT just do a short fill-in-the-blank substitution (e.g., "a red car").
+2. EXHAUSTIVE DETAIL FOR EVERY SLOT: You MUST expand EVERY single item (hero and sub-items) into a massive, masterclass-level description (at least 30 words per item). Describe specific poses, intricate outfits, rich physical characteristics, and dynamic actions just like a high-end standalone image.
+3. UNIFIED THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
+4. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). Weave the descriptions smoothly.
+5. SUFFIX RULE: You MUST append the exact style suffix at the very end of the completed prompt string.
+   - Suffix to append: ${activeSuffix}
 
-Return ONLY a valid JSON array of ${settings.numPrompts} strings.`;
+EXAMPLE OF A HIGH-QUALITY EXPANDED ITEM (Use this level of depth for EVERY item):
+"a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation"
+
+Return ONLY a valid JSON array of ${settings.numPrompts} prompt strings.`;
     } else {
       contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
 
