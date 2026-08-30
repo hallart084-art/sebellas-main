@@ -538,11 +538,27 @@ const App: React.FC = () => {
       try {
         const parsed = JSON.parse(sanitizedText);
         
+        const chosenLayoutPreset = settings.vectorPreset ?? '';
+        const isMultiItemOutput = typeof chosenLayoutPreset === 'string' && chosenLayoutPreset.trim() !== '' && chosenLayoutPreset !== 'Single Image';
+
         const mapPromptItem = (p: any): string => {
           if (typeof p === 'string') return p;
           if (Array.isArray(p)) return p.filter(v => typeof v === 'string').join(' ');
           if (typeof p === 'object' && p !== null) {
-            // Join all string values in the object (e.g. { layout: "...", item1: "..." })
+            if (isMultiItemOutput) {
+              // Assemble: layout_prefix + sorted item_N values
+              const prefix = typeof p['layout_prefix'] === 'string' ? p['layout_prefix'].trim() : '';
+              const itemKeys = Object.keys(p).filter(k => k.startsWith('item_')).sort((a, b) => {
+                const numA = parseInt(a.replace('item_', ''), 10);
+                const numB = parseInt(b.replace('item_', ''), 10);
+                return numA - numB;
+              });
+              const itemTexts = itemKeys.map(k => (p[k] as string || '').trim()).filter(Boolean);
+              if (itemTexts.length > 0) {
+                return prefix ? `${prefix}${itemTexts.join(' ')}` : itemTexts.join(' ');
+              }
+            }
+            // Fallback: join all string values
             return Object.values(p).filter(v => typeof v === 'string').join(' ');
           }
           return String(p);
@@ -555,7 +571,6 @@ const App: React.FC = () => {
           if (firstArr) {
             parsedPrompts = (firstArr as any[]).map(mapPromptItem);
           } else {
-            // If it's a single object, maybe it's just one prompt with multiple items
             parsedPrompts = [mapPromptItem(parsed)];
           }
         } else {

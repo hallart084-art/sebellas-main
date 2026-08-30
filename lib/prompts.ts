@@ -1020,40 +1020,37 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
         layoutFormula = 'A cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: ';
       }
 
-      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} BUNDLE PACK PROMPTS in JSON array format. [Session Exploration Seed: ${entropySeed}${angleClause}]
+      // Build the per-item numbered instruction list
+      const exampleItemLines: string[] = [];
+      exampleItemLines.push(`  "layout_prefix": "${layoutFormula}"`);
+      for (let i = 1; i <= slotCount; i++) {
+        exampleItemLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
+      }
 
-MANDATORY BUNDLE PACK & GRID LAYOUT SPECIFICATION:
-- Layout Preset: "${chosenPreset}" (${slotCount} distinct items per sheet)
-- Art Style: "${chosenArtStyle}"
-- Base Layout Structure:
-  "${layoutFormula}"
+      contents = `You are a world-class microstock prompt engineer. Generate EXACTLY ${settings.numPrompts} bundle pack prompts for concept: "${concept}". [Seed: ${entropySeed}${angleClause}]
 
-CRITICAL RULES FOR ITEM EXPANSION (IGNORE AT YOUR PERIL):
-1. NO LAZY SUMMARIES: Do NOT just do a short fill-in-the-blank substitution (e.g., "a red car"). 
-2. ⚠️ EXTREME LENGTH REQUIRED: You MUST write AT LEAST 40 WORDS FOR EACH AND EVERY ITEM (both hero and sub-items).
-3. ⚠️ DO NOT SKIP ITEMS: You MUST explicitly create a JSON key/value for EVERY single item requested in the layout. If there are 6 items, your JSON object MUST have 6 item keys!
-4. HOW TO ACHIEVE LENGTH: For every single item, you MUST describe: 
-   - Its exact physical pose and dynamic action
-   - Its intricate clothing, gear, or mechanical parts
-   - Its distinct materials, textures, and specific color shades
-   - A unique prop it is holding, standing on, or interacting with
-   - Its facial expression or micro-details (e.g. "glowing LED dashboard", "rosy cheeks")
-5. UNIFIED THEME: All ${slotCount} items must belong to the exact same cohesive universe of "${concept}".
-6. WEAVE NATURALLY: Do NOT use uppercase layout labels (e.g., "HERO_SUBJECT"). 
+LAYOUT PREFIX (copy this exactly for every prompt): "${layoutFormula}"
+ART STYLE: "${chosenArtStyle}"
+SLOT COUNT: ${slotCount} items per sheet
 
-YOU MUST OUTPUT EXACTLY THIS JSON FORMAT (Array of Objects):
+OUTPUT FORMAT — Return a valid JSON array of ${settings.numPrompts} objects. Each object MUST have the layout_prefix key and EXACTLY ${slotCount} item keys:
 [
   {
-    "layout_prefix": "${layoutFormula}",
-    "item_1": "1) a chubby-cheeked joyful blonde kid wearing a bright royal blue hoodie with an oversized front pocket and matching royal blue jeans, crouching low with both arms outstretched to gently cradle a flock of five tiny multicolored paper airplane models soaring upward in playful formation, eyes wide with pure excitement and lips parted in a bright laugh",
-    "item_2": "2) [massive 40+ word description for item 2...]",
-    "item_3": "3) [massive 40+ word description for item 3...]"
-    // ... continue for ALL items required by the layout ...
-  }
-  // ... repeat for ${settings.numPrompts} total prompts ...
+${exampleItemLines.join(',\n')}
+  },
+  ... (repeat for all ${settings.numPrompts} prompts)
 ]
 
-Return ONLY a valid JSON array of objects. DO NOT output the suffix (the system will add it automatically).`;
+MANDATORY RULES FOR EVERY ITEM:
+1. The "layout_prefix" value must be copied exactly from above (do NOT change it).
+2. Each "item_N" value MUST be a single string starting with "N)" (e.g., "1) a golden retriever...").
+3. Each item MUST be AT LEAST 40 WORDS LONG. Describe: pose, clothing/fur/material, colors, a unique held prop, and facial expression.
+4. ALL ${slotCount} items in every prompt MUST share the same cohesive thematic universe of "${concept}".
+5. Zero uppercase layout labels (e.g., "HERO PANEL"). Write naturally.
+6. DO NOT skip any item. Every object MUST have ALL ${slotCount} item keys filled with unique creative content.
+7. DO NOT output the style suffix. The system appends it automatically.
+
+Return ONLY the JSON array. No markdown, no extra text.`;
     } else {
       contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
 
