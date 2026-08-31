@@ -739,9 +739,22 @@ const App: React.FC = () => {
         return results;
       };
 
+      // Generate the full system instruction that controls the actual visual style logic
+      const isWhiteBg = settings.vectorWhiteBg ?? true;
+      const systemInstruction = PromptBuilder.buildVectorTextPrompt(
+        settings.negativePrompt,
+        numPrompts,
+        chosenArtStyle,
+        settings.vectorPreset || 'Single Image',
+        settings.vectorPose,
+        settings.vectorAttributes,
+        isWhiteBg,
+        placeholder.originalConcept
+      );
+
       // PHASE 1
       const phase1Text = await runModelCall(
-        () => PromptBuilder.buildMultiItemPhase1Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed),
+        () => PromptBuilder.buildMultiItemPhase1Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed, systemInstruction),
         assignedKeyIndex
       );
       const phase1Items = parseItems(phase1Text);
@@ -760,13 +773,12 @@ const App: React.FC = () => {
         : assignedKeyIndex;
 
       const phase2Text = await runModelCall(
-        () => PromptBuilder.buildMultiItemPhase2Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed, phase1Context),
+        () => PromptBuilder.buildMultiItemPhase2Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed, phase1Context, systemInstruction),
         nextKeyIndex
       );
       const phase2Items = parseItems(phase2Text);
 
       // MERGE & APPLY SUFFIX
-      const isWhiteBg = settings.vectorWhiteBg ?? true;
       const targetSuffix = PromptBuilder.getActiveVectorSuffix(chosenArtStyle, isWhiteBg, placeholder.originalConcept);
 
       const mergedPrompts = [];

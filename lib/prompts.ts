@@ -544,7 +544,8 @@ export const buildMultiItemPhase1Prompt = (
   half: number,
   artStyle: string,
   numPrompts: number,
-  entropySeed: string
+  entropySeed: string,
+  systemInstruction: string
 ): { contents: string; config: any } => {
   const exampleLines: string[] = [];
   for (let i = 1; i <= half; i++) {
@@ -575,6 +576,7 @@ MANDATORY RULES:
 7. Return ONLY the JSON array. No markdown, no suffix, no extra text.`;
 
   const config: any = {
+    systemInstruction,
     responseMimeType: 'application/json',
     temperature: 1.0,
     topP: 0.97,
@@ -596,7 +598,8 @@ export const buildMultiItemPhase2Prompt = (
   artStyle: string,
   numPrompts: number,
   entropySeed: string,
-  phase1Context: string[]   // e.g. ["sushi, rendang, pho", "burger, ramen, taco", ...]
+  phase1Context: string[],   // e.g. ["sushi, rendang, pho", "burger, ramen, taco", ...]
+  systemInstruction: string
 ): { contents: string; config: any } => {
   const exampleLines: string[] = [];
   for (let i = half + 1; i <= slotCount; i++) {
@@ -634,6 +637,7 @@ MANDATORY RULES:
 7. Return ONLY the JSON array. No markdown, no suffix, no extra text.`;
 
   const config: any = {
+    systemInstruction,
     responseMimeType: 'application/json',
     temperature: 1.0,
     topP: 0.97,
@@ -644,7 +648,7 @@ MANDATORY RULES:
 };
 
 
-const buildVectorTextPrompt = (
+export const buildVectorTextPrompt = (
   negativePrompt: string,
   numPrompts: number,
   artStyle?: string,
