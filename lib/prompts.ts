@@ -380,7 +380,7 @@ export const getMonolineVectorSuffix = (whiteBg: boolean = true) => {
     ? "perfectly isolated on solid pure white background, zero color background, pure white canvas, zero gradients, no gradients"
     : "perfectly isolated on clean solid background, zero gradients, no gradients";
 
-  return `minimalist monoline vector art, continuous uniform single-weight black outline strokes, clean geometric linework, simplified abstract contour shapes, pure black and white line art, no colors, no fills, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no complex micro-textures, ${bgClause}, modern microstock graphic icon style, clean vector contour.`;
+  return `minimalist monoline vector art, continuous uniform single-weight black outline strokes, clean geometric linework, simplified abstract contour shapes, pure black and white line art, strictly no color, only black and white, no colors, no fills, zero shading, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no complex micro-textures, ${bgClause}, modern microstock graphic icon style, clean vector contour.`;
 };
 
 export const MONOLINE_VECTOR_SUFFIX = getMonolineVectorSuffix(true);
@@ -823,7 +823,8 @@ FEW-SHOT EXAMPLES:
 1. **UNIFORM SINGLE-WEIGHT CONTINUOUS LINE ART**: Pure continuous uniform-weight black stroke line art.
 2. **GEOMETRIC PLANAR DECONSTRUCTION**: Subjects deconstructed into elegant intersecting geometric lines, circular arcs, and clean vector nodes.
 3. **ZERO FILL COLORS, ZERO GRADIENTS & ZERO SHADING**: 100% black line art on pure clean background.
-4. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
+4. **STRICT COLOR BAN**: You MUST NOT write ANY color names (e.g. do not write red, blue, green, yellow, brown, etc.). The prompt must be strictly black and white. Your description MUST purely focus on geometry, contour, shape, and line intersections.
+5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
    "${activeSuffix}"
 
 FEW-SHOT EXAMPLES:
