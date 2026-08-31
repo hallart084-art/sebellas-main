@@ -685,24 +685,58 @@ const App: React.FC = () => {
       const numPrompts = countForThisJob;
       const entropySeed = Math.random().toString(36).substring(2, 9);
       
-      const parseItems = (raw: string, numItems: number, offset: number) => {
-        const text = raw.replace(/^```(?:json)?\s*([\s\S]*?)\s*```$/i, '$1').trim();
+      const parseItems = (raw: string): string[][] => {
+        let text = raw.replace(/^```(?:json)?\s*([\s\S]*?)\s*```$/i, '$1').trim();
+        let parsed: any = null;
         try {
-          const parsed = JSON.parse(text);
-          if (Array.isArray(parsed)) {
-            return parsed.map((p: any) => {
-              if (typeof p !== 'object' || !p) return '';
-              const parts = [];
-              for (let i = offset; i < offset + numItems; i++) {
-                if (p[`item_${i}`]) parts.push(p[`item_${i}`]);
-              }
-              return parts.join(' ');
-            });
-          }
+          parsed = JSON.parse(text);
         } catch (e) {
           console.warn("Failed to parse dual phase JSON", e);
         }
-        return Array(numPrompts).fill(''); // fallback
+
+        const extractFromObj = (p: any): string[] => {
+          if (typeof p !== 'object' || !p) return [];
+          const itemKeys = Object.keys(p).filter(k => k.startsWith('item_')).sort((a, b) => {
+            const numA = parseInt(a.replace('item_', ''), 10);
+            const numB = parseInt(b.replace('item_', ''), 10);
+            return numA - numB;
+          });
+          return itemKeys.map(k => {
+            let v = String(p[k] || '').trim();
+            v = v.replace(/^\d+[\s.)\-:]+/, '').trim(); // strip LLM's numbering
+            v = v.replace(/^[-*•]\s+/, '').trim(); // strip bullets
+            return v;
+          }).filter(Boolean);
+        };
+
+        let results: string[][] = [];
+        if (Array.isArray(parsed)) {
+          results = parsed.map(extractFromObj);
+        } else if (parsed && typeof parsed === 'object') {
+          const firstArr = Object.values(parsed).find(v => Array.isArray(v));
+          if (firstArr) {
+            results = (firstArr as any[]).map(extractFromObj);
+          } else {
+            results = [extractFromObj(parsed)];
+          }
+        } else {
+          // Regex fallback
+          const regex = /"item_\d+"\s*:\s*"((?:[^"\\]|\\.)+)"/g;
+          const extracted = [];
+          let match;
+          while ((match = regex.exec(text)) !== null) {
+              let v = match[1].replace(/\\"/g, '"').replace(/\\n/g, ' ').trim();
+              v = v.replace(/^\d+[\s.)\-:]+/, '').trim();
+              v = v.replace(/^[-*•]\s+/, '').trim();
+              if (v) extracted.push(v);
+          }
+          if (extracted.length > 0) results = [extracted];
+        }
+
+        while (results.length < numPrompts) {
+          results.push([]);
+        }
+        return results;
       };
 
       // PHASE 1
@@ -710,15 +744,15 @@ const App: React.FC = () => {
         () => PromptBuilder.buildMultiItemPhase1Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed),
         assignedKeyIndex
       );
-      const phase1Items = parseItems(phase1Text, half, 1);
+      const phase1Items = parseItems(phase1Text);
       
       // Build context for phase 2 (first 5 words of each item)
-      const phase1Context = phase1Items.map(itemsStr => {
-        return itemsStr.split(' ').slice(0, 10).join(' ') + '...';
+      const phase1Context = phase1Items.map(itemsArr => {
+        if (itemsArr.length === 0) return "no items";
+        return itemsArr.map(v => v.split(' ').slice(0, 5).join(' ')).join(' | ');
       });
 
       // PHASE 2
-      // Rotate to next API key if available
       const provider = getModelProvider(settings.selectedModel);
       const providerKeys = (apiKeys[provider] ?? []);
       const nextKeyIndex = assignedKeyIndex !== undefined && providerKeys.length > 1
@@ -729,7 +763,7 @@ const App: React.FC = () => {
         () => PromptBuilder.buildMultiItemPhase2Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed, phase1Context),
         nextKeyIndex
       );
-      const phase2Items = parseItems(phase2Text, slotCount - half, half + 1);
+      const phase2Items = parseItems(phase2Text);
 
       // MERGE & APPLY SUFFIX
       const isWhiteBg = settings.vectorWhiteBg ?? true;
@@ -737,22 +771,32 @@ const App: React.FC = () => {
 
       const mergedPrompts = [];
       for (let i = 0; i < numPrompts; i++) {
-        let text = `${phase1Items[i] || ''} ${phase2Items[i] || ''}`.trim();
+        const p1 = phase1Items[i] || [];
+        const p2 = phase2Items[i] || [];
+        const combined = [...p1, ...p2];
+        
+        // STRICT VALIDATION
+        if (combined.length < slotCount) {
+          console.warn(`Dropped broken/incomplete multi-item prompt. Expected ${slotCount} items, got ${combined.length}.`);
+          continue;
+        }
+
+        // Re-number explicitly
+        let text = combined.slice(0, slotCount).map((v, idx) => `${idx + 1}) ${v}`).join(' ');
         
         // Cleanup formatting
         text = text.replace(/^[\[{\s"'`]+|[\]}\s"'`]+$/g, '').trim();
-        text = text.replace(/^\d+[\s.)\-:]+/, '').trim();
-        text = text.replace(/^[-*•]\s+/, '').trim();
         text = text.replace(/,?\s*professional\s+(sports|basketball|soccer|football|esports|cycling|motocross|volleyball|badminton|rugby|running|car wrap|athletic).*$/i, '').trim();
         text = text.replace(/,?\s*(dual split 50:50|one vertical half displays|the other vertical half is|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art|pure 100% flat 2d vector|razor-sharp hard-edge).*$/i, '').trim();
         text = text.replace(/[,.]\s*$/, '').trim();
         text = text.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
         text = text.replace(/^(A sleek|A modern|A dynamic|A high-octane|An aerodynamic|A bold|An energetic|A vibrant)?\s*(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)\s*(design|featuring|showcasing|with)?\s*/i, '').trim();
+        
         if (text.length > 0) {
           text = text.charAt(0).toUpperCase() + text.slice(1);
         }
 
-        if (text.length > 10) {
+        if (text.length > 120) {
           mergedPrompts.push(`${layoutPrefix}${text}, ${targetSuffix}`);
         }
       }
