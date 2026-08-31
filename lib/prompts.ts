@@ -514,6 +514,136 @@ export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true
   return getFlatIllustrationSuffix(whiteBg);
 };
 
+// ─────────────────────────────────────────────────────────────────────────────
+// DUAL-PHASE MULTI-ITEM LAYOUT HELPERS
+// Exported so App.tsx can run Phase 1 then Phase 2 with 2 separate API calls,
+// each only responsible for half the items. Sufiks is assembled client-side.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Returns layout prefix text + total slot count for a given preset string. */
+export const getMultiItemLayoutMeta = (preset: string): { layoutPrefix: string; slotCount: number } | null => {
+  const p = preset || '';
+  if (p.includes('Layout 1')) return { slotCount: 5, layoutPrefix: 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: on the left side is a large prominent hero subject, and arranged on the right side are four smaller distinct elements. ' };
+  if (p.includes('Layout 2')) return { slotCount: 5, layoutPrefix: 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: arranged on the left side are four smaller distinct elements, and on the right side is a large prominent hero subject. ' };
+  if (p.includes('Layout 3')) return { slotCount: 5, layoutPrefix: 'A flat vector asset collection sheet on a single solid background containing 5 isolated elements: in the center is a large prominent hero subject, flanked by two smaller elements on the left, and two smaller elements on the right. ' };
+  if (p.includes('Layout 4')) return { slotCount: 6, layoutPrefix: 'A flat vector asset collection sheet on a single solid background containing 6 evenly spaced isolated elements: ' };
+  if (p.includes('Layout 5')) return { slotCount: 12, layoutPrefix: 'A flat vector asset collection sheet on a single solid background containing 12 evenly spaced isolated elements: ' };
+  if (p.includes('Layout 6')) return { slotCount: 4, layoutPrefix: 'A flat vector asset collection sheet on a single solid background containing 4 evenly spaced isolated elements: ' };
+  if (p.includes('Layout 7')) return { slotCount: 3, layoutPrefix: 'A flat vector asset collection sheet on a single solid background containing 3 evenly spaced isolated elements side-by-side: ' };
+  if (p.includes('Sticker')) return { slotCount: 6, layoutPrefix: 'A cohesive die-cut sticker collection sheet on a single solid background containing 6 isolated stylized vector stickers with clean white die-cut contour borders evenly spaced: ' };
+  return null;
+};
+
+/**
+ * Phase 1 prompt — API #1 generates item_1 through item_half.
+ * Returns { contents, config }.
+ */
+export const buildMultiItemPhase1Prompt = (
+  concept: string,
+  slotCount: number,
+  half: number,
+  artStyle: string,
+  numPrompts: number,
+  entropySeed: string
+): { contents: string; config: any } => {
+  const exampleLines: string[] = [];
+  for (let i = 1; i <= half; i++) {
+    exampleLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
+  }
+
+  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Seed: ${entropySeed}]
+
+YOUR ROLE: Generate ONLY items 1 through ${half} for EACH of the ${numPrompts} prompts.
+ART STYLE: "${artStyle}"
+TOTAL ITEMS PER SHEET: ${slotCount} (a colleague will generate items ${half + 1} to ${slotCount})
+
+OUTPUT FORMAT — A valid JSON array of ${numPrompts} objects:
+[
+  {
+${exampleLines.join(',\n')}
+  },
+  ... (repeat for all ${numPrompts} prompts)
+]
+
+MANDATORY RULES:
+1. Each "item_N" MUST start with "N)" (e.g. "1) a sushi nigiri set...").
+2. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.
+3. Use the DEPTH-FIRST rule: exhaust all specific primary subjects of "${concept}" (e.g. for "Asian food": sushi → rendang → pho → matcha → dim sum) before expanding to tools or props.
+4. Across the ${numPrompts} prompts, NO two prompts may share the same primary subject for the same item slot.
+5. Rotate cultural origins and composition angles across prompts.
+6. DO NOT generate items ${half + 1} to ${slotCount}. Leave those to your colleague.
+7. Return ONLY the JSON array. No markdown, no suffix, no extra text.`;
+
+  const config: any = {
+    responseMimeType: 'application/json',
+    temperature: 1.0,
+    topP: 0.97,
+    maxOutputTokens: Math.min(8192, Math.max(2048, numPrompts * half * 80)),
+  };
+
+  return { contents, config };
+};
+
+/**
+ * Phase 2 prompt — API #2 generates item_{half+1} through item_{slotCount}.
+ * Receives phase1Context (array of short summaries of what Phase 1 chose per prompt).
+ * Returns { contents, config }.
+ */
+export const buildMultiItemPhase2Prompt = (
+  concept: string,
+  slotCount: number,
+  half: number,
+  artStyle: string,
+  numPrompts: number,
+  entropySeed: string,
+  phase1Context: string[]   // e.g. ["sushi, rendang, pho", "burger, ramen, taco", ...]
+): { contents: string; config: any } => {
+  const exampleLines: string[] = [];
+  for (let i = half + 1; i <= slotCount; i++) {
+    exampleLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
+  }
+
+  const contextBlock = phase1Context
+    .map((ctx, idx) => `  Prompt ${idx + 1}: items 1-${half} already use → ${ctx}`)
+    .join('\n');
+
+  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Seed: ${entropySeed}-P2]
+
+YOUR ROLE: Generate ONLY items ${half + 1} through ${slotCount} for EACH of the ${numPrompts} prompts.
+ART STYLE: "${artStyle}"
+TOTAL ITEMS PER SHEET: ${slotCount}
+
+ALREADY TAKEN SUBJECTS (your colleague generated items 1-${half} — do NOT repeat these):
+${contextBlock}
+
+OUTPUT FORMAT — A valid JSON array of ${numPrompts} objects:
+[
+  {
+${exampleLines.join(',\n')}
+  },
+  ... (repeat for all ${numPrompts} prompts)
+]
+
+MANDATORY RULES:
+1. Each "item_N" MUST start with "N)" (e.g. "${half + 1}) a bibimbap stone pot...").
+2. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.
+3. Your items MUST NOT use any subject listed in "ALREADY TAKEN SUBJECTS" for the same prompt.
+4. Continue the DEPTH-FIRST rule: keep exhausting primary subjects of "${concept}" that were not yet used.
+5. Maintain the same cohesive thematic universe and art style across all items.
+6. DO NOT generate items 1 to ${half}. Leave those to your colleague.
+7. Return ONLY the JSON array. No markdown, no suffix, no extra text.`;
+
+  const config: any = {
+    responseMimeType: 'application/json',
+    temperature: 1.0,
+    topP: 0.97,
+    maxOutputTokens: Math.min(8192, Math.max(2048, numPrompts * (slotCount - half) * 80)),
+  };
+
+  return { contents, config };
+};
+
+
 const buildVectorTextPrompt = (
   negativePrompt: string,
   numPrompts: number,

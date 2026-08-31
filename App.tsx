@@ -480,54 +480,62 @@ const App: React.FC = () => {
  return currentIndex;
  }, [apiKeys]);
 
+  const runModelCall = useCallback(async (
+    promptBuilder: () => { contents: any; config: any; },
+    assignedKeyIndex?: number
+  ): Promise<string> => {
+    const provider = getModelProvider(settings.selectedModel);
+    const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
+    if (!isProviderInitialized(provider) || providerKeys.length === 0) {
+      throw new Error(`No ${MODEL_PROVIDER_LABELS[provider]} API key found. Please add your API key in Settings → API Keys.`);
+    }
+    if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
+      throw new Error(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
+    }
+
+    const { contents, config } = promptBuilder();
+    let responseText = '';
+    let lastGenerationError: unknown = null;
+    const startKeyIndex = assignedKeyIndex !== undefined
+      ? (assignedKeyIndex % providerKeys.length)
+      : (reserveNextApiKeyStartIndex(provider) ?? 0);
+
+    for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
+      const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
+      const selectedApiKey = providerKeys[keyIdx];
+
+      try {
+        responseText = await generateModelContent({
+          model: settings.selectedModel,
+          contents,
+          config,
+          apiKey: selectedApiKey,
+          isXmlQuality: settings.promptQualityOption === 'xml',
+        });
+        lastGenerationError = null;
+        break;
+      } catch (requestError) {
+        lastGenerationError = requestError;
+        const canTryAnotherKey = attempt < providerKeys.length - 1;
+        if (!canTryAnotherKey) {
+          throw requestError;
+        }
+        console.warn(`Retrying ${provider} with next API key after error:`, requestError);
+      }
+    }
+
+    if (lastGenerationError) throw lastGenerationError;
+    if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
+    return responseText;
+  }, [settings, apiKeys, isProviderInitialized, reserveNextApiKeyStartIndex, t]);
+
   const processAndGenerate = useCallback(async (
     placeholder: GeneratedPromptSet,
     promptBuilder: () => { contents: any; config: any; },
     assignedKeyIndex?: number
   ): Promise<GeneratedPromptSet> => {
     try {
-      const provider = getModelProvider(settings.selectedModel);
-      const providerKeys = (apiKeys[provider] ?? []).filter((k): k is string => typeof k === 'string' && k.trim().length > 0);
-      if (!isProviderInitialized(provider) || providerKeys.length === 0) {
-        throw new Error(`No ${MODEL_PROVIDER_LABELS[provider]} API key found. Please add your API key in Settings → API Keys.`);
-      }
-      if (!isModelSupportedForMode(settings.selectedModel, settings.inputMode)) {
-        throw new Error(`${settings.selectedModel} does not support ${settings.inputMode} mode.`);
-      }
-
-      const { contents, config } = promptBuilder();
-      let responseText = '';
-      let lastGenerationError: unknown = null;
-      const startKeyIndex = assignedKeyIndex !== undefined
-        ? (assignedKeyIndex % providerKeys.length)
-        : (reserveNextApiKeyStartIndex(provider) ?? 0);
-
-      for (let attempt = 0; attempt < providerKeys.length; attempt += 1) {
-        const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
-        const selectedApiKey = providerKeys[keyIdx];
-
-        try {
-          responseText = await generateModelContent({
-            model: settings.selectedModel,
-            contents,
-            config,
-            apiKey: selectedApiKey,
-            isXmlQuality: settings.promptQualityOption === 'xml',
-          });
-          lastGenerationError = null;
-          break;
-        } catch (requestError) {
-          lastGenerationError = requestError;
-          const canTryAnotherKey = attempt < providerKeys.length - 1;
-          if (!canTryAnotherKey) {
-            throw requestError;
-          }
-          console.warn(`Retrying ${provider} with next API key after error:`, requestError);
-        }
-      }
-
-      if (lastGenerationError) throw lastGenerationError;
-      if (!responseText) throw new Error(t('errorApiResponseNoValidText'));
+      const responseText = await runModelCall(promptBuilder, assignedKeyIndex);
 
       // Parse JSON array / responses with robust markdown & JSON sanitization
       let parsedPrompts: string[] = [];
@@ -662,7 +670,110 @@ const App: React.FC = () => {
         hasError: true,
       };
     }
-  }, [settings, apiKeys, isProviderInitialized, reserveNextApiKeyStartIndex, parseApiError, logError, t]);
+  }, [settings, runModelCall, parseApiError, logError, t]);
+
+  const processDualPhaseMultiItem = useCallback(async (
+    placeholder: GeneratedPromptSet,
+    layoutMeta: { layoutPrefix: string; slotCount: number },
+    assignedKeyIndex?: number,
+    countForThisJob: number = 1
+  ): Promise<GeneratedPromptSet> => {
+    try {
+      const { layoutPrefix, slotCount } = layoutMeta;
+      const half = Math.ceil(slotCount / 2);
+      const chosenArtStyle = settings.vectorArtStyle || 'Flat illustration';
+      const numPrompts = countForThisJob;
+      const entropySeed = Math.random().toString(36).substring(2, 9);
+      
+      const parseItems = (raw: string, numItems: number, offset: number) => {
+        const text = raw.replace(/^```(?:json)?\s*([\s\S]*?)\s*```$/i, '$1').trim();
+        try {
+          const parsed = JSON.parse(text);
+          if (Array.isArray(parsed)) {
+            return parsed.map((p: any) => {
+              if (typeof p !== 'object' || !p) return '';
+              const parts = [];
+              for (let i = offset; i < offset + numItems; i++) {
+                if (p[`item_${i}`]) parts.push(p[`item_${i}`]);
+              }
+              return parts.join(' ');
+            });
+          }
+        } catch (e) {
+          console.warn("Failed to parse dual phase JSON", e);
+        }
+        return Array(numPrompts).fill(''); // fallback
+      };
+
+      // PHASE 1
+      const phase1Text = await runModelCall(
+        () => PromptBuilder.buildMultiItemPhase1Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed),
+        assignedKeyIndex
+      );
+      const phase1Items = parseItems(phase1Text, half, 1);
+      
+      // Build context for phase 2 (first 5 words of each item)
+      const phase1Context = phase1Items.map(itemsStr => {
+        return itemsStr.split(' ').slice(0, 10).join(' ') + '...';
+      });
+
+      // PHASE 2
+      // Rotate to next API key if available
+      const provider = getModelProvider(settings.selectedModel);
+      const providerKeys = (apiKeys[provider] ?? []);
+      const nextKeyIndex = assignedKeyIndex !== undefined && providerKeys.length > 1
+        ? (assignedKeyIndex + 1) % providerKeys.length
+        : assignedKeyIndex;
+
+      const phase2Text = await runModelCall(
+        () => PromptBuilder.buildMultiItemPhase2Prompt(placeholder.originalConcept, slotCount, half, chosenArtStyle, numPrompts, entropySeed, phase1Context),
+        nextKeyIndex
+      );
+      const phase2Items = parseItems(phase2Text, slotCount - half, half + 1);
+
+      // MERGE & APPLY SUFFIX
+      const isWhiteBg = settings.vectorWhiteBg ?? true;
+      const targetSuffix = PromptBuilder.getActiveVectorSuffix(chosenArtStyle, isWhiteBg, placeholder.originalConcept);
+
+      const mergedPrompts = [];
+      for (let i = 0; i < numPrompts; i++) {
+        let text = `${phase1Items[i] || ''} ${phase2Items[i] || ''}`.trim();
+        
+        // Cleanup formatting
+        text = text.replace(/^[\[{\s"'`]+|[\]}\s"'`]+$/g, '').trim();
+        text = text.replace(/^\d+[\s.)\-:]+/, '').trim();
+        text = text.replace(/^[-*•]\s+/, '').trim();
+        text = text.replace(/,?\s*professional\s+(sports|basketball|soccer|football|esports|cycling|motocross|volleyball|badminton|rugby|running|car wrap|athletic).*$/i, '').trim();
+        text = text.replace(/,?\s*(dual split 50:50|one vertical half displays|the other vertical half is|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art|pure 100% flat 2d vector|razor-sharp hard-edge).*$/i, '').trim();
+        text = text.replace(/[,.]\s*$/, '').trim();
+        text = text.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+        text = text.replace(/^(A sleek|A modern|A dynamic|A high-octane|An aerodynamic|A bold|An energetic|A vibrant)?\s*(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)\s*(design|featuring|showcasing|with)?\s*/i, '').trim();
+        if (text.length > 0) {
+          text = text.charAt(0).toUpperCase() + text.slice(1);
+        }
+
+        if (text.length > 10) {
+          mergedPrompts.push(`${layoutPrefix}${text}, ${targetSuffix}`);
+        }
+      }
+
+      return {
+        ...placeholder,
+        prompts: mergedPrompts.slice(0, numPrompts),
+        hasError: false,
+      };
+
+    } catch (err: any) {
+      const providerLabel = MODEL_PROVIDER_LABELS[getModelProvider(settings.selectedModel)];
+      const errorMessageWithProvider = `[${providerLabel} Dual-Phase] ${parseApiError(err)}`;
+      logError(errorMessageWithProvider, settings.selectedModel, String(err), settings.styleOption);
+      return {
+        ...placeholder,
+        prompts: [t('errorFailedToGeneratePromptsApiError', { displayName: placeholder.originalConcept, errorMessage: errorMessageWithProvider })],
+        hasError: true,
+      };
+    }
+  }, [settings, runModelCall, apiKeys, parseApiError, logError, t]);
 
 type GenerationJob = () => Promise<GeneratedPromptSet>;
  type GenerationTask = { placeholders: GeneratedPromptSet[], jobs: GenerationJob[] };
@@ -825,19 +936,33 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
         const baseChunkSize = Math.floor(totalRequested / chunksCount);
         const remainder = totalRequested % chunksCount;
 
+        const layoutMeta = PromptBuilder.getMultiItemLayoutMeta(settings.vectorPreset || '');
+        const isMultiItem = layoutMeta !== null;
+
         for (let i = 0; i < chunksCount; i++) {
           const countForThisJob = baseChunkSize + (i < remainder ? 1 : 0);
           if (countForThisJob <= 0) continue;
           const assignedKey = globalKeyIdx % numKeys;
           const angle = THEMATIC_PILLARS[i % THEMATIC_PILLARS.length];
 
-          jobs.push(() =>
-            processAndGenerate(
-              placeholder,
-              () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, thematicAngle: angle, vectorAttributes: settings.vectorInstruction }, isQuick),
-              assignedKey
-            )
-          );
+          if (isMultiItem && layoutMeta) {
+            jobs.push(() =>
+              processDualPhaseMultiItem(
+                { ...placeholder, prompts: [] }, // pass fresh placeholder
+                layoutMeta,
+                assignedKey,
+                countForThisJob
+              )
+            );
+          } else {
+            jobs.push(() =>
+              processAndGenerate(
+                placeholder,
+                () => PromptBuilder.buildTextPrompt(concept, { ...settings, styleOption: 'vector', numPrompts: countForThisJob, thematicAngle: angle, vectorAttributes: settings.vectorInstruction }, isQuick),
+                assignedKey
+              )
+            );
+          }
           globalKeyIdx += 1;
         }
       });
