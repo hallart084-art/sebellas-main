@@ -783,14 +783,14 @@ FEW-SHOT EXAMPLES (CONCEPT ONLY):
 4. **STRICTLY ZERO TEXT / ZERO WATERMARKS**:
    - Absolutely NO letters, NO words, NO typography, NO watermark, NO signatures.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+   ""
 
 FEW-SHOT EXAMPLES:
-- "food / fruits" -> "A vibrant retro seamless pattern of randomly scattered food doodles: smiling strawberries, juicy watermelon slices, fried egg shapes, golden croissants, and tiny colorful star dots on solid clean off-white background, ${activeSuffix}"
-- "cute pets / cats" -> "A playful all-over seamless pattern of minimalist cute cat face silhouettes, scattered paw prints, yarn balls, fish bones, and tiny star doodles evenly distributed on solid pastel mint green background, ${activeSuffix}"
-- "water / pool" -> "A minimalist top-down swimming pool water ripple seamless pattern, composed of interlocking liquid blue blob shapes, azure curved water caustics, and clean white fluid ripple lines in flat 2D layers, ${activeSuffix}"
-- "retro floral" -> "A bold 1970s retro Scandinavian floral seamless pattern, featuring organic interlocking olive green Matisse leaf shapes, blooming daisy flowers, and vibrant orange sun blob centers on warm cream canvas, ${activeSuffix}"
-- "doctor / medical" -> "A vibrant all-over seamless pattern of scattered cute female and male doctor characters, medical stethoscope shapes, first-aid cross symbols, and band-aid icons, all drawn with chunky solid flat color blocks and zero outlines, ${activeSuffix}"`;
+- "food / fruits" -> "A vibrant retro seamless pattern of randomly scattered food doodles: smiling strawberries, juicy watermelon slices, fried egg shapes, golden croissants, and tiny colorful star dots on solid clean off-white background"
+- "cute pets / cats" -> "A playful all-over seamless pattern of minimalist cute cat face silhouettes, scattered paw prints, yarn balls, fish bones, and tiny star doodles evenly distributed on solid pastel mint green background"
+- "water / pool" -> "A minimalist top-down swimming pool water ripple seamless pattern, composed of interlocking liquid blue blob shapes, azure curved water caustics, and clean white fluid ripple lines in flat 2D layers"
+- "retro floral" -> "A bold 1970s retro Scandinavian floral seamless pattern, featuring organic interlocking olive green Matisse leaf shapes, blooming daisy flowers, and vibrant orange sun blob centers on warm cream canvas"
+- "doctor / medical" -> "A vibrant all-over seamless pattern of scattered cute female and male doctor characters, medical stethoscope shapes, first-aid cross symbols, and band-aid icons, all drawn with chunky solid flat color blocks and zero outlines"`;
   } else if (isAbstractPictogramLogo) {
     activeSuffix = getAbstractPictogramLogoSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (ABSTRACT PICTOGRAM LOGO):
@@ -806,15 +806,15 @@ FEW-SHOT EXAMPLES:
 5. **STRICTLY ZERO TEXT / ZERO WATERMARKS**:
    - Absolutely NO letters, NO words, NO typography, NO watermark, NO signatures.
 6. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+   ""
 
 FEW-SHOT EXAMPLES:
-- "deer / gazelle" -> "An elegant stylized deer logo mark, sleek minimalist silhouette with rhythmic comb antler tines and fluid geometric body planes, ${activeSuffix}"
-- "falcon / eagle" -> "A modern bird in flight emblem, stylized curved neck silhouette with three fanned rhythmic wing slats sculpted in negative space, ${activeSuffix}"
-- "burger" -> "An iconic culinary burger emblem, modern food symbol formed by rhythmic horizontal solid bar slabs and a smooth semi-circle bun silhouette, ${activeSuffix}"
-- "coffee" -> "A sleek modern coffee cup emblem, minimalist crescent cup silhouette paired with dual ascending rhythmic steam curves in negative space, ${activeSuffix}"
-- "runner" -> "A dynamic athletic speed runner mark, abstract aerodynamic silhouette formed by three sweeping rhythmic forward-angled geometric shards, ${activeSuffix}"
-- "queen / female face" -> "An elegant regal queen profile emblem, minimalist geometric head silhouette framed by flowing stylized hair ribbons and crowned with a bold three-point geometric crown in negative space, ${activeSuffix}"`;
+- "deer / gazelle" -> "An elegant stylized deer logo mark, sleek minimalist silhouette with rhythmic comb antler tines and fluid geometric body planes"
+- "falcon / eagle" -> "A modern bird in flight emblem, stylized curved neck silhouette with three fanned rhythmic wing slats sculpted in negative space"
+- "burger" -> "An iconic culinary burger emblem, modern food symbol formed by rhythmic horizontal solid bar slabs and a smooth semi-circle bun silhouette"
+- "coffee" -> "A sleek modern coffee cup emblem, minimalist crescent cup silhouette paired with dual ascending rhythmic steam curves in negative space"
+- "runner" -> "A dynamic athletic speed runner mark, abstract aerodynamic silhouette formed by three sweeping rhythmic forward-angled geometric shards"
+- "queen / female face" -> "An elegant regal queen profile emblem, minimalist geometric head silhouette framed by flowing stylized hair ribbons and crowned with a bold three-point geometric crown in negative space"`;
   } else if (isFlatObjectIllustration) {
     activeSuffix = getFlatObjectIllustrationSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (FLAT OBJECT ILLUSTRATION - INANIMATE OBJECTS & PROPS ONLY):
@@ -828,14 +828,14 @@ FEW-SHOT EXAMPLES:
 4. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**:
    - Isolated on clean solid background with zero floor, zero ground shadow.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+   ""
 
 FEW-SHOT EXAMPLES:
-- "coffee machine" -> "An artisan commercial chrome espresso coffee maker machine with portafilter, dual pressure dials, and steam wand, chunky 2D geometric vector styling, ${activeSuffix}"
-- "power drill" -> "A cordless industrial rotary hammer power drill with textured grip handle, lithium battery pack, and steel chuck bit in 3/4 isometric perspective, ${activeSuffix}"
-- "microscope" -> "A precision laboratory compound optical microscope with brass turret lenses, mechanical slide stage, and solid base, ${activeSuffix}"
-- "delivery van" -> "A modern electric commercial delivery box cargo van in sleek side profile with solid aerodynamic body panels and charging port, ${activeSuffix}"
-- "gardening shears" -> "A heavy-duty bypass pruning garden shears with ergonomic rubberized handles and sharp steel blades, ${activeSuffix}"`;
+- "coffee machine" -> "An artisan commercial chrome espresso coffee maker machine with portafilter, dual pressure dials, and steam wand, chunky 2D geometric vector styling"
+- "power drill" -> "A cordless industrial rotary hammer power drill with textured grip handle, lithium battery pack, and steel chuck bit in 3/4 isometric perspective"
+- "microscope" -> "A precision laboratory compound optical microscope with brass turret lenses, mechanical slide stage, and solid base"
+- "delivery van" -> "A modern electric commercial delivery box cargo van in sleek side profile with solid aerodynamic body panels and charging port"
+- "gardening shears" -> "A heavy-duty bypass pruning garden shears with ergonomic rubberized handles and sharp steel blades"`;
   } else if (isMonolineVector) {
     activeSuffix = getMonolineVectorSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (MONOLINE GEOMETRIC VECTOR):
@@ -844,12 +844,12 @@ FEW-SHOT EXAMPLES:
 3. **ZERO FILL COLORS, ZERO GRADIENTS & ZERO SHADING**: 100% black line art on pure clean background.
 4. **STRICT COLOR BAN**: You MUST NOT write ANY color names (e.g. do not write red, blue, green, yellow, brown, etc.). The prompt must be strictly black and white. Your description MUST purely focus on geometry, contour, shape, and line intersections.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+   ""
 
 FEW-SHOT EXAMPLES:
-- "eagle in flight" -> "A majestic eagle soaring with wings outstretched, composed of precise uniform single-weight geometric monoline curves and intersecting arc segments, ${activeSuffix}"
-- "motorcycle" -> "A vintage cafe racer motorcycle side profile, defined purely by continuous single-weight black contour line work with geometric wireframe spokes, ${activeSuffix}"
-- "astronomy telescope" -> "A precision astronomical observatory telescope on a tripod, rendered in clean geometric single-weight monoline vector line art, ${activeSuffix}"`;
+- "eagle in flight" -> "A majestic eagle soaring with wings outstretched, composed of precise uniform single-weight geometric monoline curves and intersecting arc segments"
+- "motorcycle" -> "A vintage cafe racer motorcycle side profile, defined purely by continuous single-weight black contour line work with geometric wireframe spokes"
+- "astronomy telescope" -> "A precision astronomical observatory telescope on a tripod, rendered in clean geometric single-weight monoline vector line art"`;
   } else if (isGeometricSilhouette) {
     activeSuffix = getGeometricSilhouetteSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (GEOMETRIC SILHOUETTE):
@@ -857,12 +857,12 @@ FEW-SHOT EXAMPLES:
 2. **STRICTLY LINELESS (ZERO STROKES / NO OUTLINES)**: Formed purely from solid filled black shapes.
 3. **DYNAMIC AERODYNAMIC FLOW**: Bold forward momentum, powerful stance, and clean anatomical silhouette.
 4. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+   ""
 
 FEW-SHOT EXAMPLES:
-- "charging bull" -> "A powerful muscular charging bull silhouette in aggressive forward leap with lowered horns and sharp geometric contour facets, solid black fill, ${activeSuffix}"
-- "howling wolf" -> "A dramatic howling wolf silhouette perched on a cliff ledge, sharp planar fur edge cuts and chiseled jaw contour, solid black shape, ${activeSuffix}"
-- "gymnast" -> "A dynamic athletic gymnast silhouette in mid-air arched split leap, elegant aerodynamic contour with sharp angular planar cuts, ${activeSuffix}"`;
+- "charging bull" -> "A powerful muscular charging bull silhouette in aggressive forward leap with lowered horns and sharp geometric contour facets, solid black fill"
+- "howling wolf" -> "A dramatic howling wolf silhouette perched on a cliff ledge, sharp planar fur edge cuts and chiseled jaw contour, solid black shape"
+- "gymnast" -> "A dynamic athletic gymnast silhouette in mid-air arched split leap, elegant aerodynamic contour with sharp angular planar cuts"`;
   } else if (isNegativeSpaceCutout) {
     activeSuffix = getNegativeSpaceCutoutSuffix(isWhiteBg);
     const subjectColor = isWhiteBg ? 'solid black' : 'solid crisp white';
@@ -874,12 +874,12 @@ FEW-SHOT EXAMPLES:
 2. **INTERNAL DETAILS CARVED OUT OF NEGATIVE SPACE**:
    - The subject's internal features (eyes, jawlines, wing feathers, muscle separations, facial contours) MUST be carved as clean negative space channels and slits.
 3. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+   ""
 
 FEW-SHOT EXAMPLES:
-- "athletic figure" -> "A dynamic ${subjectColor} athletic figure in mid-leap with limb muscles, momentum lines, and anatomical contours carved sharply from negative space slices on ${bgColor} background, free-standing silhouette, strictly no badge, no border, ${activeSuffix}"
-- "bearded god" -> "A majestic bust profile of a bearded Greek god with hair locks, chiseled brow, and deep jaw shadows sharply carved out through negative space on ${bgColor} background, strictly frameless, no border, ${activeSuffix}"
-- "wolf in motion" -> "A stylized ${subjectColor} running wolf silhouette with fur facets, eye, and jaw highlights defined purely through high-contrast negative space cuts on ${bgColor} background, free-standing silhouette, no border, no frame, ${activeSuffix}"`;
+- "athletic figure" -> "A dynamic ${subjectColor} athletic figure in mid-leap with limb muscles, momentum lines, and anatomical contours carved sharply from negative space slices on ${bgColor} background, free-standing silhouette, strictly no badge, no border"
+- "bearded god" -> "A majestic bust profile of a bearded Greek god with hair locks, chiseled brow, and deep jaw shadows sharply carved out through negative space on ${bgColor} background, strictly frameless, no border"
+- "wolf in motion" -> "A stylized ${subjectColor} running wolf silhouette with fur facets, eye, and jaw highlights defined purely through high-contrast negative space cuts on ${bgColor} background, free-standing silhouette, no border, no frame"`;
   } else if (isFlatIllustration) {
     activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (FLAT ILLUSTRATION):
@@ -888,13 +888,13 @@ FEW-SHOT EXAMPLES:
 3. **COLOR & SHADING**: Colors must be ultra-vibrant, sharp, and cheerful with saturated azure blue and radiant bright orange accents. Shading must be bold, clean-cut, hard-edge 2-tone flat shadow shapes. Strictly zero outlines/strokes, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare.
 4. **SOLID SINGLE-COLOR BACKGROUND (STRICT)**: The background MUST be a single flat solid color with NO floor, NO ground surface, NO floor line, NO scenery, zero gradients, no gradients, and zero fake lighting. The subject must be cleanly isolated on this single solid background.
 5. **MANDATORY SUFFIX**: Every single prompt MUST end with this exact paten suffix:
-   "${activeSuffix}"
+   ""
 
 FEW-SHOT EXAMPLES:
-- "technician" -> "A joyful male electrical technician with chunky build wearing a plain bright orange safety vest and solid yellow hardhat holding a blank tablet next to simple clean solar panels, ${activeSuffix}"
-- "man watering plant" -> "A cheerful man with chunky build and simple smiling face happily kneeling to water a potted plant with a yellow watering can, ${activeSuffix}"
-- "sport player" -> "A cheerful young basketball player with chunky cartoon build wearing a solid orange basketball jersey and blue shorts dribbling a simple basketball, ${activeSuffix}"
-- "robot assistant" -> "A cute chubby white and deep cobalt blue AI robot with bulbous rounded body and glowing cyan visor holding a solid yellow folder, ${activeSuffix}"`;
+- "technician" -> "A joyful male electrical technician with chunky build wearing a plain bright orange safety vest and solid yellow hardhat holding a blank tablet next to simple clean solar panels"
+- "man watering plant" -> "A cheerful man with chunky build and simple smiling face happily kneeling to water a potted plant with a yellow watering can"
+- "sport player" -> "A cheerful young basketball player with chunky cartoon build wearing a solid orange basketball jersey and blue shorts dribbling a simple basketball"
+- "robot assistant" -> "A cute chubby white and deep cobalt blue AI robot with bulbous rounded body and glowing cyan visor holding a solid yellow folder"`;
   } else {
     activeSuffix = getFlatIllustrationSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE:
@@ -1260,7 +1260,7 @@ CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 - Act as an ultra-smart, wildly creative commercial microstock director.
 - Selected Art Style: "${chosenArtStyle}"
 - For every prompt, write a rich, highly specific 2D vector graphic scene/motif description, followed by the mandatory style suffix:
-"[DETAILED 2D GRAPHIC SCENE/MOTIF DESCRIPTION], ${activeSuffix}"
+"[DETAILED 2D GRAPHIC SCENE/MOTIF DESCRIPTION]"
 
 Return ONLY a valid JSON array of ${settings.numPrompts} complete prompt strings.`;
     }
