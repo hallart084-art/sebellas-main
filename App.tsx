@@ -504,24 +504,46 @@ const App: React.FC = () => {
       const keyIdx = (startKeyIndex + attempt) % providerKeys.length;
       const selectedApiKey = providerKeys[keyIdx];
 
-      try {
-        responseText = await generateModelContent({
-          model: settings.selectedModel,
-          contents,
-          config,
-          apiKey: selectedApiKey,
-          isXmlQuality: settings.promptQualityOption === 'xml',
-        });
-        lastGenerationError = null;
-        break;
-      } catch (requestError) {
-        lastGenerationError = requestError;
-        const canTryAnotherKey = attempt < providerKeys.length - 1;
-        if (!canTryAnotherKey) {
-          throw requestError;
+      let innerRetries = 3;
+      let delayMs = 3000;
+
+      while (innerRetries > 0) {
+        try {
+          responseText = await generateModelContent({
+            model: settings.selectedModel,
+            contents,
+            config,
+            apiKey: selectedApiKey,
+            isXmlQuality: settings.promptQualityOption === 'xml',
+          });
+          lastGenerationError = null;
+          break; // success
+        } catch (requestError: any) {
+          lastGenerationError = requestError;
+          const errMsg = (requestError?.message || String(requestError)).toLowerCase();
+          
+          if (errMsg.includes('429') || errMsg.includes('too many requests') || errMsg.includes('quota')) {
+            console.warn(`Rate limited (429). Retrying in ${delayMs}ms... (${innerRetries} retries left for this key)`);
+            await new Promise(resolve => setTimeout(resolve, delayMs));
+            delayMs *= 2; // exponential backoff
+            innerRetries--;
+          } else {
+            // Not a rate limit error, break inner loop to try next key immediately
+            break;
+          }
         }
-        console.warn(`Retrying ${provider} with next API key after error:`, requestError);
       }
+
+      // If we got a response or we ran out of keys, break the outer loop
+      if (!lastGenerationError) {
+        break;
+      }
+      
+      const canTryAnotherKey = attempt < providerKeys.length - 1;
+      if (!canTryAnotherKey) {
+        throw lastGenerationError;
+      }
+      console.warn(`Retrying ${provider} with next API key after error:`, lastGenerationError);
     }
 
     if (lastGenerationError) throw lastGenerationError;

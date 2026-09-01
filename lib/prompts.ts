@@ -538,6 +538,23 @@ export const getMultiItemLayoutMeta = (preset: string): { layoutPrefix: string; 
  * Phase 1 prompt — API #1 generates item_1 through item_half.
  * Returns { contents, config }.
  */
+const buildMultiItemSchema = (startIdx: number, endIdx: number) => {
+  const properties: Record<string, any> = {};
+  const required: string[] = [];
+  for (let i = startIdx; i <= endIdx; i++) {
+    properties[`item_${i}`] = { type: Type.STRING };
+    required.push(`item_${i}`);
+  }
+  return {
+    type: Type.ARRAY,
+    items: {
+      type: Type.OBJECT,
+      properties,
+      required,
+    }
+  };
+};
+
 export const buildMultiItemPhase1Prompt = (
   concept: string,
   slotCount: number,
@@ -578,6 +595,7 @@ MANDATORY RULES:
   const config: any = {
     systemInstruction,
     responseMimeType: 'application/json',
+    responseSchema: buildMultiItemSchema(1, half),
     temperature: 1.0,
     topP: 0.97,
     maxOutputTokens: Math.min(8192, Math.max(2048, numPrompts * half * 80)),
@@ -639,6 +657,7 @@ MANDATORY RULES:
   const config: any = {
     systemInstruction,
     responseMimeType: 'application/json',
+    responseSchema: buildMultiItemSchema(half + 1, slotCount),
     temperature: 1.0,
     topP: 0.97,
     maxOutputTokens: Math.min(8192, Math.max(2048, numPrompts * (slotCount - half) * 80)),
