@@ -630,7 +630,7 @@ const App: React.FC = () => {
 
       // Guaranteed Vector Suffix Enforcement:
       // Pastikan 100% setiap prompt selalu memiliki deskripsi tema yang valid + sufiks paten style yang lengkap tanpa duplikasi kata jersey/sufiks.
-      const isVectorStyle = settings.inputMode === 'vector' || settings.styleOption === 'vector';
+      const isVectorStyle = settings.inputMode === 'vector' || settings.styleOption === 'vector' || !!settings.vectorArtStyle;
       const hasRefImages = (settings.vectorReferenceImages || []).length > 0;
       
       if (isVectorStyle) {
