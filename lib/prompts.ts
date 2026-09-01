@@ -264,8 +264,33 @@ ${footageJsonTemplate}`;
 };
 
 
-// --- TEXT-BASED PROMPT BUILDERS ---
+const universalMicrostockIdeationEngine = `
+════════════════════════════════════════════════════════════════════════════════════
+👑 UNIVERSAL MICROSTOCK IDEATION ENGINE (MANDATORY FOR ALL STYLES)
+════════════════════════════════════════════════════════════════════════════════════
+The user is a layman looking for high-quality, ready-to-sell commercial microstock concepts. You MUST act as an elite Creative Director and elevate their basic prompt into highly marketable, commercially viable scenarios.
 
+1. 🎯 **ELEVATE TO COMMERCIAL SCENARIOS**:
+   - If the user types a simple word like "business", DO NOT just output "a businessman". Elevate it to: "A diverse corporate team collaborating on a futuristic glass interface in a modern high-rise office at sunset".
+   - If they type "food", elevate it to: "A vibrant top-down flat-lay of rustic Italian pasta ingredients with fresh basil, scattered flour, and raw tomatoes on a weathered wooden table".
+
+2. 📈 **MICROSTOCK MARKET TRENDS (Prioritize these themes if they fit the concept)**:
+   - Authentic, candid lifestyle moments (laughing, genuine emotion, unposed).
+   - Diversity, inclusion, and breaking stereotypes.
+   - Sustainable living, eco-friendly concepts, and green energy.
+   - Future tech, AI integration, cyber-security, and modern smart homes.
+   - Mental health, wellness, mindfulness, and active senior living.
+
+3. 🔍 **ULTRA-SPECIFICITY**:
+   - Use precise nouns. Instead of "a dog", use "a golden retriever puppy". Instead of "a car", use "a sleek modern electric SUV".
+   - Describe lighting, mood, and atmosphere (e.g., "warm golden hour glow", "cinematic neon reflections", "bright airy studio lighting").
+
+4. 🔄 **DEPTH-FIRST EXHAUSTION & ZERO REPETITION**:
+   - Generate wildly different concepts for each prompt. DO NOT repeat the same subject, pose, or angle across the requested number of prompts.
+   - Rotate demographics, camera angles, environments, and time of day to maximize the commercial utility of the batch.
+`;
+
+// --- TEXT-BASED PROMPT BUILDERS ---
 const buildFotographicTextPrompt = (quality: 'default' | 'xml', negativePrompt: string, numPrompts: number) => {
  let wordCountInstruction: string;
  let detailInstruction: string;
@@ -280,6 +305,8 @@ const buildFotographicTextPrompt = (quality: 'default' | 'xml', negativePrompt: 
  }
 
  return `${buildNegativePromptInstruction(negativePrompt)}You are a highly creative AI image prompt generator. Your task is to process a single concept and generate a specified number of unique prompts in a JSON format.
+
+${universalMicrostockIdeationEngine}
 
 Follow these instructions precisely:
 1. The user will provide a single concept. You MUST process the concept directly and generate the output in English language. NEVER ask questions, NEVER refuse, and NEVER output conversational text. You MUST output ONLY the requested JSON array.
@@ -1132,6 +1159,9 @@ Every subject must be commercially in-demand on Adobe Stock, Shutterstock, and F
   return `${buildNegativePromptInstruction(negativePrompt)}You are an elite, world-class Creative Director and Master Prompt Engineer specializing in high-end 2D commercial vector graphics, microstock illustration, and iconic visual branding (Adobe Stock, Shutterstock, Freepik, Getty standard).
 
 Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
+
+${universalMicrostockIdeationEngine}
+
 ${expansionRules}
 
 7. 🎨 **ART-STYLE SPECIALIZED MORPHOLOGY**:
