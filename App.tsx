@@ -815,16 +815,17 @@ const App: React.FC = () => {
           continue;
         }
 
-        // Re-number explicitly
-        let text = combined.slice(0, slotCount).map((v, idx) => `${idx + 1}) ${v}`).join(' ');
-        
-        // Cleanup formatting
-        text = text.replace(/^[\[{\s"'`]+|[\]}\s"'`]+$/g, '').trim();
-        text = text.replace(/,?\s*professional\s+(sports|basketball|soccer|football|esports|cycling|motocross|volleyball|badminton|rugby|running|car wrap|athletic).*$/i, '').trim();
-        text = text.replace(/,?\s*(dual split 50:50|one vertical half displays|the other vertical half is|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art|pure 100% flat 2d vector|razor-sharp hard-edge).*$/i, '').trim();
-        text = text.replace(/[,.]\s*$/, '').trim();
-        text = text.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
-        text = text.replace(/^(A sleek|A modern|A dynamic|A high-octane|An aerodynamic|A bold|An energetic|A vibrant)?\s*(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)\s*(design|featuring|showcasing|with)?\s*/i, '').trim();
+        // Cleanup and re-number explicitly per item
+        let text = combined.slice(0, slotCount).map((v, idx) => {
+          let itemText = v.trim();
+          itemText = itemText.replace(/^[\[{\s"'`]+|[\]}\s"'`]+$/g, '').trim();
+          itemText = itemText.replace(/,?\s*professional\s+(sports|basketball|soccer|football|esports|cycling|motocross|volleyball|badminton|rugby|running|car wrap|athletic).*$/i, '').trim();
+          itemText = itemText.replace(/,?\s*(dual split 50:50|one vertical half displays|the other vertical half is|isolated on solid|commercial sportswear|commercial automotive|clean-cut hard-edge|flat illustration style|minimalist monoline vector art|geometric silhouette vector art|negative space vector art|pure 100% flat 2d vector|razor-sharp hard-edge).*$/i, '').trim();
+          itemText = itemText.replace(/[,.]\s*$/, '').trim();
+          itemText = itemText.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+          itemText = itemText.replace(/^(A sleek|A modern|A dynamic|A high-octane|An aerodynamic|A bold|An energetic|A vibrant)?\s*(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)\s*(design|featuring|showcasing|with)?\s*/i, '').trim();
+          return `${idx + 1}) ${itemText}`;
+        }).join(' ');
         
         if (text.length > 0) {
           text = text.charAt(0).toUpperCase() + text.slice(1);
