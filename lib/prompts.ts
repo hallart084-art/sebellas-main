@@ -1259,8 +1259,7 @@ Return ONLY the JSON array. No markdown, no extra text.`;
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 - Act as an ultra-smart, wildly creative commercial microstock director.
 - Selected Art Style: "${chosenArtStyle}"
-- For every prompt, write a rich, highly specific 2D vector graphic scene/motif description, followed by the mandatory style suffix:
-"[DETAILED 2D GRAPHIC SCENE/MOTIF DESCRIPTION]"
+- For every prompt, write a rich, highly specific 2D vector graphic scene/motif description.
 
 Return ONLY a valid JSON array of ${settings.numPrompts} complete prompt strings.`;
     }
