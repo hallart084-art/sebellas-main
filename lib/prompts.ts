@@ -265,29 +265,31 @@ ${footageJsonTemplate}`;
 
 
 export const getFlatIllustrationZeroPointOneIdeationEngine = () => {
-  return `1. 🎯 **MASTER PROMPT FORMULA & THEME DECONSTRUCTION**:
-   - The user provides a THEME. Treat the theme as a broad visual umbrella, then develop it into specific, commercially useful microstock illustration concepts.
-   - The theme must NOT simply be repeated. Expand it into concrete subjects, roles, categories, activities, props, poses, movements, expressions, and visual contexts.
-   - **MANDATORY PROMPT FORMULA**: [SUBJECT] + [SPECIFIC ACTIVITY] + [SUPPORTING PROPS] + [POSE / MOVEMENT] + [EXPRESSION] + [VISUAL CONCEPT]
-   - Write the visual concept first, then append the MASTER STYLE naturally at the end (the system will append the suffix automatically).
-   
-2. **CONCEPT DEVELOPMENT RULES (REVISION)**:
-   - Keep the subject description simple, direct, and broadly applicable.
-   - DO NOT over-specify unnecessary physical, cultural, ethnic, geographic, or demographic characteristics.
-   - DO NOT add ethnicity, nationality, race, country, regional identity, or cultural appearance unless explicitly requested (e.g. "farmer" is enough, "Asian farmer" is unnecessary).
-   - Focus ONLY on details that materially improve the visual concept: subject, role/category, main activity, relevant prop, simple pose, simple facial expression, clear visual composition.
-   - AVOID excessive descriptive stacking (no unnecessary clothing specs, body-shapes, materials, surface details, environments, geometric objects, background objects, or cultural details).
-   - Keep the concept visually simple, clean, and easy to understand. The subject should remain recognizable from the first few words.
-   - Use natural, concise visual descriptions rather than long chains of decorative adjectives.
-   - "Developed" means a clearer and more useful visual idea, NOT a longer description. Do not make the prompt unnecessarily detailed just to make it look more developed.
-   - **STYLE BALANCE**: The MASTER STYLE controls the overall visual appearance. The concept description should control ONLY the subject and visual idea. Do not let the concept description override or conflict with the MASTER STYLE.
+  return `1. 🎯 **THEME INTERPRETATION RULE — IMPORTANT**:
+   - The user's theme is the PRIMARY SUBJECT CATEGORY. Develop it into simple, recognizable specific subjects.
+   - Do NOT reinterpret the theme into unrelated professions, cultural identities, fictional occupations, or complex character concepts unless explicitly requested.
+   - Example Theme "food mascot": Make "burger mascot", "pizza mascot", "donut mascot". DO NOT make "burger mascot dressed as a gourmet grease technician wearing a mechanic jumpsuit".
+   - The goal is to make the THEME more specific, not to create an unrelated story around the theme.
 
-3. **BACKGROUND RULE (CRITICAL)**:
-   - The background must always be a bright, very light pastel color, tending toward white.
-   - Use backgrounds such as: very light pastel blue, very light pastel orange, very light pastel yellow, very light pastel green, very light pastel pink, very light pastel lavender, soft off-white pastel.
-   - AVOID dark, saturated, burnt, deep, or strongly colored backgrounds. (DO NOT use "vibrant tangerine", "deep colored", or "single saturated burnt orange").
-   - The background should provide gentle contrast while remaining bright, airy, clean, and close to white.
-   - **BACKGROUND FORMULA**: "isolated on a very light bright pastel background, close to white" OR "isolated on a soft very light pastel blue background, close to white"`;
+2. **SIMPLICITY & CONCEPT DEVELOPMENT RULE**:
+   - Keep the subject description concise. Use approximately: SUBJECT + ACTION + 1-2 RELEVANT PROPS + SIMPLE EXPRESSION/POSE.
+   - Avoid long chains of adjectives and unnecessary visual specifications.
+   - DO NOT describe: ethnicity, nationality, race, geographic origin, cultural identity, detailed clothing, detailed anatomy, detailed materials, complex environments, complicated background objects, unnecessary food ingredients, or decorative micro-details.
+   - "Developed" means: more specific, more visually useful, and more commercially usable. It does NOT mean more complicated, more descriptive, or more detailed.
+   
+3. **ACTION & VARIATION RULE**:
+   - Actions should be natural and easy to understand (holding, waving, carrying, sitting, standing, jumping, eating, drinking, presenting). Do not force an unusual action merely to make the prompt different.
+   - Create variation primarily by changing the specific SUBJECT and simple ACTION. (e.g. burger holding spatula, pizza carrying box, donut waving).
+   
+4. **COLOR & COMPOSITION RULE**:
+   - Do not randomly assign multiple strong colors. The MASTER STYLE defines the primary palette (saturated azure blue and radiant bright orange). Use these naturally with simple supporting colors.
+   - Prefer a simple isolated composition. Do not automatically add: isometric planes, floating ingredients, platforms, mounds, flames, or complex environmental arrangements unless genuinely necessary.
+   - **BACKGROUND RULE**: Always use a very light, bright pastel background that is close to white. Preferred wording: "isolated on a very light bright pastel background, close to white". Do not use saturated backgrounds.
+   
+5. **PRIORITY ORDER & FINAL STRUCTURE**:
+   1. Theme accuracy, 2. Clear subject, 3. Simple recognizable action, 4. Relevant supporting prop, 5. Clean commercial composition, 6. Visual variation, 7. MASTER STYLE.
+   - Never sacrifice theme accuracy for visual complexity.
+   - Write the visual concept first, then append the MASTER STYLE naturally at the end.`;
 };
 
 const getUniversalMicrostockIdeationEngine = (isVector: boolean, isFlatObject: boolean = false) => {
