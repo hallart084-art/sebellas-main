@@ -606,7 +606,7 @@ export const buildMultiItemPhase1Prompt = (
     exampleLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
   }
 
-  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Seed: ${entropySeed}]
+  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Session Entropy Seed: ${entropySeed} - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Do NOT output the most common/obvious subjects first. Guarantee this specific session produces a completely unique batch compared to any previous sessions by exploring rare sub-categories.]
 
 YOUR ROLE: Generate ONLY items 1 through ${half} for EACH of the ${numPrompts} prompts.
 ART STYLE: "${artStyle}"
@@ -667,7 +667,7 @@ export const buildMultiItemPhase2Prompt = (
     .map((ctx, idx) => `  Prompt ${idx + 1}: items 1-${half} already use → ${ctx}`)
     .join('\n');
 
-  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Seed: ${entropySeed}-P2]
+  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Session Entropy Seed: ${entropySeed}-P2 - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Guarantee this specific session produces a completely unique batch.]
 
 YOUR ROLE: Generate ONLY items ${half + 1} through ${slotCount} for EACH of the ${numPrompts} prompts.
 ART STYLE: "${artStyle}"
@@ -1271,7 +1271,7 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
         exampleItemLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
       }
 
-      contents = `You are a world-class microstock prompt engineer. Generate EXACTLY ${settings.numPrompts} bundle pack prompts for concept: "${concept}". [Seed: ${entropySeed}${angleClause}]
+      contents = `You are a world-class microstock prompt engineer. Generate EXACTLY ${settings.numPrompts} bundle pack prompts for concept: "${concept}". [Seed: ${entropySeed}${angleClause} - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Do NOT output the most common/obvious subjects first. Guarantee this specific session produces a completely unique batch compared to any previous sessions by exploring rare sub-categories.]
 
 LAYOUT PREFIX (copy this exactly for every prompt): "${layoutFormula}"
 ART STYLE: "${chosenArtStyle}"
@@ -1296,7 +1296,7 @@ MANDATORY RULES FOR EVERY ITEM:
 
 Return ONLY the JSON array. No markdown, no extra text.`;
     } else {
-      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
+      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause} - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Do NOT output the most common/obvious subjects first. Guarantee this specific session produces a completely unique batch compared to any previous sessions by exploring rare sub-categories.]
 
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 - Act as an ultra-smart, wildly creative commercial microstock director.
