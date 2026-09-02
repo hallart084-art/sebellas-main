@@ -265,54 +265,57 @@ ${footageJsonTemplate}`;
 
 
 export const getFlatIllustrationObjectConceptZeroPointOneIdeationEngine = () => {
-  return `1. 🎯 **GENERAL THEME INTERPRETATION LOGIC (CRITICAL STRICTNESS)**:
-   - The user's input is the PRIMARY THEME and STRICT SUBJECT-CATEGORY INSTRUCTION.
+  return `1. 🎯 **GENERAL THEME-TO-CONCEPT LOGIC (CRITICAL STRICTNESS)**:
+   - The user's THEME is the PRIMARY SOURCE OF MEANING and STRICT SUBJECT-CATEGORY INSTRUCTION.
+   - Do NOT interpret the theme as "anything related to the theme."
    - The generated main subject MUST directly belong to the EXACT category named by the user's theme.
-   - **DO NOT** generate objects, tools, equipment, professions, locations, environments, or activities merely because they are related to the theme.
    - **CRITICAL RULE**: "RELATED TO THE THEME" does NOT mean "PART OF THE THEME".
    - **DO NOT GENERATE "THINGS RELATED TO THE THEME." GENERATE "THINGS THAT ARE THE THEME."**
 
-2. **DIRECT SUBJECT TEST**:
-   - A generated subject is valid ONLY when a person can naturally point to it and say: "THIS IS [USER THEME]."
-   - Example (Theme "Japanese Food"):
-     - Sushi -> "This is Japanese Food." YES.
-     - Ramen -> "This is Japanese Food." YES.
-     - Sushi mat, donabe pot, chef, restaurant -> "This is Japanese Food." NO. (These are related, but NOT the theme).
+2. **IDENTIFY THE CORE SUBJECT (STEP 1 & 2)**:
+   - Ask internally: "What would people EXPECT TO SEE when they specifically search for this theme?"
+   - E.g. Theme "Sumer" = Sumerian civilization artifacts, architecture, writing. NOT modern excavators.
+   - E.g. Theme "Japanese Food" = Japanese dishes. NOT kitchen equipment.
 
-3. **NO CATEGORY DRIFT & GENERALIZATION RULE**:
-   - Do not drift from Food -> Cooking/Kitchen/Equipment.
-   - Do not drift from Cars -> Mechanics/Garages.
-   - Do not drift from Agriculture -> Tractors/Farmers.
-   - The semantic relationship between a subject and the theme is NOT sufficient. The subject must belong to the SAME semantic category as the theme.
+3. **ICONIC SUBJECT FILTER & DIRECT REPRESENTATION RULE (STEP 3 & 4)**:
+   - Prioritize subjects directly identifiable, historically/culturally distinctive, and commonly recognized.
+   - A concept is valid ONLY when the MAIN SUBJECT ITSELF is a direct representation of the theme.
+   - If someone sees ONLY the main subject, they MUST be able to identify the requested theme. (e.g. Sushi = Yes, Sushi mat = No. Cuneiform tablet = Yes, Excavator = No).
 
-4. **MAIN SUBJECT DOMINANCE & SUPPORTING OBJECT LIMIT**:
-   - The MAIN SUBJECT must visually dominate the prompt.
-   - Supporting elements are secondary. Use a maximum of a few relevant supporting elements to improve presentation ONLY.
-   - The supporting element must NEVER become the visual focus.
-   - **OBJECT-ONLY RULE**: Absolutely NO UNREQUESTED HUMAN SUBJECTS (no chefs, farmers, baristas, etc.).
+4. **HISTORICAL/CULTURAL, TEMPORAL & GEOGRAPHIC DRIFT RULES (STEPS 5, 11, 12)**:
+   - When the theme represents a civilization/historical period (e.g. Sumer), use iconic artifacts, architecture, writing systems of THAT SPECIFIC CULTURE.
+   - NO GEOGRAPHIC DRIFT: Do not substitute generic "ancient-looking" or broad regional objects for a specific culture.
+   - NO TEMPORAL DRIFT: Do NOT mix modern objects, tools, or technology into historical themes.
+   - NO ASSOCIATION DRIFT: Association chains are forbidden (e.g. Sumer -> archaeology -> excavator = REJECT).
 
-5. **THEME MODIFIER RULE & BROAD VS SPECIFIC**:
-   - When a theme contains multiple words, preserve the meaning of ALL important words (e.g. "Japanese Food" = Japanese AND Food. Not just "anything related to Japanese cuisine").
-   - Broad themes (Food) = common examples within that category.
-   - Specific themes (Japanese Food) = tight examples inside that specific category.
+5. **SUBJECT POOL & VARIATION RULE (STEPS 7 & 8)**:
+   - Mentally build a SUBJECT POOL first before generating prompts.
+   - Variation MUST STAY INSIDE the valid subject pool (e.g. vary by object selection, arrangement, grouping, viewpoint). Do not create variation by switching to unrelated tools/equipment.
 
-6. **BACKGROUND & COMPOSITION RULE**:
+6. **MAIN SUBJECT DOMINANCE & SUPPORTING ELEMENTS (STEPS 9 & 13)**:
+   - The MAIN SUBJECT must visually dominate. Supporting elements are allowed ONLY to reinforce the main theme and must NEVER become the hero subject.
+   - NO RANDOM OBJECT INSERTION. Every object must have a reason to exist.
+
+7. **BACKGROUND RULE**:
    - The background must remain very light, bright pastel, and close to white.
    - **BACKGROUND FORMULA**: "isolated on a very light bright pastel background, close to white"
-   - Avoid saturated, dark, or burnt backgrounds. The background is secondary and must never compete with the subject.
 
-7. **VALIDATION GATE (MANDATORY)**:
-   Before finalizing every concept, perform this internal validation:
-   Q1: What is the exact theme?
-   Q2: What is the exact subject category requested by the theme?
-   Q3: Is the MAIN SUBJECT directly part of that category?
-   Q4: Would the image still represent the theme if all supporting objects were removed?
-   Q5: Has the concept drifted into tools, equipment, professions, locations, or activities related to the theme?
-   Q6: Is the MAIN SUBJECT more important than all supporting objects?
-   **IF Q3=NO, Q4=NO, or Q5=YES: REJECT THE CONCEPT IMMEDIATELY AND GENERATE ANOTHER ONE.**
+8. **FINAL VALIDATION GATE (MANDATORY)**:
+   Before producing every prompt, silently answer:
+   1. What EXACT theme did the user enter?
+   2. What TYPE of theme is it?
+   3. What is the CORE SUBJECT CATEGORY?
+   4. What are the most recognizable subjects inside that category?
+   5. Is the MAIN SUBJECT directly representative of the theme?
+   6. Could the theme still be recognized if all supporting elements were removed?
+   7. Did the concept drift into a related industry, place, profession, tool, equipment, or activity?
+   8. Did the concept introduce a modern object into a historical theme?
+   9. Did the concept substitute a broad region for a specific culture?
+   10. Is the subject a strong microstock concept?
+   **IF ANY CRITICAL ANSWER IS NO (e.g. 5=NO, 6=NO, 7=YES, 8=YES, 9=YES): REJECT THE CONCEPT IMMEDIATELY.**
 
-8. **FINAL PRINCIPLE**:
-   THEME = WHAT TO SHOW. STYLE = HOW TO DRAW IT. CONCEPT DEVELOPMENT = HOW TO VARY IT WITHOUT CHANGING WHAT THE USER ASKED FOR.`;
+9. **CRITICAL HIERARCHY**:
+   THEME ACCURACY > DIRECT SUBJECT MATCH > ICONIC / RECOGNIZABLE SUBJECT > VARIETY > CREATIVITY > DECORATIVE DETAIL.`;
 };
 
 export const getFlatIllustrationZeroPointOneIdeationEngine = () => {
