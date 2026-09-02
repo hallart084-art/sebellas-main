@@ -611,16 +611,21 @@ export const buildMultiItemPhase1Prompt = (
   systemInstruction: string
 ): { contents: string; config: any } => {
   const isFlatObj = artStyle.toLowerCase().includes('object');
+  const isComplexStyle = artStyle.toLowerCase().includes('jersey') || artStyle.toLowerCase().includes('jersy') || artStyle.toLowerCase().includes('livery') || artStyle.toLowerCase().includes('wrap');
+
   const exampleLines: string[] = [];
   for (let i = 1; i <= half; i++) {
-    exampleLines.push(`  "item_${i}": "${isFlatObj ? 'a burger' : `your ultra-detailed 40+ word description for item ${i} here...`}"`);
+    exampleLines.push(`  "item_${i}": "${isFlatObj ? 'a burger' : (isComplexStyle ? `your ultra-detailed 40+ word description for item ${i} here...` : `a detailed description for item ${i} here...`)}"`);
   }
 
-  const lengthRule = isFlatObj 
-    ? '3. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a burger", "a sports car"). DO NOT add any adjectives, background details, poses, or descriptions.'
-    : '3. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.';
+  let lengthRule = '3. Each item should be a clear, natural description of the subject (pose, colors, props).';
+  if (isFlatObj) {
+    lengthRule = '3. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a burger", "a sports car"). DO NOT add any adjectives, background details, poses, or descriptions.';
+  } else if (isComplexStyle) {
+    lengthRule = '3. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.';
+  }
 
-  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Session Entropy Seed: ${entropySeed} - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Ensure unique variations across sessions, BUT STAY STRICTLY ON-TOPIC to the core concept. Do NOT drift into irrelevant subjects.]
+  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Session Seed: ${entropySeed}]
 
 YOUR ROLE: Generate ONLY items 1 through ${half} for EACH of the ${numPrompts} prompts.
 ART STYLE: "${artStyle}"
@@ -673,20 +678,25 @@ export const buildMultiItemPhase2Prompt = (
   systemInstruction: string
 ): { contents: string; config: any } => {
   const isFlatObj = artStyle.toLowerCase().includes('object');
+  const isComplexStyle = artStyle.toLowerCase().includes('jersey') || artStyle.toLowerCase().includes('jersy') || artStyle.toLowerCase().includes('livery') || artStyle.toLowerCase().includes('wrap');
+
   const exampleLines: string[] = [];
   for (let i = half + 1; i <= slotCount; i++) {
-    exampleLines.push(`  "item_${i}": "${isFlatObj ? 'a pizza' : `your ultra-detailed 40+ word description for item ${i} here...`}"`);
+    exampleLines.push(`  "item_${i}": "${isFlatObj ? 'a pizza' : (isComplexStyle ? `your ultra-detailed 40+ word description for item ${i} here...` : `a detailed description for item ${i} here...`)}"`);
   }
 
-  const lengthRule = isFlatObj 
-    ? '2. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a pizza", "a sports car"). DO NOT add any adjectives, background details, poses, or descriptions.'
-    : '2. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.';
+  let lengthRule = '2. Each item should be a clear, natural description of the subject (pose, colors, props).';
+  if (isFlatObj) {
+    lengthRule = '2. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a pizza", "a sports car"). DO NOT add any adjectives, background details, poses, or descriptions.';
+  } else if (isComplexStyle) {
+    lengthRule = '2. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.';
+  }
 
   const contextBlock = phase1Context
     .map((ctx, idx) => `  Prompt ${idx + 1}: items 1-${half} already use → ${ctx}`)
     .join('\n');
 
-  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Session Entropy Seed: ${entropySeed}-P2 - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Ensure unique variations, BUT STAY STRICTLY ON-TOPIC to the core concept.]
+  const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Session Seed: ${entropySeed}-P2]
 
 YOUR ROLE: Generate ONLY items ${half + 1} through ${slotCount} for EACH of the ${numPrompts} prompts.
 ART STYLE: "${artStyle}"
@@ -705,7 +715,7 @@ ${exampleLines.join(',\n')}
 
 MANDATORY RULES:
 1. Each "item_N" MUST start with "N)" (e.g. "${half + 1}) a bibimbap stone pot...").
-2. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.
+${lengthRule}
 3. Your items MUST NOT use any subject listed in "ALREADY TAKEN SUBJECTS" for the same prompt.
 4. Continue the DEPTH-FIRST rule: keep exhausting primary subjects of "${concept}" that were not yet used.
 5. Maintain the same cohesive thematic universe and art style across all items.
@@ -1174,12 +1184,19 @@ Every subject must be commercially in-demand on Adobe Stock, Shutterstock, and F
    - Every prompt MUST structure the canvas using this exact composition format:
      "${layoutSchema}"
 
-3. 💎 **DEEP, EXHAUSTIVE CHARACTERIZATION PER ITEM (EQUAL TO SINGLE IMAGE QUALITY)**:
+${isFlatObjectIllustration ? `3. 💎 **EXTREME BREVITY REQUIRED PER ITEM**:
+   - YOU MUST write VERY BRIEF, generic summaries for the slots (e.g. JUST say "a burger", "a sports car").
+   - ⚠️ MAXIMUM 1-3 WORDS REQUIRED: You MUST write ONLY the name of the simple object!
+   - ⚠️ DO NOT SKIP ITEMS: You must explicitly write out the description for EVERY numbered item (e.g., "1) [description], 2) [description]..."). If the layout asks for 6 items, you MUST write exactly 6 detailed items!
+   - DO NOT describe pose, materials, colors, or backgrounds. Keep it raw and minimalistic.` : (isJerseyPattern || isCarWrapLivery ? `3. 💎 **DEEP, EXHAUSTIVE CHARACTERIZATION PER ITEM (EQUAL TO SINGLE IMAGE QUALITY)**:
    - YOU MUST NOT write brief, lazy, or generic summaries for the slots (e.g. do NOT just say "a lion, a bear").
    - ⚠️ EXTREME LENGTH REQUIRED: You MUST write AT LEAST 40 WORDS FOR EVERY SINGLE ITEM in the grid! 
    - ⚠️ DO NOT SKIP ITEMS: You must explicitly write out the description for EVERY numbered item (e.g., "1) [description], 2) [description]..."). If the layout asks for 6 items, you MUST write exactly 6 detailed items!
    - For EVERY SINGLE SLOT, describe its exact physical pose, its intricate clothing/gear, its distinct materials and colors, a unique prop it is holding, and its specific facial expression or micro-details!
-   - Every slot must be described with the massive depth and richness of a standalone heroic illustration! You MUST NOT truncate or skip any slots!
+   - Every slot must be described with the massive depth and richness of a standalone heroic illustration! You MUST NOT truncate or skip any slots!` : `3. 💎 **CLEAR AND CONCISE ITEM DESCRIPTION**:
+   - Write a clear, natural sentence for each item slot.
+   - Describe its basic pose, distinct materials and colors, or a unique prop.
+   - ⚠️ DO NOT SKIP ITEMS: You must explicitly write out the description for EVERY numbered item (e.g., "1) [description], 2) [description]..."). If the layout asks for 6 items, you MUST write exactly 6 detailed items!`)}
 
 4. 🚫 **STRICT ZERO-TEXT CONTRACT**:
    - STRICTLY FORBIDDEN: DO NOT write label headers in uppercase like "ONE DOMINANT HERO VERTICAL PANEL" or "A 2x2 QUAD GRID". Midjourney will literally render these words as text in the image!
@@ -1290,7 +1307,7 @@ export const buildTextPrompt = (concept: string, settings: UseSettingsReturn & {
         exampleItemLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
       }
 
-      contents = `You are a world-class microstock prompt engineer. Generate EXACTLY ${settings.numPrompts} bundle pack prompts for concept: "${concept}". [Seed: ${entropySeed}${angleClause} - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Ensure unique variations across sessions, BUT STAY STRICTLY ON-TOPIC to the core concept. Do NOT drift into irrelevant subjects.]
+      contents = `You are a world-class microstock prompt engineer. Generate EXACTLY ${settings.numPrompts} bundle pack prompts for concept: "${concept}". [Seed: ${entropySeed}${angleClause}]
 
 LAYOUT PREFIX (copy this exactly for every prompt): "${layoutFormula}"
 ART STYLE: "${chosenArtStyle}"
@@ -1309,7 +1326,7 @@ MANDATORY RULES FOR EVERY ITEM:
 2. Each "item_N" value MUST be a single string starting with "N)" (e.g., "1) a golden retriever...").
 ${chosenArtStyle.toLowerCase().includes('object') 
   ? '3. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a burger").' 
-  : '3. Each item MUST be AT LEAST 40 WORDS LONG. Describe: pose, clothing/fur/material, colors, a unique held prop, and facial expression.'}
+  : (chosenArtStyle.toLowerCase().includes('jersey') || chosenArtStyle.toLowerCase().includes('jersy') || chosenArtStyle.toLowerCase().includes('livery') || chosenArtStyle.toLowerCase().includes('wrap') ? '3. Each item MUST be AT LEAST 40 WORDS LONG. Describe: pose, clothing/fur/material, colors, a unique held prop, and facial expression.' : '3. Each item should be a clear, natural description of the subject (pose, colors, props).')}
 4. ALL ${slotCount} items in every prompt MUST share the same cohesive thematic universe of "${concept}".
 5. Zero uppercase layout labels (e.g., "HERO PANEL"). Write naturally.
 6. DO NOT skip any item. Every object MUST have ALL ${slotCount} item keys filled with unique creative content.
@@ -1317,7 +1334,7 @@ ${chosenArtStyle.toLowerCase().includes('object')
 
 Return ONLY the JSON array. No markdown, no extra text.`;
     } else {
-      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause} - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Ensure unique variations across sessions, BUT STAY STRICTLY ON-TOPIC to the core concept. Do NOT drift into irrelevant subjects.]
+      contents = `Process the concept: "${concept}" and generate EXACTLY ${settings.numPrompts} unique, wildly creative prompts in JSON array format using the Hierarchical High-SEO Microstock Priority. [Session Exploration Seed: ${entropySeed}${angleClause}]
 
 CRITICAL DIVERSITY & FORMULA REQUIREMENT:
 - Act as an ultra-smart, wildly creative commercial microstock director.
@@ -1599,3 +1616,4 @@ export const buildVideoPrompt = (videoData: { data: string; mimeType: string }, 
     
     return { contents, config };
 };
+
