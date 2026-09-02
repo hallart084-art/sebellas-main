@@ -117,10 +117,8 @@ export const getModelsForInputMode = (mode: InputMode): readonly ApiModel[] =>
   AI_MODELS.filter(model => (model.supportedModes as readonly InputMode[]).includes(mode)).map(m => m.id as ApiModel);
 
 export const VECTOR_ART_STYLES = [
-  'Flat illustration',
   'Flat illustration 0.1',
   'Flat Illustration Object Concept 0.1',
-  'Flat object illustration',
   'Monoline geometric vector',
   'Geometric silhouette',
   'Negative space cutout',
