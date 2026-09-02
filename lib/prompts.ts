@@ -264,6 +264,35 @@ ${footageJsonTemplate}`;
 };
 
 
+export const getFlatIllustrationObjectConceptZeroPointOneIdeationEngine = () => {
+  return `1. 🎯 **MASTER PROMPT FORMULA & THEME DECONSTRUCTION (OBJECTS ONLY)**:
+   - Treat the theme as a broad visual umbrella, then develop it into specific, commercially useful object-based microstock illustration concepts.
+   - This style is ONLY for objects, products, tools, equipment, food, plants, furniture, vehicles, architecture, nature objects, abstract objects, and related non-character visual subjects.
+   - **IMPORTANT**: Do NOT include people, humans, characters, mascots, animals acting as characters, faces, body parts, professions, or human activities unless explicitly requested.
+   - **MANDATORY PROMPT FORMULA**: [OBJECT / SUBJECT] + [CATEGORY / VARIATION] + [FUNCTION / CONTEXT] + [SUPPORTING OBJECTS] + [POSITION / ORIENTATION] + [COMPOSITION] + [VISUAL CONCEPT]
+   
+2. **OBJECT CONCEPT DEVELOPMENT RULES**:
+   - Always identify the main object explicitly (e.g. "watering can", NOT "an object related to agriculture").
+   - Do NOT add people or characters (e.g. use "watering can beside a seedling", NOT "gardener using a watering can").
+   - Replace human actions with object functions, relationships, arrangements, or usage contexts (e.g. "coffee cup beside a French press").
+   - Vary concepts through object type, size, shape, function, arrangement, orientation, stacking, grouping, pairing.
+   - Supporting objects must strengthen the main concept. Do not add random decorative objects.
+   - Keep object combinations commercially useful (advertising, education, presentation, infographic).
+   - Do not over-specify the object (no country of origin, brand, microscopic surface details, ethnicity).
+   - Use simple and visually understandable object relationships. Avoid overly complicated environmental clutter.
+   - Keep screens and surfaces BLANK (no text, logos, labels, numbers, icons).
+   - Use object positioning instead of character poses (e.g. standing upright, placed beside, stacked, overlapping, centered, diagonal arrangement).
+
+3. **BACKGROUND RULE (CRITICAL)**:
+   - The background must always be a bright, very light pastel color, tending toward white (e.g. very light pastel blue/orange/yellow/pink).
+   - AVOID dark, saturated, burnt, or deep backgrounds.
+   - **BACKGROUND FORMULA**: "isolated on a very light bright pastel background, close to white"
+
+4. **PRIORITY ORDER & FINAL STRUCTURE**:
+   - Write the object concept first, followed naturally by the MASTER STYLE (appended automatically).
+   - Do not force unnecessary details. Keep it concise, visually clear, and commercially useful.`;
+};
+
 export const getFlatIllustrationZeroPointOneIdeationEngine = () => {
   return `1. 🎯 **THEME INTERPRETATION RULE — IMPORTANT**:
    - The user's theme is the PRIMARY SUBJECT CATEGORY. Develop it into simple, recognizable specific subjects.
@@ -437,6 +466,14 @@ export const getFlatIllustrationSuffix = (whiteBg: boolean = true) => {
   return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
 };
 
+export const getFlatIllustrationObjectConceptZeroPointOneSuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "isolated on a very light bright pure white background, close to white, no floor, no ground line, zero gradients, no gradients"
+    : "isolated on a very light bright pastel background, close to white, no floor, no ground line, zero gradients, no gradients";
+
+  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, ${bgClause}, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
+};
+
 export const getFlatIllustrationZeroPointOneSuffix = (whiteBg: boolean = true) => {
   const bgClause = whiteBg
     ? "isolated on a very light bright pure white background, close to white, no floor, no ground line, zero gradients, no gradients"
@@ -592,6 +629,9 @@ export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true
   }
   if (chosenStyle.includes('negative space')) {
     return getNegativeSpaceCutoutSuffix(whiteBg);
+  }
+  if (chosenStyle === 'flat illustration object concept 0.1') {
+    return getFlatIllustrationObjectConceptZeroPointOneSuffix(whiteBg);
   }
   if (chosenStyle === 'flat illustration 0.1') {
     return getFlatIllustrationZeroPointOneSuffix(whiteBg);
@@ -802,6 +842,7 @@ export const buildVectorTextPrompt = (
   const isMonolineVector = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
   const isGeometricSilhouette = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
   const isNegativeSpaceCutout = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
+  const isFlatIllustrationObjectConcept01 = chosenStyle === 'flat illustration object concept 0.1';
   const isFlatIllustration01 = chosenStyle === 'flat illustration 0.1';
   const isFlatIllustration = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
 
@@ -1254,7 +1295,7 @@ ${isFlatObjectIllustration ? `3. 💎 **EXTREME BREVITY REQUIRED PER ITEM**:
 
 Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
 
-${isFlatIllustration01 ? getFlatIllustrationZeroPointOneIdeationEngine() : getUniversalMicrostockIdeationEngine(true, isFlatObjectIllustration)}
+${isFlatIllustrationObjectConcept01 ? getFlatIllustrationObjectConceptZeroPointOneIdeationEngine() : (isFlatIllustration01 ? getFlatIllustrationZeroPointOneIdeationEngine() : getUniversalMicrostockIdeationEngine(true, isFlatObjectIllustration))}
 
 ${expansionRules}
 
