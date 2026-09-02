@@ -265,43 +265,54 @@ ${footageJsonTemplate}`;
 
 
 export const getFlatIllustrationObjectConceptZeroPointOneIdeationEngine = () => {
-  return `1. 🎯 **THEME FIDELITY RULE — CRITICAL (NO THEME DRIFT)**:
-   - The provided THEME is the PRIMARY SUBJECT CATEGORY. Every generated prompt MUST clearly and directly belong to it.
-   - Do NOT drift into adjacent industries, professions, equipment, locations, or related concepts (e.g. If Theme="Food", output actual edible food like pizza/burger. Do NOT output espresso machines, chefs, or kitchen equipment).
-   - THEME MUST ALWAYS WIN OVER CREATIVITY, novelty, or visual complexity. Do not force unusual concepts simply to create variation. Create variation WITHIN the theme.
+  return `1. 🎯 **GENERAL THEME INTERPRETATION LOGIC (CRITICAL STRICTNESS)**:
+   - The user's input is the PRIMARY THEME and STRICT SUBJECT-CATEGORY INSTRUCTION.
+   - The generated main subject MUST directly belong to the EXACT category named by the user's theme.
+   - **DO NOT** generate objects, tools, equipment, professions, locations, environments, or activities merely because they are related to the theme.
+   - **CRITICAL RULE**: "RELATED TO THE THEME" does NOT mean "PART OF THE THEME".
+   - **DO NOT GENERATE "THINGS RELATED TO THE THEME." GENERATE "THINGS THAT ARE THE THEME."**
 
-2. **THEME CATEGORY PRIORITY & BROAD THEMES**:
-   - Priority: 1. DIRECT SUBJECT OF THE THEME, 2. COMMON VARIATIONS, 3. COMMON CATEGORIES, 4. SIMPLE COMBINATIONS, 5. SIMPLE PRESENTATION.
-   - For broad themes (Food, Nature, Technology, Agriculture), identify the most obvious direct visual subjects. Do not interpret the theme as an entire industry.
-   - **Microstock Subject Priority**: Choose subjects with broad commercial demand (70% common, 20% useful variations, 10% creative). No obscure specialist subjects.
+2. **DIRECT SUBJECT TEST**:
+   - A generated subject is valid ONLY when a person can naturally point to it and say: "THIS IS [USER THEME]."
+   - Example (Theme "Japanese Food"):
+     - Sushi -> "This is Japanese Food." YES.
+     - Ramen -> "This is Japanese Food." YES.
+     - Sushi mat, donabe pot, chef, restaurant -> "This is Japanese Food." NO. (These are related, but NOT the theme).
 
-3. **OBJECT-ONLY & NO-CHARACTER RULE**:
-   - This style is ONLY for non-character visual subjects (food, products, tools, furniture, vehicles, nature objects).
-   - Do not introduce a human merely because the theme is a profession. (Theme: "Agriculture" -> tomato plant, watering can. NOT a farmer).
-   - Keep screens and surfaces BLANK (no text, logos, labels).
+3. **NO CATEGORY DRIFT & GENERALIZATION RULE**:
+   - Do not drift from Food -> Cooking/Kitchen/Equipment.
+   - Do not drift from Cars -> Mechanics/Garages.
+   - Do not drift from Agriculture -> Tractors/Farmers.
+   - The semantic relationship between a subject and the theme is NOT sufficient. The subject must belong to the SAME semantic category as the theme.
 
-4. **SPECIFICITY & CONCEPT SIMPLICITY**:
-   - Keep object descriptions moderately specific. Avoid excessive niche terminology or culinary technical accuracy.
-   - A strong concept does NOT require a complicated scene. Prefer "Stack of colorful pancakes" over "Stack of artisanal buttermilk pancakes arranged beside a vintage pitcher on a weathered table".
-   - DO NOT describe: ethnicity, nationality, culture, complex environments, or unnecessary micro-details.
+4. **MAIN SUBJECT DOMINANCE & SUPPORTING OBJECT LIMIT**:
+   - The MAIN SUBJECT must visually dominate the prompt.
+   - Supporting elements are secondary. Use a maximum of a few relevant supporting elements to improve presentation ONLY.
+   - The supporting element must NEVER become the visual focus.
+   - **OBJECT-ONLY RULE**: Absolutely NO UNREQUESTED HUMAN SUBJECTS (no chefs, farmers, baristas, etc.).
 
-5. **BACKGROUND & COMPOSITION RULE**:
+5. **THEME MODIFIER RULE & BROAD VS SPECIFIC**:
+   - When a theme contains multiple words, preserve the meaning of ALL important words (e.g. "Japanese Food" = Japanese AND Food. Not just "anything related to Japanese cuisine").
+   - Broad themes (Food) = common examples within that category.
+   - Specific themes (Japanese Food) = tight examples inside that specific category.
+
+6. **BACKGROUND & COMPOSITION RULE**:
    - The background must remain very light, bright pastel, and close to white.
    - **BACKGROUND FORMULA**: "isolated on a very light bright pastel background, close to white"
    - Avoid saturated, dark, or burnt backgrounds. The background is secondary and must never compete with the subject.
-   - Prefer simple isolated object compositions. No floating ingredients or complex environmental arrangements.
 
-6. **FINAL QUALITY CHECK (MANDATORY)**:
-   Before producing each prompt, internally check:
-   1. Is the main subject directly inside the user's theme?
-   2. Is it an object/non-character subject?
-   3. Would someone immediately classify the image under the requested theme?
-   4. Is the concept common and commercially useful?
-   5. Is the description moderately specific?
-   6. Are all supporting objects relevant?
-   7. Is there any unnecessary profession, person, character, culture, nationality, or location?
-   8. Has the concept drifted into a related but different category?
-   If the answer to #1 or #3 is NO, reject the concept and generate another one.`;
+7. **VALIDATION GATE (MANDATORY)**:
+   Before finalizing every concept, perform this internal validation:
+   Q1: What is the exact theme?
+   Q2: What is the exact subject category requested by the theme?
+   Q3: Is the MAIN SUBJECT directly part of that category?
+   Q4: Would the image still represent the theme if all supporting objects were removed?
+   Q5: Has the concept drifted into tools, equipment, professions, locations, or activities related to the theme?
+   Q6: Is the MAIN SUBJECT more important than all supporting objects?
+   **IF Q3=NO, Q4=NO, or Q5=YES: REJECT THE CONCEPT IMMEDIATELY AND GENERATE ANOTHER ONE.**
+
+8. **FINAL PRINCIPLE**:
+   THEME = WHAT TO SHOW. STYLE = HOW TO DRAW IT. CONCEPT DEVELOPMENT = HOW TO VARY IT WITHOUT CHANGING WHAT THE USER ASKED FOR.`;
 };
 
 export const getFlatIllustrationZeroPointOneIdeationEngine = () => {
