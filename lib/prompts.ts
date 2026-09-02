@@ -279,9 +279,15 @@ const getUniversalMicrostockIdeationEngine = (isVector: boolean, isFlatObject: b
    - DO NOT write long descriptions. DO NOT add environments, backgrounds, colors, materials, or lighting.
    - MAXIMUM 1-3 WORDS per concept! 
    - Example: if the user types "food", just output "a burger", "a sushi roll", "a hotdog". If they type "car", just output "a sports car", "an offroad car". Keep it absolutely minimal.`
-    : `1. 🎯 **ELEVATE TO COMMERCIAL SCENARIOS (WITH STRICT LOGIC BOUNDARIES)**:
-   - If the user types a broad human/lifestyle concept (e.g., "business", "health"), elevate it to a full commercial scenario: "A diverse corporate team collaborating on a futuristic glass interface..."
-   - ⚠️ **STRICT ON-TOPIC RULE**: If the user types a specific animal (e.g. "dinosaur"), object, or vehicle, **DO NOT force human lifestyle trends onto it!** Do NOT make a dinosaur cook, use a computer, or do business. Keep it in its NATURAL, logical context (e.g., "A towering T-Rex roaring in a dense prehistoric jungle", "A Triceratops grazing peacefully"). ONLY add surreal or human actions if the user explicitly typed them!`;
+    : `1. 🎯 **UMBRELLA THEME DECONSTRUCTION FORMULA**:
+   - DO NOT use the user's theme as the raw main object. The theme is an UMBRELLA. You must break it down into SPECIFIC SUBJECTS and ACTIVITIES.
+   - **MANDATORY FORMULA**: [SPECIFIC SUBJECT] + [MAIN ACTIVITY] + [MOST ENGAGING VISUAL MOMENT/POSE] + [PROPS] + [EXPRESSION] + [CONTEXT]
+   - Example 1 (Theme: "Atlet olahraga"): "Professional basketball athlete performing a powerful slam dunk", "Professional soccer athlete performing a bicycle kick". (DO NOT just say "Professional athlete").
+   - Example 2 (Theme: "Dokter"): "Doctor examining a patient with a stethoscope", "Doctor reading medical results on a clipboard".
+   - Example 3 (Theme: "Sekolah"): "Teacher teaching at a whiteboard", "Students working on a group presentation".
+   - Example 4 (Theme: "Bisnis"): "Entrepreneur giving a presentation", "Team negotiating a startup deal".
+   - Example 5 (Theme: "Hewan"): Break it down into animal + role + activity! Example: "Cute fox mascot as a graphic designer holding a tablet", "Panda mascot as a school teacher pointing at a board".
+   - NEVER repeat the exact same sub-concept. Break the umbrella theme into diverse, specific sub-categories.`;
 
   return `
 ════════════════════════════════════════════════════════════════════════════════════
