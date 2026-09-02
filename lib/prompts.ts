@@ -1,4 +1,4 @@
-
+﻿
 import { UseSettingsReturn } from '../hooks/useSettings';
 import { Type, ThinkingLevel } from '@google/genai';
 import { applyQuickGenerateConfig } from './models';
@@ -264,6 +264,27 @@ ${footageJsonTemplate}`;
 };
 
 
+export const getFlatIllustrationZeroPointOneIdeationEngine = () => {
+  return `1. 🎯 **MASTER PROMPT FORMULA & THEME DECONSTRUCTION**:
+   - The user provides a THEME. Treat the theme as a broad visual umbrella, then develop it into specific, commercially useful microstock illustration concepts.
+   - The theme must NOT simply be repeated. Expand it into concrete subjects, roles, categories, activities, props, poses, movements, expressions, and visual contexts.
+   - **MANDATORY PROMPT FORMULA**: [SUBJECT] + [SPECIFIC ACTIVITY] + [SUPPORTING PROPS] + [POSE / MOVEMENT] + [EXPRESSION] + [VISUAL CONCEPT]
+   - Write the visual concept first, then append the MASTER STYLE naturally at the end (the system will append the suffix automatically).
+   
+2. **CONCEPT DEVELOPMENT RULES**:
+   - Always identify the subject explicitly. Do not use vague phrases such as "a character related to the theme."
+   - Develop the theme into different specific subjects and categories (e.g. Theme "Animal Mascot" -> "fox designer", "panda teacher", "bear chef").
+   - **Animal Mascot**: Always combine the animal with a clear role, profession, or subject.
+   - **Sports Athlete**: Use HUMAN ATHLETES ONLY unless requested otherwise. Clearly identify the sport and athletic activity (e.g. basketball athlete, soccer athlete, tennis player).
+   - Do NOT automatically add the word "Professional" at the beginning (unless requested). Start directly with the specific subject (e.g. "Farmer planting tomato seedlings...").
+   - Every concept should contain a specific activity or action. Avoid static and generic descriptions.
+   - Vary the concepts through: subject type, profession, category, activity, tools, equipment, props, pose, movement, body position, facial expression, visual situation.
+   - Supporting props must strengthen the main concept. Avoid random decorative objects. Props and screens must remain BLANK (zero text/logos).
+   - Avoid repetitive concepts. Each prompt should provide a meaningful visual variation.
+   - Keep the composition visually clean, simple, and easy to isolate. Do not add unnecessary background elements, environmental clutter, tiny decorative details, or complex textures.
+   - Do not introduce animals into human-only themes (athletes, workers, doctors, etc) unless explicitly requested.`;
+};
+
 const getUniversalMicrostockIdeationEngine = (isVector: boolean, isFlatObject: boolean = false) => {
   const specificityRule = isVector 
     ? `- Use precise nouns. Instead of "a dog", use "a golden retriever puppy". Instead of "a car", use "a sleek modern electric SUV".
@@ -407,6 +428,14 @@ export const getFlatIllustrationSuffix = (whiteBg: boolean = true) => {
     : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients, no gradients";
 
   return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, modern microstock graphic asset, zero gradients, no gradients, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
+};
+
+export const getFlatIllustrationZeroPointOneSuffix = (whiteBg: boolean = true) => {
+  const bgClause = whiteBg
+    ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients, no gradients"
+    : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients, no gradients";
+
+  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
 };
 
 export const FLAT_ILLUSTRATION_SUFFIX = getFlatIllustrationSuffix(true);
@@ -556,6 +585,9 @@ export const getActiveVectorSuffix = (artStyle?: string, whiteBg: boolean = true
   }
   if (chosenStyle.includes('negative space')) {
     return getNegativeSpaceCutoutSuffix(whiteBg);
+  }
+  if (chosenStyle === 'flat illustration 0.1') {
+    return getFlatIllustrationZeroPointOneSuffix(whiteBg);
   }
   return getFlatIllustrationSuffix(whiteBg);
 };
@@ -763,6 +795,7 @@ export const buildVectorTextPrompt = (
   const isMonolineVector = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('monoline');
   const isGeometricSilhouette = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('geometric silhouette');
   const isNegativeSpaceCutout = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && chosenStyle.toLowerCase().includes('negative space');
+  const isFlatIllustration01 = chosenStyle === 'flat illustration 0.1';
   const isFlatIllustration = !isJerseyPattern && !isCarWrapLivery && !isSeamlessPattern && !isAbstractPictogramLogo && !isFlatObjectIllustration && chosenStyle.toLowerCase().includes('flat illustration');
 
   let activeSuffix = '';
@@ -1214,7 +1247,7 @@ ${isFlatObjectIllustration ? `3. 💎 **EXTREME BREVITY REQUIRED PER ITEM**:
 
 Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
 
-${getUniversalMicrostockIdeationEngine(true, isFlatObjectIllustration)}
+${isFlatIllustration01 ? getFlatIllustrationZeroPointOneIdeationEngine() : getUniversalMicrostockIdeationEngine(true, isFlatObjectIllustration)}
 
 ${expansionRules}
 
@@ -1622,4 +1655,5 @@ export const buildVideoPrompt = (videoData: { data: string; mimeType: string }, 
     
     return { contents, config };
 };
+
 
