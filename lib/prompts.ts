@@ -615,7 +615,7 @@ TOTAL ITEMS PER SHEET: ${slotCount} (a colleague will generate items ${half + 1}
 OUTPUT FORMAT — A valid JSON array of ${numPrompts} objects:
 [
   {
-    "bg_color": "specify 1 clean solid key color (e.g. mint green, navy blue, pastel pink) that unifies the theme",
+    "bg_color": "specify 1 bright pastel solid key color (e.g. soft pastel pink, bright mint green, soft baby blue, bright pastel yellow) that unifies the theme",
 ${exampleLines.join(',\n')}
   },
   ... (repeat for all ${numPrompts} prompts)
@@ -623,7 +623,7 @@ ${exampleLines.join(',\n')}
 
 MANDATORY RULES:
 1. Each "item_N" MUST start with "N)" (e.g. "1) a sushi nigiri set...").
-2. "bg_color" MUST specify exactly one specific, named solid key color for the entire sheet's background (DO NOT just say "white" unless specifically thematic). It must be a vibrant or pastel microstock-friendly color.
+2. "bg_color" MUST specify exactly one specific, named BRIGHT PASTEL solid key color for the entire sheet's background (DO NOT just say "white"). Strictly avoid dark or muddy colors (no navy blue, no dark brown, no black). It MUST be a bright, soft, pastel microstock-friendly color.
 3. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.
 4. Use the DEPTH-FIRST rule: exhaust all specific primary subjects of "${concept}" (e.g. for "Asian food": sushi → rendang → pho → matcha → dim sum) before expanding to tools or props.
 5. Across the ${numPrompts} prompts, NO two prompts may share the same primary subject for the same item slot. Rotate background colors as well!
