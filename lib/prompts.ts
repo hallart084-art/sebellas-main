@@ -264,7 +264,7 @@ ${footageJsonTemplate}`;
 };
 
 
-const getUniversalMicrostockIdeationEngine = (isVector: boolean) => {
+const getUniversalMicrostockIdeationEngine = (isVector: boolean, isFlatObject: boolean = false) => {
   const specificityRule = isVector 
     ? `- Use precise nouns. Instead of "a dog", use "a golden retriever puppy". Instead of "a car", use "a sleek modern electric SUV".
    - **STRICT VECTOR STYLE BANS**: ABSOLUTELY NO gradients, NO neon, NO glowing effects, NO lens flares, and NO realistic lighting descriptions (like "golden hour" or "cinematic"). Keep descriptions focused on solid, flat colors, clean geometric shapes, and crisp lines.
@@ -272,15 +272,22 @@ const getUniversalMicrostockIdeationEngine = (isVector: boolean) => {
     : `- Use precise nouns. Instead of "a dog", use "a golden retriever puppy". Instead of "a car", use "a sleek modern electric SUV".
    - Describe lighting, mood, and atmosphere (e.g., "warm golden hour glow", "cinematic neon reflections", "bright airy studio lighting").`;
 
+  const commercialScenariosRule = isFlatObject
+    ? `1. 🎯 **ISOLATED OBJECT FOCUS (NO BACKGROUNDS, NO CONTEXT)**:
+   - Since this is a Flat Object Illustration, DO NOT add environments, scenarios, scenes, tables, floors, or backgrounds. 
+   - Expand the idea ONLY by detailing the physical properties of the object itself (materials, colors, specific parts, variations). 
+   - Example: if the user types "food", output "A detailed 2D flat vector of a rustic Italian pizza slice with melting mozzarella cheese and pepperoni" (DO NOT add "on a wooden table" or "in a restaurant").`
+    : `1. 🎯 **ELEVATE TO COMMERCIAL SCENARIOS (WITH STRICT LOGIC BOUNDARIES)**:
+   - If the user types a broad human/lifestyle concept (e.g., "business", "health"), elevate it to a full commercial scenario: "A diverse corporate team collaborating on a futuristic glass interface..."
+   - ⚠️ **STRICT ON-TOPIC RULE**: If the user types a specific animal (e.g. "dinosaur"), object, or vehicle, **DO NOT force human lifestyle trends onto it!** Do NOT make a dinosaur cook, use a computer, or do business. Keep it in its NATURAL, logical context (e.g., "A towering T-Rex roaring in a dense prehistoric jungle", "A Triceratops grazing peacefully"). ONLY add surreal or human actions if the user explicitly typed them!`;
+
   return `
 ════════════════════════════════════════════════════════════════════════════════════
 👑 UNIVERSAL MICROSTOCK IDEATION ENGINE (MANDATORY)
 ════════════════════════════════════════════════════════════════════════════════════
 The user is a layman looking for high-quality, ready-to-sell commercial microstock concepts. You MUST act as an elite Creative Director and elevate their basic prompt into highly marketable, commercially viable scenarios.
 
-1. 🎯 **ELEVATE TO COMMERCIAL SCENARIOS (WITH STRICT LOGIC BOUNDARIES)**:
-   - If the user types a broad human/lifestyle concept (e.g., "business", "health"), elevate it to a full commercial scenario: "A diverse corporate team collaborating on a futuristic glass interface..."
-   - ⚠️ **STRICT ON-TOPIC RULE**: If the user types a specific animal (e.g. "dinosaur"), object, or vehicle, **DO NOT force human lifestyle trends onto it!** Do NOT make a dinosaur cook, use a computer, or do business. Keep it in its NATURAL, logical context (e.g., "A towering T-Rex roaring in a dense prehistoric jungle", "A Triceratops grazing peacefully"). ONLY add surreal or human actions if the user explicitly typed them!
+${commercialScenariosRule}
 
 2. 📈 **MICROSTOCK MARKET TRENDS (ONLY IF RELEVANT)**:
    - Apply these themes ONLY if they logically fit the user's concept: Authentic candid lifestyle, Diversity & inclusion, Sustainable living, Future tech, Mental health & wellness. (Do NOT apply these to wild animals or basic objects).
@@ -1172,7 +1179,7 @@ Every subject must be commercially in-demand on Adobe Stock, Shutterstock, and F
 
 Your core mission is to deeply understand the user's concept and perform an ULTRA-INTELLIGENT, HIERARCHICAL HIGH-SEO COMMERCIAL MICROSTOCK EXPANSION. You must produce EXACTLY ${numPrompts} wildly creative, intellectually sophisticated, completely non-repetitive, and commercially high-demand prompt variations in English, returned as a JSON array.
 
-${getUniversalMicrostockIdeationEngine(true)}
+${getUniversalMicrostockIdeationEngine(true, isFlatObjectIllustration)}
 
 ${expansionRules}
 
