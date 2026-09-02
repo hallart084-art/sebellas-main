@@ -265,32 +265,43 @@ ${footageJsonTemplate}`;
 
 
 export const getFlatIllustrationObjectConceptZeroPointOneIdeationEngine = () => {
-  return `1. 🎯 **MASTER PROMPT FORMULA & THEME DECONSTRUCTION (OBJECTS ONLY)**:
-   - Treat the theme as a broad visual umbrella, then develop it into specific, commercially useful object-based microstock illustration concepts.
-   - This style is ONLY for objects, products, tools, equipment, food, plants, furniture, vehicles, architecture, nature objects, abstract objects, and related non-character visual subjects.
-   - **IMPORTANT**: Do NOT include people, humans, characters, mascots, animals acting as characters, faces, body parts, professions, or human activities unless explicitly requested.
-   - **MANDATORY PROMPT FORMULA**: [OBJECT / SUBJECT] + [CATEGORY / VARIATION] + [FUNCTION / CONTEXT] + [SUPPORTING OBJECTS] + [POSITION / ORIENTATION] + [COMPOSITION] + [VISUAL CONCEPT]
-   
-2. **OBJECT CONCEPT DEVELOPMENT RULES**:
-   - Always identify the main object explicitly (e.g. "watering can", NOT "an object related to agriculture").
-   - Do NOT add people or characters (e.g. use "watering can beside a seedling", NOT "gardener using a watering can").
-   - Replace human actions with object functions, relationships, arrangements, or usage contexts (e.g. "coffee cup beside a French press").
-   - Vary concepts through object type, size, shape, function, arrangement, orientation, stacking, grouping, pairing.
-   - Supporting objects must strengthen the main concept. Do not add random decorative objects.
-   - Keep object combinations commercially useful (advertising, education, presentation, infographic).
-   - Do not over-specify the object (no country of origin, brand, microscopic surface details, ethnicity).
-   - Use simple and visually understandable object relationships. Avoid overly complicated environmental clutter.
-   - Keep screens and surfaces BLANK (no text, logos, labels, numbers, icons).
-   - Use object positioning instead of character poses (e.g. standing upright, placed beside, stacked, overlapping, centered, diagonal arrangement).
+  return `1. 🎯 **THEME FIDELITY RULE — CRITICAL (NO THEME DRIFT)**:
+   - The provided THEME is the PRIMARY SUBJECT CATEGORY. Every generated prompt MUST clearly and directly belong to it.
+   - Do NOT drift into adjacent industries, professions, equipment, locations, or related concepts (e.g. If Theme="Food", output actual edible food like pizza/burger. Do NOT output espresso machines, chefs, or kitchen equipment).
+   - THEME MUST ALWAYS WIN OVER CREATIVITY, novelty, or visual complexity. Do not force unusual concepts simply to create variation. Create variation WITHIN the theme.
 
-3. **BACKGROUND RULE (CRITICAL)**:
-   - The background must always be a bright, very light pastel color, tending toward white (e.g. very light pastel blue/orange/yellow/pink).
-   - AVOID dark, saturated, burnt, or deep backgrounds.
+2. **THEME CATEGORY PRIORITY & BROAD THEMES**:
+   - Priority: 1. DIRECT SUBJECT OF THE THEME, 2. COMMON VARIATIONS, 3. COMMON CATEGORIES, 4. SIMPLE COMBINATIONS, 5. SIMPLE PRESENTATION.
+   - For broad themes (Food, Nature, Technology, Agriculture), identify the most obvious direct visual subjects. Do not interpret the theme as an entire industry.
+   - **Microstock Subject Priority**: Choose subjects with broad commercial demand (70% common, 20% useful variations, 10% creative). No obscure specialist subjects.
+
+3. **OBJECT-ONLY & NO-CHARACTER RULE**:
+   - This style is ONLY for non-character visual subjects (food, products, tools, furniture, vehicles, nature objects).
+   - Do not introduce a human merely because the theme is a profession. (Theme: "Agriculture" -> tomato plant, watering can. NOT a farmer).
+   - Keep screens and surfaces BLANK (no text, logos, labels).
+
+4. **SPECIFICITY & CONCEPT SIMPLICITY**:
+   - Keep object descriptions moderately specific. Avoid excessive niche terminology or culinary technical accuracy.
+   - A strong concept does NOT require a complicated scene. Prefer "Stack of colorful pancakes" over "Stack of artisanal buttermilk pancakes arranged beside a vintage pitcher on a weathered table".
+   - DO NOT describe: ethnicity, nationality, culture, complex environments, or unnecessary micro-details.
+
+5. **BACKGROUND & COMPOSITION RULE**:
+   - The background must remain very light, bright pastel, and close to white.
    - **BACKGROUND FORMULA**: "isolated on a very light bright pastel background, close to white"
+   - Avoid saturated, dark, or burnt backgrounds. The background is secondary and must never compete with the subject.
+   - Prefer simple isolated object compositions. No floating ingredients or complex environmental arrangements.
 
-4. **PRIORITY ORDER & FINAL STRUCTURE**:
-   - Write the object concept first, followed naturally by the MASTER STYLE (appended automatically).
-   - Do not force unnecessary details. Keep it concise, visually clear, and commercially useful.`;
+6. **FINAL QUALITY CHECK (MANDATORY)**:
+   Before producing each prompt, internally check:
+   1. Is the main subject directly inside the user's theme?
+   2. Is it an object/non-character subject?
+   3. Would someone immediately classify the image under the requested theme?
+   4. Is the concept common and commercially useful?
+   5. Is the description moderately specific?
+   6. Are all supporting objects relevant?
+   7. Is there any unnecessary profession, person, character, culture, nationality, or location?
+   8. Has the concept drifted into a related but different category?
+   If the answer to #1 or #3 is NO, reject the concept and generate another one.`;
 };
 
 export const getFlatIllustrationZeroPointOneIdeationEngine = () => {
@@ -471,7 +482,7 @@ export const getFlatIllustrationObjectConceptZeroPointOneSuffix = (whiteBg: bool
     ? "isolated on a very light bright pure white background, close to white, no floor, no ground line, zero gradients, no gradients"
     : "isolated on a very light bright pastel background, close to white, no floor, no ground line, zero gradients, no gradients";
 
-  return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, ${bgClause}, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
+  return `flat illustration style, inanimate object vector graphic, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean surfaces, chunky stylized 2D object geometry, no humans, no people, zero characters, no faces, ${bgClause}, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
 };
 
 export const getFlatIllustrationZeroPointOneSuffix = (whiteBg: boolean = true) => {
