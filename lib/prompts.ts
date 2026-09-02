@@ -208,7 +208,7 @@ No plastic look, no airbrushed or overly smooth skin, no exaggerated teeth-showi
 
 const humanAncestryInstruction = `HUMAN SUBJECT RULE: If any prompt contains human subjects, you must determine and write one race, ethnicity, nationality, regional ancestry, or ancestry descriptor for every visible human subject before returning the final JSON. For reference images or videos, first make an internal inventory of all visible humans, including secondary people, children, adults, background presenters, companions, patients, workers, or bystanders who are visually relevant. Describe each relevant human subject with their own descriptor, clothing, pose/action, expression, and relationship or placement in the scene; do not describe only the most prominent person when more than one human is visible. For text concepts, choose fitting descriptors that make each human subject specific. Use natural phrasing such as "a young woman of Japanese ancestry", "a Black man", "a Latina girl", "an elderly Nigerian woman", "a child of mixed European and East Asian ancestry", or "people of mixed ancestry" when exact ancestry is uncertain. Do not use only generic words like person, woman, man, child, model, worker, group, crowd, or subject without descriptors. Before final output, self-check every prompt and rewrite any human subject phrase that lacks its own descriptor or omits another visible human subject.`;
 
-const actionPoseInstruction = `ACTION & POSE RULE: If the user's concept does not mention a specific action, pose, or activity for the subject, you MUST creatively determine and describe a fitting, natural action or pose. Do not leave the subject completely static or without a defined posture unless explicitly requested by the concept.`;
+const actionPoseInstruction = `ACTION & POSE RULE: If the user's concept does not mention a specific action or pose, determine a FITTING, NATURAL posture for the subject. For human subjects, you may assign engaging lifestyle actions. However, for animals, creatures, vehicles, or inanimate objects, keep their poses STRICTLY NATURAL to their species or nature (e.g., 'grazing', 'roaring', 'parked', 'flying', 'mid-leap'). DO NOT anthropomorphize or force animals to do human activities (like cooking, holding tools, or working) unless the user explicitly requested it. Do not leave subjects completely static without a defined physical posture.`;
 
 const sameAsReferenceStyleInstruction = `REFERENCE STYLE MODE: Match the actual visual medium and style of the reference, not a guessed style. First classify the reference internally as camera-captured, illustration, vector/graphic, 3D render, painting, anime/cartoon, or another visible medium. CRITICAL: If the reference contains a real human or is clearly a camera-captured photograph, the final prompt MUST maintain the camera-captured or photographic base medium. Do NOT let a solid-color, geometric, or abstract background trick you into classifying the entire image as an illustration or graphic design. For these photographic references, you MUST NOT label the overall style as digital illustration, vector, flat color design, graphic composition style, graphic illustration, line art, anime, or painting. However, if the photograph is a conceptual composite featuring real humans interacting with holographic, UI, or CGI overlay elements, you may describe those specific elements as "digital holograms", "UI overlays", or "3D graphic elements" within a photographic context. If the reference is genuinely a full illustration, vector, 3D, painted, graphic, anime, cartoon, or stylized, keep that visible medium faithfully instead of making it camera-captured. Do not invent camera bodies, lens names, focal lengths, aperture, shutter speed, ISO, DSLR/mirrorless wording, or other EXIF-style metadata. Describe only style traits that are actually visible in the reference. If the medium is uncertain, avoid naming an invented medium and describe only visible traits.`;
 
@@ -278,22 +278,18 @@ const getUniversalMicrostockIdeationEngine = (isVector: boolean) => {
 ════════════════════════════════════════════════════════════════════════════════════
 The user is a layman looking for high-quality, ready-to-sell commercial microstock concepts. You MUST act as an elite Creative Director and elevate their basic prompt into highly marketable, commercially viable scenarios.
 
-1. 🎯 **ELEVATE TO COMMERCIAL SCENARIOS**:
-   - If the user types a simple word like "business", DO NOT just output "a businessman". Elevate it to: "A diverse corporate team collaborating on a futuristic glass interface in a modern high-rise office".
-   - If they type "food", elevate it to: "A vibrant top-down flat-lay of rustic Italian pasta ingredients with fresh basil, scattered flour, and raw tomatoes on a weathered wooden table".
+1. 🎯 **ELEVATE TO COMMERCIAL SCENARIOS (WITH STRICT LOGIC BOUNDARIES)**:
+   - If the user types a broad human/lifestyle concept (e.g., "business", "health"), elevate it to a full commercial scenario: "A diverse corporate team collaborating on a futuristic glass interface..."
+   - ⚠️ **STRICT ON-TOPIC RULE**: If the user types a specific animal (e.g. "dinosaur"), object, or vehicle, **DO NOT force human lifestyle trends onto it!** Do NOT make a dinosaur cook, use a computer, or do business. Keep it in its NATURAL, logical context (e.g., "A towering T-Rex roaring in a dense prehistoric jungle", "A Triceratops grazing peacefully"). ONLY add surreal or human actions if the user explicitly typed them!
 
-2. 📈 **MICROSTOCK MARKET TRENDS (Prioritize these themes if they fit the concept)**:
-   - Authentic, candid lifestyle moments (laughing, genuine emotion, unposed).
-   - Diversity, inclusion, and breaking stereotypes.
-   - Sustainable living, eco-friendly concepts, and green energy.
-   - Future tech, AI integration, cyber-security, and modern smart homes.
-   - Mental health, wellness, mindfulness, and active senior living.
+2. 📈 **MICROSTOCK MARKET TRENDS (ONLY IF RELEVANT)**:
+   - Apply these themes ONLY if they logically fit the user's concept: Authentic candid lifestyle, Diversity & inclusion, Sustainable living, Future tech, Mental health & wellness. (Do NOT apply these to wild animals or basic objects).
 
 3. 🔍 **ULTRA-SPECIFICITY & FOCUS**:
    ${specificityRule}
 
-4. 🔄 **DEPTH-FIRST EXHAUSTION & ZERO REPETITION**:
-   - Generate wildly different concepts for each prompt. DO NOT repeat the same subject, pose, or angle across the requested number of prompts.
+4. 🔄 **ABSOLUTE ZERO REPETITION (CRITICAL)**:
+   - You MUST NOT repeat the same concept. If the user asks for "dinosaur" and wants 10 prompts, you MUST provide 10 completely different species (T-Rex, Velociraptor, Stegosaurus, Pterodactyl, etc.). DO NOT output 10 T-Rexes with slightly different backgrounds.
    - Rotate demographics, camera angles, environments, and time of day to maximize the commercial utility of the batch.
 `;
 };
