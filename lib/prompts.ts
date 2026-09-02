@@ -576,6 +576,12 @@ export const getMultiItemLayoutMeta = (preset: string): { layoutPrefix: string; 
 const buildMultiItemSchema = (startIdx: number, endIdx: number) => {
   const properties: Record<string, any> = {};
   const required: string[] = [];
+  
+  if (startIdx === 1) {
+    properties['bg_color'] = { type: Type.STRING };
+    required.push('bg_color');
+  }
+
   for (let i = startIdx; i <= endIdx; i++) {
     properties[`item_${i}`] = { type: Type.STRING };
     required.push(`item_${i}`);
@@ -613,6 +619,7 @@ TOTAL ITEMS PER SHEET: ${slotCount} (a colleague will generate items ${half + 1}
 OUTPUT FORMAT — A valid JSON array of ${numPrompts} objects:
 [
   {
+    "bg_color": "specify 1 clean solid key color (e.g. mint green, navy blue, pastel pink) that unifies the theme",
 ${exampleLines.join(',\n')}
   },
   ... (repeat for all ${numPrompts} prompts)
@@ -620,12 +627,13 @@ ${exampleLines.join(',\n')}
 
 MANDATORY RULES:
 1. Each "item_N" MUST start with "N)" (e.g. "1) a sushi nigiri set...").
-2. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.
-3. Use the DEPTH-FIRST rule: exhaust all specific primary subjects of "${concept}" (e.g. for "Asian food": sushi → rendang → pho → matcha → dim sum) before expanding to tools or props.
-4. Across the ${numPrompts} prompts, NO two prompts may share the same primary subject for the same item slot.
-5. Rotate cultural origins and composition angles across prompts.
-6. DO NOT generate items ${half + 1} to ${slotCount}. Leave those to your colleague.
-7. Return ONLY the JSON array. No markdown, no suffix, no extra text.`;
+2. "bg_color" MUST specify exactly one specific, named solid key color for the entire sheet's background (DO NOT just say "white" unless specifically thematic). It must be a vibrant or pastel microstock-friendly color.
+3. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.
+4. Use the DEPTH-FIRST rule: exhaust all specific primary subjects of "${concept}" (e.g. for "Asian food": sushi → rendang → pho → matcha → dim sum) before expanding to tools or props.
+5. Across the ${numPrompts} prompts, NO two prompts may share the same primary subject for the same item slot. Rotate background colors as well!
+6. Rotate cultural origins and composition angles across prompts.
+7. DO NOT generate items ${half + 1} to ${slotCount}. Leave those to your colleague.
+8. Return ONLY the JSON array. No markdown, no suffix, no extra text.`;
 
   const config: any = {
     systemInstruction,

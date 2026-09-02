@@ -706,8 +706,7 @@ const App: React.FC = () => {
       const chosenArtStyle = settings.vectorArtStyle || 'Flat illustration';
       const numPrompts = countForThisJob;
       const entropySeed = Math.random().toString(36).substring(2, 9);
-      
-      const parseItems = (raw: string): string[][] => {
+          const parseItems = (raw: string): { itemsList: string[][], bgColors: string[] } => {
         let text = raw.replace(/^```(?:json)?\s*([\s\S]*?)\s*```$/i, '$1').trim();
         let parsed: any = null;
         try {
@@ -716,30 +715,40 @@ const App: React.FC = () => {
           console.warn("Failed to parse dual phase JSON", e);
         }
 
-        const extractFromObj = (p: any): string[] => {
-          if (typeof p !== 'object' || !p) return [];
+        const extractFromObj = (p: any): { items: string[], bgColor: string } => {
+          if (typeof p !== 'object' || !p) return { items: [], bgColor: '' };
           const itemKeys = Object.keys(p).filter(k => k.startsWith('item_')).sort((a, b) => {
             const numA = parseInt(a.replace('item_', ''), 10);
             const numB = parseInt(b.replace('item_', ''), 10);
             return numA - numB;
           });
-          return itemKeys.map(k => {
+          const items = itemKeys.map(k => {
             let v = String(p[k] || '').trim();
             v = v.replace(/^\d+[\s.)\-:]+/, '').trim(); // strip LLM's numbering
-            v = v.replace(/^[-*•]\s+/, '').trim(); // strip bullets
+            v = v.replace(/^[-* ]\s+/, '').trim(); // strip bullets
             return v;
           }).filter(Boolean);
+          
+          return { items, bgColor: p.bg_color ? String(p.bg_color).trim() : '' };
         };
 
-        let results: string[][] = [];
+        let itemsList: string[][] = [];
+        let bgColors: string[] = [];
+        
         if (Array.isArray(parsed)) {
-          results = parsed.map(extractFromObj);
+          const extracted = parsed.map(extractFromObj);
+          itemsList = extracted.map(e => e.items);
+          bgColors = extracted.map(e => e.bgColor);
         } else if (parsed && typeof parsed === 'object') {
           const firstArr = Object.values(parsed).find(v => Array.isArray(v));
           if (firstArr) {
-            results = (firstArr as any[]).map(extractFromObj);
+            const extracted = (firstArr as any[]).map(extractFromObj);
+            itemsList = extracted.map(e => e.items);
+            bgColors = extracted.map(e => e.bgColor);
           } else {
-            results = [extractFromObj(parsed)];
+            const ext = extractFromObj(parsed);
+            itemsList = [ext.items];
+            bgColors = [ext.bgColor];
           }
         } else {
           // Regex fallback
@@ -747,18 +756,27 @@ const App: React.FC = () => {
           const extracted = [];
           let match;
           while ((match = regex.exec(text)) !== null) {
-              let v = match[1].replace(/\\"/g, '"').replace(/\\n/g, ' ').trim();
-              v = v.replace(/^\d+[\s.)\-:]+/, '').trim();
-              v = v.replace(/^[-*•]\s+/, '').trim();
-              if (v) extracted.push(v);
+            let v = match[1].replace(/\\"/g, '"').replace(/\\n/g, ' ').trim();
+            v = v.replace(/^\d+[\s.)\-:]+/, '').trim();
+            v = v.replace(/^[-* ]\s+/, '').trim();
+            if (v) extracted.push(v);
           }
-          if (extracted.length > 0) results = [extracted];
+          const bgRegex = /"bg_color"\s*:\s*"((?:[^"\\]|\\.)+)"/i;
+          const bgMatch = bgRegex.exec(text);
+          let bgVal = '';
+          if (bgMatch) bgVal = bgMatch[1].trim();
+
+          if (extracted.length > 0) {
+            itemsList = [extracted];
+            bgColors = [bgVal];
+          }
         }
 
-        while (results.length < numPrompts) {
-          results.push([]);
+        while (itemsList.length < numPrompts) {
+          itemsList.push([]);
+          bgColors.push('');
         }
-        return results;
+        return { itemsList, bgColors };
       };
 
       // Generate the full system instruction that controls the actual visual style logic
@@ -782,7 +800,7 @@ const App: React.FC = () => {
       const phase1Items = parseItems(phase1Text);
       
       // Build context for phase 2 (first 5 words of each item)
-      const phase1Context = phase1Items.map(itemsArr => {
+      const phase1Context = phase1Items.itemsList.map(itemsArr => {
         if (itemsArr.length === 0) return "no items";
         return itemsArr.map(v => v.split(' ').slice(0, 5).join(' ')).join(' | ');
       });
@@ -801,13 +819,16 @@ const App: React.FC = () => {
       const phase2Items = parseItems(phase2Text);
 
       // MERGE & APPLY SUFFIX
-      const targetSuffix = PromptBuilder.getActiveVectorSuffix(chosenArtStyle, isWhiteBg, placeholder.originalConcept);
+      // Force isWhiteBg to FALSE for multi-item sets so the AI-chosen bg color works and targetSuffix doesn't force "pure white background"
+      const multiItemIsWhiteBg = false;
+      const targetSuffix = PromptBuilder.getActiveVectorSuffix(chosenArtStyle, multiItemIsWhiteBg, placeholder.originalConcept);
 
       const mergedPrompts = [];
       for (let i = 0; i < numPrompts; i++) {
-        const p1 = phase1Items[i] || [];
-        const p2 = phase2Items[i] || [];
+        const p1 = phase1Items.itemsList[i] || [];
+        const p2 = phase2Items.itemsList[i] || [];
         const combined = [...p1, ...p2];
+        const bgColor = phase1Items.bgColors[i] || 'white';
         
         // STRICT VALIDATION
         if (combined.length < slotCount) {
@@ -825,14 +846,19 @@ const App: React.FC = () => {
           itemText = itemText.replace(/[\r\n]+/g, ' ').replace(/\s{2,}/g, ' ').trim();
           itemText = itemText.replace(/^(A sleek|A modern|A dynamic|A high-octane|An aerodynamic|A bold|An energetic|A vibrant)?\s*(basketball|soccer|football|futsal|esports|cycling|motocross|volleyball|badminton|rugby|running)?\s*(jersey|shirt|kit|tank top)\s*(design|featuring|showcasing|with)?\s*/i, '').trim();
           return `${idx + 1}) ${itemText}`;
-        }).join(' ');
+        }).join(', ');
         
+        let customPrefix = layoutPrefix;
+        if (bgColor && customPrefix.includes('single solid background')) {
+          customPrefix = customPrefix.replace('single solid background', `single solid ${bgColor} background`);
+        }
+
         if (text.length > 0) {
           text = text.charAt(0).toUpperCase() + text.slice(1);
         }
 
         if (text.length > 120) {
-          mergedPrompts.push(`${layoutPrefix}${text}, ${targetSuffix}`);
+          mergedPrompts.push(`${customPrefix}${text}, ${targetSuffix}`);
         }
       }
 
