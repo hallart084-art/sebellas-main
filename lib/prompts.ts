@@ -274,10 +274,11 @@ const getUniversalMicrostockIdeationEngine = (isVector: boolean, isFlatObject: b
    - Describe lighting, mood, and atmosphere (e.g., "warm golden hour glow", "cinematic neon reflections", "bright airy studio lighting").`;
 
   const commercialScenariosRule = isFlatObject
-    ? `1. 🎯 **ISOLATED OBJECT FOCUS (NO BACKGROUNDS, NO CONTEXT)**:
-   - Since this is a Flat Object Illustration, DO NOT add environments, scenarios, scenes, tables, floors, or backgrounds. 
-   - Expand the idea ONLY by detailing the physical properties of the object itself (materials, colors, specific parts, variations). 
-   - Example: if the user types "food", output "A detailed 2D flat vector of a rustic Italian pizza slice with melting mozzarella cheese and pepperoni" (DO NOT add "on a wooden table" or "in a restaurant").`
+    ? `1. 🎯 **EXTREME BREVITY & ISOLATED OBJECT FOCUS**:
+   - Since this is a Flat Object Illustration, YOU MUST ONLY NAME THE SIMPLE OBJECT.
+   - DO NOT write long descriptions. DO NOT add environments, backgrounds, colors, materials, or lighting.
+   - MAXIMUM 1-3 WORDS per concept! 
+   - Example: if the user types "food", just output "a burger", "a sushi roll", "a hotdog". If they type "car", just output "a sports car", "an offroad car". Keep it absolutely minimal.`
     : `1. 🎯 **ELEVATE TO COMMERCIAL SCENARIOS (WITH STRICT LOGIC BOUNDARIES)**:
    - If the user types a broad human/lifestyle concept (e.g., "business", "health"), elevate it to a full commercial scenario: "A diverse corporate team collaborating on a futuristic glass interface..."
    - ⚠️ **STRICT ON-TOPIC RULE**: If the user types a specific animal (e.g. "dinosaur"), object, or vehicle, **DO NOT force human lifestyle trends onto it!** Do NOT make a dinosaur cook, use a computer, or do business. Keep it in its NATURAL, logical context (e.g., "A towering T-Rex roaring in a dense prehistoric jungle", "A Triceratops grazing peacefully"). ONLY add surreal or human actions if the user explicitly typed them!`;
@@ -609,10 +610,15 @@ export const buildMultiItemPhase1Prompt = (
   entropySeed: string,
   systemInstruction: string
 ): { contents: string; config: any } => {
+  const isFlatObj = artStyle.toLowerCase().includes('object');
   const exampleLines: string[] = [];
   for (let i = 1; i <= half; i++) {
-    exampleLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
+    exampleLines.push(`  "item_${i}": "${isFlatObj ? 'a burger' : `your ultra-detailed 40+ word description for item ${i} here...`}"`);
   }
+
+  const lengthRule = isFlatObj 
+    ? '3. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a burger", "a sports car"). DO NOT add any adjectives, background details, poses, or descriptions.'
+    : '3. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.';
 
   const contents = `You are a world-class microstock prompt engineer. Concept: "${concept}". [Session Entropy Seed: ${entropySeed} - CRITICAL: SHUFFLE YOUR KNOWLEDGE. Ensure unique variations across sessions, BUT STAY STRICTLY ON-TOPIC to the core concept. Do NOT drift into irrelevant subjects.]
 
@@ -632,7 +638,7 @@ ${exampleLines.join(',\n')}
 MANDATORY RULES:
 1. Each "item_N" MUST start with "N)" (e.g. "1) a sushi nigiri set...").
 2. "bg_color" MUST specify exactly one specific, named BRIGHT PASTEL solid key color for the entire sheet's background (DO NOT just say "white"). Strictly avoid dark or muddy colors (no navy blue, no dark brown, no black). It MUST be a bright, soft, pastel microstock-friendly color.
-3. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.
+${lengthRule}
 4. Use the DEPTH-FIRST rule: exhaust all specific primary subjects of "${concept}" (e.g. for "Asian food": sushi → rendang → pho → matcha → dim sum) before expanding to tools or props.
 5. Across the ${numPrompts} prompts, NO two prompts may share the same primary subject for the same item slot. Rotate background colors as well!
 6. Rotate cultural origins and composition angles across prompts.
@@ -666,10 +672,15 @@ export const buildMultiItemPhase2Prompt = (
   phase1Context: string[],   // e.g. ["sushi, rendang, pho", "burger, ramen, taco", ...]
   systemInstruction: string
 ): { contents: string; config: any } => {
+  const isFlatObj = artStyle.toLowerCase().includes('object');
   const exampleLines: string[] = [];
   for (let i = half + 1; i <= slotCount; i++) {
-    exampleLines.push(`  "item_${i}": "your ultra-detailed 40+ word description for item ${i} here..."`);
+    exampleLines.push(`  "item_${i}": "${isFlatObj ? 'a pizza' : `your ultra-detailed 40+ word description for item ${i} here...`}"`);
   }
+
+  const lengthRule = isFlatObj 
+    ? '2. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a pizza", "a sports car"). DO NOT add any adjectives, background details, poses, or descriptions.'
+    : '2. Each item MUST be AT LEAST 40 WORDS. Describe: specific subject, pose/state, materials, colors, unique prop/detail.';
 
   const contextBlock = phase1Context
     .map((ctx, idx) => `  Prompt ${idx + 1}: items 1-${half} already use → ${ctx}`)
@@ -878,11 +889,11 @@ FEW-SHOT EXAMPLES:
    ""
 
 FEW-SHOT EXAMPLES:
-- "coffee machine" -> "An artisan commercial chrome espresso coffee maker machine with portafilter, dual pressure dials, and steam wand, chunky 2D geometric vector styling"
-- "power drill" -> "A cordless industrial rotary hammer power drill with textured grip handle, lithium battery pack, and steel chuck bit in 3/4 isometric perspective"
-- "microscope" -> "A precision laboratory compound optical microscope with brass turret lenses, mechanical slide stage, and solid base"
-- "delivery van" -> "A modern electric commercial delivery box cargo van in sleek side profile with solid aerodynamic body panels and charging port"
-- "gardening shears" -> "A heavy-duty bypass pruning garden shears with ergonomic rubberized handles and sharp steel blades"`;
+- "kitchen appliances" -> "a coffee machine"
+- "tools" -> "a power drill"
+- "science" -> "a microscope"
+- "vehicles" -> "a delivery van"
+- "gardening" -> "gardening shears"`;
   } else if (isMonolineVector) {
     activeSuffix = getMonolineVectorSuffix(isWhiteBg);
     styleRules = `MANDATORY PROMPT STRUCTURE & SUFFIX RULES (MONOLINE GEOMETRIC VECTOR):
@@ -1296,7 +1307,9 @@ ${exampleItemLines.join(',\n')}
 MANDATORY RULES FOR EVERY ITEM:
 1. The "layout_prefix" value must be copied exactly from above (do NOT change it).
 2. Each "item_N" value MUST be a single string starting with "N)" (e.g., "1) a golden retriever...").
-3. Each item MUST be AT LEAST 40 WORDS LONG. Describe: pose, clothing/fur/material, colors, a unique held prop, and facial expression.
+${chosenArtStyle.toLowerCase().includes('object') 
+  ? '3. EXTREME BREVITY REQUIRED: Each item MUST be MAXIMUM 1-3 WORDS LONG. Just name the simple object directly (e.g. "a burger").' 
+  : '3. Each item MUST be AT LEAST 40 WORDS LONG. Describe: pose, clothing/fur/material, colors, a unique held prop, and facial expression.'}
 4. ALL ${slotCount} items in every prompt MUST share the same cohesive thematic universe of "${concept}".
 5. Zero uppercase layout labels (e.g., "HERO PANEL"). Write naturally.
 6. DO NOT skip any item. Every object MUST have ALL ${slotCount} item keys filled with unique creative content.
