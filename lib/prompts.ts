@@ -271,18 +271,23 @@ export const getFlatIllustrationZeroPointOneIdeationEngine = () => {
    - **MANDATORY PROMPT FORMULA**: [SUBJECT] + [SPECIFIC ACTIVITY] + [SUPPORTING PROPS] + [POSE / MOVEMENT] + [EXPRESSION] + [VISUAL CONCEPT]
    - Write the visual concept first, then append the MASTER STYLE naturally at the end (the system will append the suffix automatically).
    
-2. **CONCEPT DEVELOPMENT RULES**:
-   - Always identify the subject explicitly. Do not use vague phrases such as "a character related to the theme."
-   - Develop the theme into different specific subjects and categories (e.g. Theme "Animal Mascot" -> "fox designer", "panda teacher", "bear chef").
-   - **Animal Mascot**: Always combine the animal with a clear role, profession, or subject.
-   - **Sports Athlete**: Use HUMAN ATHLETES ONLY unless requested otherwise. Clearly identify the sport and athletic activity (e.g. basketball athlete, soccer athlete, tennis player).
-   - Do NOT automatically add the word "Professional" at the beginning (unless requested). Start directly with the specific subject (e.g. "Farmer planting tomato seedlings...").
-   - Every concept should contain a specific activity or action. Avoid static and generic descriptions.
-   - Vary the concepts through: subject type, profession, category, activity, tools, equipment, props, pose, movement, body position, facial expression, visual situation.
-   - Supporting props must strengthen the main concept. Avoid random decorative objects. Props and screens must remain BLANK (zero text/logos).
-   - Avoid repetitive concepts. Each prompt should provide a meaningful visual variation.
-   - Keep the composition visually clean, simple, and easy to isolate. Do not add unnecessary background elements, environmental clutter, tiny decorative details, or complex textures.
-   - Do not introduce animals into human-only themes (athletes, workers, doctors, etc) unless explicitly requested.`;
+2. **CONCEPT DEVELOPMENT RULES (REVISION)**:
+   - Keep the subject description simple, direct, and broadly applicable.
+   - DO NOT over-specify unnecessary physical, cultural, ethnic, geographic, or demographic characteristics.
+   - DO NOT add ethnicity, nationality, race, country, regional identity, or cultural appearance unless explicitly requested (e.g. "farmer" is enough, "Asian farmer" is unnecessary).
+   - Focus ONLY on details that materially improve the visual concept: subject, role/category, main activity, relevant prop, simple pose, simple facial expression, clear visual composition.
+   - AVOID excessive descriptive stacking (no unnecessary clothing specs, body-shapes, materials, surface details, environments, geometric objects, background objects, or cultural details).
+   - Keep the concept visually simple, clean, and easy to understand. The subject should remain recognizable from the first few words.
+   - Use natural, concise visual descriptions rather than long chains of decorative adjectives.
+   - "Developed" means a clearer and more useful visual idea, NOT a longer description. Do not make the prompt unnecessarily detailed just to make it look more developed.
+   - **STYLE BALANCE**: The MASTER STYLE controls the overall visual appearance. The concept description should control ONLY the subject and visual idea. Do not let the concept description override or conflict with the MASTER STYLE.
+
+3. **BACKGROUND RULE (CRITICAL)**:
+   - The background must always be a bright, very light pastel color, tending toward white.
+   - Use backgrounds such as: very light pastel blue, very light pastel orange, very light pastel yellow, very light pastel green, very light pastel pink, very light pastel lavender, soft off-white pastel.
+   - AVOID dark, saturated, burnt, deep, or strongly colored backgrounds. (DO NOT use "vibrant tangerine", "deep colored", or "single saturated burnt orange").
+   - The background should provide gentle contrast while remaining bright, airy, clean, and close to white.
+   - **BACKGROUND FORMULA**: "isolated on a very light bright pastel background, close to white" OR "isolated on a soft very light pastel blue background, close to white"`;
 };
 
 const getUniversalMicrostockIdeationEngine = (isVector: boolean, isFlatObject: boolean = false) => {
@@ -432,8 +437,8 @@ export const getFlatIllustrationSuffix = (whiteBg: boolean = true) => {
 
 export const getFlatIllustrationZeroPointOneSuffix = (whiteBg: boolean = true) => {
   const bgClause = whiteBg
-    ? "isolated on solid single-color pure white background, solid white background, no floor, no ground line, zero gradients, no gradients"
-    : "isolated on solid single-color soft pastel background, no floor, no ground line, zero gradients, no gradients";
+    ? "isolated on a very light bright pure white background, close to white, no floor, no ground line, zero gradients, no gradients"
+    : "isolated on a very light bright pastel background, close to white, no floor, no ground line, zero gradients, no gradients";
 
   return `flat illustration style, strictly lineless vector art, no outlines, zero strokes, bold high-contrast flat cel shading, strong pronounced hard-edge shadows, ultra-vibrant sharp cheerful color palette with saturated azure blue and radiant bright orange, clean simplified solid color shapes, no tiny micro-details, no intricate textures, no small surface icons or decals, blank clean screens and props, stylized chunky rounded anatomy, ${bgClause}, no fake lighting, zero glow, no lens flare, no artificial lighting glare, no text, zero typography, no words, no letters, no watermark, no signatures, no labels, no noise, no photorealism, no 3d render.`;
 };
