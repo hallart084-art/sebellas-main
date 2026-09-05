@@ -1,4 +1,4 @@
-import { getModelProvider } from '../constants';
+﻿import { getModelProvider } from '../constants';
 import type { ApiModel, ModelProvider } from '../constants';
 
 export type GeneratePromptRequest = {
@@ -31,10 +31,22 @@ export class EmptyResponseError extends Error {
 export const ENDPOINTS: Record<ModelProvider, string> = {
   google: 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions',
   groq: 'https://api.groq.com/openai/v1/chat/completions',
-  github: 'https://models.inference.ai.azure.com/chat/completions',
+  github: 'https://models.inference.ai.azure.com/chat/completions', // used as fallback only
   mistral: 'https://api.mistral.ai/v1/chat/completions',
   openai: 'https://api.openai.com/v1/chat/completions',
   openrouter: 'https://openrouter.ai/api/v1/chat/completions',
+};
+
+// GitHub Models API does not support CORS for direct browser calls.
+// We route through a Netlify serverless proxy at /api/proxy.
+const GITHUB_PROXY_ENDPOINT = '/api/proxy';
+
+const getEndpoint = (provider: ModelProvider): string => {
+  if (provider === 'github') {
+    // Use relative proxy URL so it works on any Netlify deployment domain
+    return GITHUB_PROXY_ENDPOINT;
+  }
+  return ENDPOINTS[provider] || ENDPOINTS.google;
 };
 
 export const CHECK_MODELS: Record<ModelProvider, string> = {
@@ -108,7 +120,7 @@ export const generateModelContent = async (request: GeneratePromptRequest): Prom
     throw new Error(`No ${provider} API key found. Please configure your key in Settings.`);
   }
 
-  const endpoint = ENDPOINTS[provider] || ENDPOINTS.google;
+  const endpoint = getEndpoint(provider);
   const userContent = toChatCompletionUserContent(request.contents);
 
   const headers: Record<string, string> = {
@@ -199,7 +211,7 @@ export async function checkApiKeyOnline(provider: ModelProvider, key: string): P
   }
 
   try {
-    const endpoint = ENDPOINTS[provider] || ENDPOINTS.google;
+    const endpoint = getEndpoint(provider);
     const testModel = CHECK_MODELS[provider] || 'gemini-2.5-flash';
 
     const headers: Record<string, string> = {
@@ -255,3 +267,4 @@ export const shouldRotateApiKeyOnError = (error: unknown): boolean => {
     text.includes('invalid')
   );
 };
+
