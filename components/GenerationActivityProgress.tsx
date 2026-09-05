@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 export interface ActivityLogItem {
   id: string;
@@ -80,7 +80,9 @@ export const GenerationActivityProgress: React.FC<GenerationActivityProgressProp
             {isLoading ? (
               currentConcept ? `Sedang memproses: "${currentConcept}"` : 'Menghasilkan prompt...'
             ) : (
-              'Semua prompt berhasil dibuat!'
+              logs.some(l => l.type === 'error') 
+                ? (logs.some(l => l.type === 'success') ? 'Proses selesai dengan beberapa error' : 'Semua proses gagal')
+                : 'Semua prompt berhasil dibuat!'
             )}
           </span>
           <span className="font-bold text-indigo-400">

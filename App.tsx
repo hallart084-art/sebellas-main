@@ -522,13 +522,21 @@ const App: React.FC = () => {
           lastGenerationError = requestError;
           const errMsg = (requestError?.message || String(requestError)).toLowerCase();
           
-          if (errMsg.includes('429') || errMsg.includes('too many requests') || errMsg.includes('quota')) {
-            console.warn(`Rate limited (429). Retrying in ${delayMs}ms... (${innerRetries} retries left for this key)`);
-            await new Promise(resolve => setTimeout(resolve, delayMs));
-            delayMs *= 2; // exponential backoff
-            innerRetries--;
+          if (shouldRotateApiKeyOnError(requestError)) {
+            if (providerKeys.length > 1) {
+              console.warn(`Key rate limited or invalid. Rotating to next key immediately...`);
+              break;
+            } else {
+              if (errMsg.includes('429') || errMsg.includes('too many requests') || errMsg.includes('quota')) {
+                console.warn(`Rate limited (429). Retrying in ${delayMs}ms... (${innerRetries} retries left for this key)`);
+                await new Promise(resolve => setTimeout(resolve, delayMs));
+                delayMs *= 2;
+                innerRetries--;
+              } else {
+                break;
+              }
+            }
           } else {
-            // Not a rate limit error, break inner loop to try next key immediately
             break;
           }
         }
@@ -1357,7 +1365,7 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
 
       await Promise.all(batch.map(async (job, idx) => {
         const workerIndex = (startIndex + idx) % workerCount + 1;
-        const conceptName = generationTask!.placeholders[0]?.originalConcept || '';
+        const conceptName = generationTask!.placeholders[startIndex + idx]?.originalConcept || '';
         setCurrentProcessingConcept(conceptName);
         addActivityLog(`Worker #${workerIndex}: Sedang memproses "${conceptName}"...`, 'info', workerIndex);
 
@@ -1398,7 +1406,19 @@ type GenerationJob = () => Promise<GeneratedPromptSet>;
 
     if (generationIdRef.current !== currentGenerationId) return;
 
-    addActivityLog(`Semua proses berhasil diselesaikan!`, 'success');
+    setGeneratedPromptSets(currentSets => {
+      const hasErrors = currentSets.some(s => s.hasError);
+      const allErrors = currentSets.every(s => s.hasError);
+      
+      if (allErrors) {
+        addActivityLog('Semua proses gagal diselesaikan.', 'error');
+      } else if (hasErrors) {
+        addActivityLog('Proses selesai dengan beberapa error.', 'warning');
+      } else {
+        addActivityLog('Semua proses berhasil diselesaikan!', 'success');
+      }
+      return currentSets;
+    });
     setIsLoading(false);
 
     setGeneratedPromptSets(currentSets => {
